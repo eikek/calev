@@ -28,7 +28,7 @@ compared to systemd:
 - The *core* module has zero dependencies and implements the parser
   and generator for calendar events. With sbt, use:
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-core" % "0.1.0-SNAPSHOT"
+  libraryDependencies += "com.github.eikek" %% "calev-core" % "0.1.0"
   ```
 - The *fs2* module contains utilities to work with
   [FS2](https://github.com/functional-streams-for-scala/fs2) streams.
@@ -36,7 +36,7 @@ compared to systemd:
   for calendar events, from the
   [fs2-cron](https://github.com/fthomas/fs2-cron) library. With sbt, use
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-fs2" % "0.1.0-SNAPSHOT"
+  libraryDependencies += "com.github.eikek" %% "calev-fs2" % "0.1.0"
   ```
 
 
@@ -112,7 +112,7 @@ import java.time._
 ce.asString
 // res4: String = "*-*-* 00/2:00:00"
 val now = LocalDateTime.now
-// now: LocalDateTime = 2020-03-07T12:45:39.939
+// now: LocalDateTime = 2020-03-07T13:56:17.353
 ce.nextElapse(now)
 // res5: Option[LocalDateTime] = Some(2020-03-07T14:00)
 ce.nextElapses(now, 5)
@@ -148,7 +148,7 @@ import java.time.LocalTime
 import scala.concurrent.ExecutionContext
 
 implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
-// timer: Timer[IO] = cats.effect.internals.IOTimer@782926a1
+// timer: Timer[IO] = cats.effect.internals.IOTimer@3d77510d
 
 val printTime = IO(println(LocalTime.now))
 // printTime: IO[Unit] = Delay(<function0>)
@@ -165,7 +165,7 @@ val task = CalevFs2.awakeEvery[IO](event).evalMap(_ => printTime)
 // task: Stream[IO[x], Unit] = Stream(..)
 
 task.take(3).compile.drain.unsafeRunSync
-// 12:45:42.023
-// 12:45:44.001
-// 12:45:46.001
+// 13:56:18.050
+// 13:56:20.001
+// 13:56:22
 ```
