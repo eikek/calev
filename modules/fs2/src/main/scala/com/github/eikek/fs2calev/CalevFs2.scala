@@ -25,7 +25,6 @@ object CalevFs2 {
   )(implicit E: ApplicativeError[F, Throwable]): Stream[F, CalEvent] =
     Stream.eval(parse[F](str))
 
-
   def nextElapses[F[_]](ref: ZonedDateTime)(ce: CalEvent): Stream[F, ZonedDateTime] =
     Stream
       .emit(ce.nextElapse(ref))
