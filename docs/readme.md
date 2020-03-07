@@ -1,5 +1,5 @@
 # calev
-[![Build Status](https://travis-ci.com/eikek/calev.svg?branch=master)](https://travis-ci.com/eikek/calev)
+[![Build Status](https://travis-ci.org/eikek/calev.svg?branch=master)](https://travis-ci.org/eikek/calev)
 [![Scaladex](https://index.scala-lang.org/eikek/calev/latest.svg?color=blue)](https://index.scala-lang.org/eikek/calev/calev-core)
 
 
