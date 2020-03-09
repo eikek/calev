@@ -19,7 +19,8 @@ object SuccessorTest extends SimpleTestSuite {
   }
 
   test("expandValues") {
-    val v0 = Successor.expandValues(Seq(Value.Single(4, Some(2)), Value.Single(8, Some(2))), 12)
+    val v0 =
+      Successor.expandValues(Seq(Value.Single(4, Some(2)), Value.Single(8, Some(2))), 12)
     assertEquals(v0, Vector(4, 6, 8, 10, 12))
   }
 

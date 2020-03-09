@@ -3,9 +3,29 @@
 [![Scaladex](https://index.scala-lang.org/eikek/calev/latest.svg?color=blue)](https://index.scala-lang.org/eikek/calev/calev-core)
 [![Scala Steward badge](https://img.shields.io/badge/Scala_Steward-helping-blue.svg?style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAMAAAARSr4IAAAAVFBMVEUAAACHjojlOy5NWlrKzcYRKjGFjIbp293YycuLa3pYY2LSqql4f3pCUFTgSjNodYRmcXUsPD/NTTbjRS+2jomhgnzNc223cGvZS0HaSD0XLjbaSjElhIr+AAAAAXRSTlMAQObYZgAAAHlJREFUCNdNyosOwyAIhWHAQS1Vt7a77/3fcxxdmv0xwmckutAR1nkm4ggbyEcg/wWmlGLDAA3oL50xi6fk5ffZ3E2E3QfZDCcCN2YtbEWZt+Drc6u6rlqv7Uk0LdKqqr5rk2UCRXOk0vmQKGfc94nOJyQjouF9H/wCc9gECEYfONoAAAAASUVORK5CYII=)](https://scala-steward.org)
 
-Small library for parsing systemd calendar event expressions. See
+Small Scala library for parsing systemd.time like calendar event
+expressions. It is available for Scala 2.12 and 2.13. The core module
+has no dependencies.
 
-``` shell
+## What are calendar events?
+
+It serves the same purpose as cron expressions, but uses a different
+syntax: a "normal" timestamp where each part is a pattern. A pattern
+is a list of values, a range or `*` meaning every value. Some
+examples:
+
+| Expression                  | Meaning                                                      |
+|-----------------------------|--------------------------------------------------------------|
+| `*-*-* 12:15:00`            | every day at 12:15                                           |
+| `2020-1,5,9-* 10:00:00`     | every day on Jan, May and Sept of 2020 at 10:00              |
+| `Mon *-*-* 09:00:00`        | every monday at 9:00                                         |
+| `Mon..Fri *-*-1/7 15:00:00` | on 1.,8.,15. etc of every month at 15:00 but not on weekends |
+
+The `1/7` means value `1` and all multiples of `7` added to it.
+
+For more information see
+
+```shell
 man systemd.time
 ```
 
@@ -13,7 +33,8 @@ or
 
 <https://man.cx/systemd.time#heading7>
 
-## Simplified
+
+## Limitations
 
 This library has some limitations when parsing calendar events
 compared to systemd:
@@ -112,16 +133,16 @@ import java.time._
 ce.asString
 // res4: String = "*-*-* 00/2:00:00"
 val now = LocalDateTime.now
-// now: LocalDateTime = 2020-03-07T13:56:17.353
+// now: LocalDateTime = 2020-03-10T00:09:44.799
 ce.nextElapse(now)
-// res5: Option[LocalDateTime] = Some(2020-03-07T14:00)
+// res5: Option[LocalDateTime] = Some(2020-03-10T02:00)
 ce.nextElapses(now, 5)
 // res6: List[LocalDateTime] = List(
-//   2020-03-07T14:00,
-//   2020-03-07T16:00,
-//   2020-03-07T18:00,
-//   2020-03-07T20:00,
-//   2020-03-07T22:00
+//   2020-03-10T02:00,
+//   2020-03-10T04:00,
+//   2020-03-10T06:00,
+//   2020-03-10T08:00,
+//   2020-03-10T10:00
 // )
 ```
 
@@ -148,7 +169,7 @@ import java.time.LocalTime
 import scala.concurrent.ExecutionContext
 
 implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
-// timer: Timer[IO] = cats.effect.internals.IOTimer@3d77510d
+// timer: Timer[IO] = cats.effect.internals.IOTimer@69cca45b
 
 val printTime = IO(println(LocalTime.now))
 // printTime: IO[Unit] = Delay(<function0>)
@@ -165,7 +186,7 @@ val task = CalevFs2.awakeEvery[IO](event).evalMap(_ => printTime)
 // task: Stream[IO[x], Unit] = Stream(..)
 
 task.take(3).compile.drain.unsafeRunSync
-// 13:56:18.050
-// 13:56:20.001
-// 13:56:22
+// 00:09:46.021
+// 00:09:48
+// 00:09:50
 ```
