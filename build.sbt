@@ -58,7 +58,6 @@ lazy val publishSettings = Seq(
     runClean,
     runTest,
     setReleaseVersion,
-    releaseStepCommand("readme/updateReadme"),
     commitReleaseVersion,
     tagRelease,
     //For non cross-build projects, use releaseStepCommand("publishSigned")
