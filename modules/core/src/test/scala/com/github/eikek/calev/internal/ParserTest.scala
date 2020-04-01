@@ -109,5 +109,15 @@ object ParserTest extends SimpleTestSuite {
       Right("" -> CalEvent(Mon.c, DateEvent.All, time(6.c ++ 18.c, 0.c, 0.c)))
     )
     assert(p.run("Mon *-*-* 6,88:0:0").isLeft)
+
+    assertEquals(
+      p.run("*-*-* 0..5:0/1:0"),
+      Right("" -> CalEvent(AllWeekdays, DateEvent.All, time(0 ~ 5, 0 #/ 1, 0.c)))
+    )
+
+    assertEquals(
+      p.run("*-*-* 0..5:0/1"),
+      Right("" -> CalEvent(AllWeekdays, DateEvent.All, time(0 ~ 5, 0 #/ 1, 0.c)))
+    )
   }
 }

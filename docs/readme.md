@@ -43,8 +43,8 @@ compared to systemd:
 
 - The `~` in the date part for refering last days of a month is not
   supported.
-- No parts except weekdays may be absent, date and time parts must be
-  specified
+- No parts except weekdays may be absent. Date and time parts must all
+  be specified, except seconds are optional.
 
 ## Modules
 

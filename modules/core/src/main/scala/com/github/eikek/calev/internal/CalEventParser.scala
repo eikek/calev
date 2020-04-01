@@ -6,9 +6,9 @@ import Parser._
 object CalEventParser {
 
   def time: P[TimeEvent] =
-    ((comp2 <~ colon) ~ (comp2 <~ colon) ~ comp2).map {
+    ((comp2 <~ colon) ~ comp2 ~ ((colon ~> comp2).opt)).map {
       case ((h, m), s) =>
-        TimeEvent(h, m, s)
+        TimeEvent(h, m, s.getOrElse(Component(0)))
     }
 
   def date: P[DateEvent] =
