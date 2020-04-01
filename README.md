@@ -43,15 +43,15 @@ compared to systemd:
 
 - The `~` in the date part for refering last days of a month is not
   supported.
-- No parts except weekdays may be absent, date and time parts must be
-  specified
+- No parts except weekdays may be absent. Date and time parts must all
+  be specified, except seconds are optional.
 
 ## Modules
 
 - The *core* module has zero dependencies and implements the parser
   and generator for calendar events. With sbt, use:
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-core" % "0.1.0"
+  libraryDependencies += "com.github.eikek" %% "calev-core" % "0.2.0"
   ```
 - The *fs2* module contains utilities to work with
   [FS2](https://github.com/functional-streams-for-scala/fs2) streams.
@@ -59,7 +59,7 @@ compared to systemd:
   for calendar events, from the
   [fs2-cron](https://github.com/fthomas/fs2-cron) library. With sbt, use
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-fs2" % "0.1.0"
+  libraryDependencies += "com.github.eikek" %% "calev-fs2" % "0.2.0"
   ```
 
 
@@ -135,16 +135,16 @@ import java.time._
 ce.asString
 // res4: String = "*-*-* 00/2:00:00"
 val now = LocalDateTime.now
-// now: LocalDateTime = 2020-03-10T00:09:44.799
+// now: LocalDateTime = 2020-04-02T01:12:36.761
 ce.nextElapse(now)
-// res5: Option[LocalDateTime] = Some(2020-03-10T02:00)
+// res5: Option[LocalDateTime] = Some(2020-04-02T02:00)
 ce.nextElapses(now, 5)
 // res6: List[LocalDateTime] = List(
-//   2020-03-10T02:00,
-//   2020-03-10T04:00,
-//   2020-03-10T06:00,
-//   2020-03-10T08:00,
-//   2020-03-10T10:00
+//   2020-04-02T02:00,
+//   2020-04-02T04:00,
+//   2020-04-02T06:00,
+//   2020-04-02T08:00,
+//   2020-04-02T10:00
 // )
 ```
 
@@ -171,7 +171,7 @@ import java.time.LocalTime
 import scala.concurrent.ExecutionContext
 
 implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
-// timer: Timer[IO] = cats.effect.internals.IOTimer@69cca45b
+// timer: Timer[IO] = cats.effect.internals.IOTimer@1e2cc372
 
 val printTime = IO(println(LocalTime.now))
 // printTime: IO[Unit] = Delay(<function0>)
@@ -188,7 +188,7 @@ val task = CalevFs2.awakeEvery[IO](event).evalMap(_ => printTime)
 // task: Stream[IO[x], Unit] = Stream(..)
 
 task.take(3).compile.drain.unsafeRunSync
-// 00:09:46.021
-// 00:09:48
-// 00:09:50
+// 01:12:38.021
+// 01:12:40.013
+// 01:12:42.001
 ```
