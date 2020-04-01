@@ -34,16 +34,8 @@ object Value {
     require(start <= end, "start must be <= end")
 
     def contains(n: Int): Boolean =
-      rep match {
-        case None =>
-          n >= start && n <= end
-
-        case Some(m) =>
-          val i1 = math.abs((n - start) / m)
-          val i2 = math.abs((n - end) / m)
-          ((start + i1 * m) <= n && n <= (end + i1 * m)) ||
-          ((start + i2 * m) <= n && n <= (end + i2 * m))
-      }
+      n >= start && n <= end &&
+        (rep == None || Single(start, rep).contains(n))
 
     def asString: String = rep match {
       case None    => f"$start%02d..$end%02d"

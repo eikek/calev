@@ -21,7 +21,9 @@ examples:
 | `Mon *-*-* 09:00:00`        | every monday at 9:00                                         |
 | `Mon..Fri *-*-1/7 15:00:00` | on 1.,8.,15. etc of every month at 15:00 but not on weekends |
 
-The `1/7` means value `1` and all multiples of `7` added to it.
+The `1/7` means value `1` and all multiples of `7` added to it. A
+range with repetition, like `1..12/2` means `1` and all multiples of
+`2` addet to it within the range `1..12`.
 
 For more information see
 
