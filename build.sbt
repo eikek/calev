@@ -103,7 +103,10 @@ lazy val core = project
   .settings(sharedSettings)
   .settings(testSettings)
   .settings(
-    name := "calev-core"
+    name := "calev-core",
+    libraryDependencies ++=
+      Dependencies.fs2.map(_ % Test) ++
+      Dependencies.fs2io.map(_ % Test)
   )
 
 lazy val fs2 = project

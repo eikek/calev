@@ -7,8 +7,13 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 import java.time.temporal.ChronoField
+import scala.concurrent.ExecutionContext
+import cats.effect._
 
 object CalEventTest extends SimpleTestSuite {
+
+  implicit val CS = IO.contextShift(ExecutionContext.global)
+  val blocker = Blocker.liftExecutionContext(ExecutionContext.global)
 
   test("contains") {
     val ce = CalEvent(Mon ~ Tue, DateEvent.All, time(0.c, 10.c ++ 20.c, 0.c))
@@ -54,55 +59,8 @@ object CalEventTest extends SimpleTestSuite {
     assertEquals(next.getNano, 0L)
   }
 
-  test("nextElapse") {
-    val ref = zdt(2020, 3, 6, 1, 47, 12).withZoneSameLocal(CalEvent.UTC)
-    val ce = CalEvent(Mon.c, DateEvent.All, time(All, 10.c ++ 20.c ++ 50.c, 0.c))
-    val expect = zdt(2020, 3, 9, 0, 10, 0)
-    assertEquals(ce.nextElapse(ref), Some(expect))
-  }
 
-  test("nextElapse") {
-    val ref = zdt(2020, 3, 8, 1, 47, 12).withZoneSameLocal(CalEvent.UTC)
-    val ce = CalEvent(
-      AllWeekdays,
-      date(2017 #/ 2, 4.c, 11.c),
-      time(All, 10.c ++ 20.c ++ 50.c, 0.c)
-    )
-    assertEquals(ce.nextElapse(ref), Some(zdt(2021, 4, 11, 0, 10, 0)))
-  }
-
-  test("nextElapse (past)") {
-    val ref = zdt(2020, 3, 6, 1, 47, 12).withZoneSameLocal(CalEvent.UTC)
-    val ce =
-      CalEvent(
-        AllWeekdays,
-        date(2018.c, 11.c, 11.c),
-        time(All, 10.c ++ 20.c ++ 50.c, 0.c)
-      )
-    assertEquals(ce.nextElapse(ref), None)
-  }
-
-  test("nextElapse (past)") {
-    val ref = zdt(2020, 3, 8, 1, 47, 12).withZoneSameLocal(CalEvent.UTC)
-    val ce =
-      CalEvent(AllWeekdays, date(2019.c, 4.c, 11.c), time(All, 10.c ++ 20.c ++ 50.c, 0.c))
-    assertEquals(ce.nextElapse(ref), None)
-  }
-
-  test("nextElapses") {
-    val ref = zdt(2020, 3, 6, 1, 47, 12).withZoneSameLocal(CalEvent.UTC)
-    val ce = CalEvent(Mon.c, DateEvent.All, time(All, 10.c ++ 20.c ++ 50.c, 0.c))
-    val expect = List(
-      zdt(2020, 3, 9, 0, 10, 0),
-      zdt(2020, 3, 9, 0, 20, 0),
-      zdt(2020, 3, 9, 0, 50, 0),
-      zdt(2020, 3, 9, 1, 10, 0),
-      zdt(2020, 3, 9, 1, 20, 0)
-    )
-    assertEquals(ce.nextElapses(ref, 5), expect)
-  }
-
-  test("nextElapses") {
+  test("nextElapses ends") {
     val ref = zdt(2020, 3, 8, 1, 47, 12).withZoneSameLocal(CalEvent.UTC)
     val ce =
       CalEvent(AllWeekdays, date(2021.c, 4.c, 11.c), time(5.c, 10.c ++ 20.c ++ 50.c, 0.c))
@@ -112,19 +70,6 @@ object CalEventTest extends SimpleTestSuite {
         zdt(2021, 4, 11, 5, 20, 0),
         zdt(2021, 4, 11, 5, 50, 0)
       )
-    assertEquals(ce.nextElapses(ref, 5), expect)
-  }
-
-  test("nextElapses") {
-    val ref = zdt(2020, 3, 8, 8, 41, 6).withZoneSameLocal(CalEvent.UTC)
-    val ce = CalEvent(AllWeekdays, DateEvent.All, time(9 ~ 22, 0 #/ 10, 0.c))
-    val expect = List(
-      zdt(2020, 3, 8, 9, 0, 0),
-      zdt(2020, 3, 8, 9, 10, 0),
-      zdt(2020, 3, 8, 9, 20, 0),
-      zdt(2020, 3, 8, 9, 30, 0),
-      zdt(2020, 3, 8, 9, 40, 0)
-    )
     assertEquals(ce.nextElapses(ref, 5), expect)
   }
 
