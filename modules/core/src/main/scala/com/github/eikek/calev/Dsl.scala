@@ -28,9 +28,6 @@ object Dsl {
 
     def c: WeekdayComponent =
       List(Seq(WeekdayVal.Single(wd)))
-
-    def unary_! : WeekdayComponent =
-      c
   }
 
   implicit final class IntComponent(n: Int) {
@@ -39,8 +36,6 @@ object Dsl {
 
     def ~(end: Int): Component =
       Component.List(Seq(Value.range(n, end)))
-
-    def unary_! : Component = c
 
     def c: Component =
       Component.List(Seq(Value(n)))
