@@ -135,16 +135,16 @@ import java.time._
 ce.asString
 // res4: String = "*-*-* 00/2:00:00"
 val now = LocalDateTime.now
-// now: LocalDateTime = 2020-04-02T01:12:36.761
+// now: LocalDateTime = 2020-04-03T18:13:43.305
 ce.nextElapse(now)
-// res5: Option[LocalDateTime] = Some(2020-04-02T02:00)
+// res5: Option[LocalDateTime] = Some(2020-04-03T20:00)
 ce.nextElapses(now, 5)
 // res6: List[LocalDateTime] = List(
-//   2020-04-02T02:00,
-//   2020-04-02T04:00,
-//   2020-04-02T06:00,
-//   2020-04-02T08:00,
-//   2020-04-02T10:00
+//   2020-04-03T20:00,
+//   2020-04-03T22:00,
+//   2020-04-04T00:00,
+//   2020-04-04T02:00,
+//   2020-04-04T04:00
 // )
 ```
 
@@ -171,7 +171,7 @@ import java.time.LocalTime
 import scala.concurrent.ExecutionContext
 
 implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
-// timer: Timer[IO] = cats.effect.internals.IOTimer@1e2cc372
+// timer: Timer[IO] = cats.effect.internals.IOTimer@51e676ac
 
 val printTime = IO(println(LocalTime.now))
 // printTime: IO[Unit] = Delay(<function0>)
@@ -188,7 +188,7 @@ val task = CalevFs2.awakeEvery[IO](event).evalMap(_ => printTime)
 // task: Stream[IO[x], Unit] = Stream(..)
 
 task.take(3).compile.drain.unsafeRunSync
-// 01:12:38.021
-// 01:12:40.013
-// 01:12:42.001
+// 18:13:44.020
+// 18:13:46.001
+// 18:13:48.001
 ```
