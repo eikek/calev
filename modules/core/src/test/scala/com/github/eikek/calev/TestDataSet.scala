@@ -9,6 +9,7 @@ import fs2.Stream
 case class TestDataSet(event: CalEvent, ref: ZonedDateTime, expect: List[ZonedDateTime])
 
 object TestDataSet {
+  type EA[B] = Either[Throwable, B]
 
   def readResource[F[_]: Sync: ContextShift](
       name: String,
@@ -39,7 +40,7 @@ object TestDataSet {
         for {
           event <- CalEvent.parse(ev).leftMap(new Exception(_))
           refDate <- readDateTime(ref)
-          result <- rest.traverse(readDateTime)
+          result <- rest.traverse[EA, ZonedDateTime](readDateTime)
         } yield TestDataSet(event, refDate, result)
 
       case _ =>
