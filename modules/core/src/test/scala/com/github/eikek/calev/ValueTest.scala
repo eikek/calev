@@ -59,4 +59,20 @@ object ValueTest extends SimpleTestSuite {
 
     assertEquals(Value.Range(1, 15, Some(4)).asString, "01..15/4")
   }
+
+  test("expandValue") {
+    val v0 = Value.Single(13, Some(4)).expand(59)
+    assertEquals(v0, Vector(13, 17, 21, 25, 29, 33, 37, 41, 45, 49, 53, 57))
+
+    val v1 = Value.Single(2, None).expand(10)
+    assertEquals(v1, Vector(2))
+
+    val v2 = Value.Range(9, 23, Some(3)).expand(23)
+    assertEquals(v2, Vector(9, 12, 15, 18, 21))
+
+    assertEquals(Value.Range(1, 6, Some(5)).expand(59), Vector(1, 6))
+    assertEquals(Value.Range(1, 4, Some(5)).expand(59), Vector(1))
+    assertEquals(Value.Range(3, 4, Some(5)).expand(59), Vector(3))
+  }
+
 }

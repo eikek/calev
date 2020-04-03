@@ -53,4 +53,10 @@ object ComponentTest extends SimpleTestSuite {
     assertEquals((2.c ++ 4 #/ 2 ++ 6.c).asString, "02,04/2,06")
   }
 
+  test("findFirst") {
+    assertEquals(2.c.findFirst(8, 80), None)
+    assertEquals((2.c ++ 4.c ++ 6.c).findFirst(3, 12), Some(4))
+    assertEquals(All.findFirst(1, 10), Some(1))
+    assertEquals((2 #/ 5).findFirst(10, 15), Some(12))
+  }
 }

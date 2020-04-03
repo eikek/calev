@@ -42,13 +42,13 @@ final case class CalEvent(
       time.seconds.validate(0, 59)
 
   def nextElapse(ref: ZonedDateTime): Option[ZonedDateTime] =
-    internal.Successor.next(ref, this)
+    internal.DefaultTrigger.next(ref, this)
 
   def nextElapse(ref: LocalDateTime): Option[LocalDateTime] =
     nextElapse(ref.atZone(CalEvent.UTC)).map(_.toLocalDateTime)
 
   def nextElapses(ref: ZonedDateTime, count: Int): List[ZonedDateTime] =
-    internal.Successor.nextRepeat(ref, this, count)
+    internal.DefaultTrigger.nextRepeat(count)(ref, this)
 
   def nextElapses(ref: LocalDateTime, count: Int): List[LocalDateTime] =
     nextElapses(ref.atZone(CalEvent.UTC), count).map(_.toLocalDateTime)

@@ -9,6 +9,10 @@ sealed trait Component {
   def asString: String
 
   def validate(min: Int, max: Int): Seq[String]
+
+  /** Find the first value in this component that is in range [min,max].
+    */
+  def findFirst(min: Int, max: Int): Option[Int]
 }
 
 object Component {
@@ -18,9 +22,14 @@ object Component {
     def ++(c: Component): Component = this
     def asString: String = "*"
     def validate(min: Int, max: Int): Seq[String] = Nil
+    def findFirst(min: Int, max: Int): Option[Int] =
+      Some(min).filter(_ <= max)
   }
 
   case class List(values: Seq[Value]) extends Component {
+    def expanded(max: Int) =
+      values.flatMap(_.expand(max)).distinct.sorted.toVector
+
     def contains(n: Int): Boolean =
       values.exists(_.contains(n))
 
@@ -35,6 +44,9 @@ object Component {
 
     def validate(min: Int, max: Int): Seq[String] =
       values.flatMap(_.validate(min, max))
+
+    def findFirst(min: Int, max: Int): Option[Int] =
+      expanded(max).find(_ >= min)
   }
 
   def apply(n: Int, more: Int*): Component =

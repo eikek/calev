@@ -64,7 +64,11 @@ object CalEventTest extends SimpleTestSuite {
   test("nextElapse (past)") {
     val ref = zdt(2020, 3, 6, 1, 47, 12).withZoneSameLocal(CalEvent.UTC)
     val ce =
-      CalEvent(AllWeekdays, date(2018.c, 11.c, 11.c), time(All, 10.c ++ 20.c ++ 50.c, 0.c))
+      CalEvent(
+        AllWeekdays,
+        date(2018.c, 11.c, 11.c),
+        time(All, 10.c ++ 20.c ++ 50.c, 0.c)
+      )
     assertEquals(ce.nextElapse(ref), None)
   }
 
@@ -99,7 +103,19 @@ object CalEventTest extends SimpleTestSuite {
         zdt(2021, 4, 11, 5, 50, 0)
       )
     assertEquals(ce.nextElapses(ref, 5), expect)
+  }
 
+  test("nextElapses") {
+    val ref = zdt(2020, 3, 8, 8, 41, 6).withZoneSameLocal(CalEvent.UTC)
+    val ce = CalEvent(AllWeekdays, DateEvent.All, time(9 ~ 22, 0 #/ 10, 0.c))
+    val expect = List(
+      zdt(2020, 3, 8, 9, 0, 0),
+      zdt(2020, 3, 8, 9, 10, 0),
+      zdt(2020, 3, 8, 9, 20, 0),
+      zdt(2020, 3, 8, 9, 30, 0),
+      zdt(2020, 3, 8, 9, 40, 0)
+    )
+    assertEquals(ce.nextElapses(ref, 5), expect)
   }
 
   private def zdt(y: Int, month: Int, d: Int, h: Int, min: Int, sec: Int): ZonedDateTime =

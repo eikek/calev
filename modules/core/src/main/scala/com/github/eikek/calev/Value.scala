@@ -6,6 +6,8 @@ sealed trait Value {
   def asString: String
 
   def validate(min: Int, max: Int): Seq[String]
+
+  def expand(max: Int): Vector[Int]
 }
 
 object Value {
@@ -28,6 +30,20 @@ object Value {
     def validate(min: Int, max: Int): Seq[String] =
       if (min <= value && value <= max) Nil
       else Seq(s"Value $value not in range [$min,$max]")
+
+    def expand(max: Int): Vector[Int] =
+      rep match {
+        case Some(r) =>
+          @annotation.tailrec
+          def go(v: Vector[Int], count: Int): Vector[Int] =
+            if (count * r + value > max) v
+            else go(v :+ (count * r + value), count + 1)
+
+          go(Vector.empty, 0)
+
+        case None =>
+          Vector(value)
+      }
   }
 
   case class Range(start: Int, end: Int, rep: Option[Int]) extends Value {
@@ -49,6 +65,16 @@ object Value {
       if (min < max) errs
       else errs ++ Seq(s"Range invalid: $min >= $max")
     }
+
+    def expand(max: Int): Vector[Int] =
+      rep match {
+        case Some(_) =>
+          val newMax = math.min(end, max)
+          Single(start, rep).expand(newMax)
+
+        case None =>
+          (start to math.min(end, max)).toVector
+      }
   }
 
   def apply(n: Int): Value =
