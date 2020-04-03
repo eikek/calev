@@ -2,7 +2,6 @@ package com.github.eikek.calev.internal
 
 import java.time._
 import com.github.eikek.calev._
-import java.time.temporal.ChronoField
 
 /** Generate the next date-time that matches a calendar event and is
   * closest but after a give reference date-time.
@@ -45,8 +44,7 @@ object DefaultTrigger extends Trigger {
       next match {
         case Some(dt) =>
           val zd = dt.toLocalDateTime.atZone(ref.getZone)
-          if (ev.weekday.contains(Weekday.from(zd.getDayOfWeek)))
-            Some(zd.`with`(ChronoField.MILLI_OF_SECOND, 0))
+          if (ev.weekday.contains(Weekday.from(zd.getDayOfWeek))) Some(zd)
           else go(Calc.init(dt, ev))
         case None =>
           None

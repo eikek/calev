@@ -5,6 +5,8 @@ import Dsl._
 import java.time.ZonedDateTime
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.temporal.ChronoUnit
+import java.time.temporal.ChronoField
 
 object CalEventTest extends SimpleTestSuite {
 
@@ -42,6 +44,14 @@ object CalEventTest extends SimpleTestSuite {
 
     val ce2 = CalEvent(Mon ~ Wed, date(All, 5 ~ 7, All), time(0 #/ 2, 10.c ++ 20.c, 0.c))
     assert(ce2.validate.isEmpty)
+  }
+
+  test("nextElapse no millis") {
+    val ce = CalEvent.unsafe("*-*-* 0/2:0/10")
+    val ref = zdt(2020, 4, 2, 18, 31, 12).`with`(ChronoField.MILLI_OF_SECOND, 156)
+    assertEquals(ref.getNano, 156000000L)
+    val next = ce.nextElapse(ref).get
+    assertEquals(next.getNano, 0L)
   }
 
   test("nextElapse") {
