@@ -51,7 +51,7 @@ compared to systemd:
 - The *core* module has zero dependencies and implements the parser
   and generator for calendar events. With sbt, use:
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-core" % "0.2.0"
+  libraryDependencies += "com.github.eikek" %% "calev-core" % "0.3.0"
   ```
 - The *fs2* module contains utilities to work with
   [FS2](https://github.com/functional-streams-for-scala/fs2) streams.
@@ -59,9 +59,13 @@ compared to systemd:
   for calendar events, from the
   [fs2-cron](https://github.com/fthomas/fs2-cron) library. With sbt, use
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-fs2" % "0.2.0"
+  libraryDependencies += "com.github.eikek" %% "calev-fs2" % "0.3.0"
   ```
-
+- The *doobie* module contains `Meta`, `Read` and `Write` instances
+  for `CalEvent` to use with
+  [doobie](https://github.com/tpolecat/doobie).
+- The *circe* module defines json decoder and encoder for `CalEvent`
+  instances.
 
 ## Examples
 
@@ -135,16 +139,16 @@ import java.time._
 ce.asString
 // res4: String = "*-*-* 00/2:00:00"
 val now = LocalDateTime.now
-// now: LocalDateTime = 2020-04-03T18:13:43.305
+// now: LocalDateTime = 2020-04-05T22:56:18.457
 ce.nextElapse(now)
-// res5: Option[LocalDateTime] = Some(2020-04-03T20:00)
+// res5: Option[LocalDateTime] = Some(2020-04-06T00:00)
 ce.nextElapses(now, 5)
 // res6: List[LocalDateTime] = List(
-//   2020-04-03T20:00,
-//   2020-04-03T22:00,
-//   2020-04-04T00:00,
-//   2020-04-04T02:00,
-//   2020-04-04T04:00
+//   2020-04-06T00:00,
+//   2020-04-06T02:00,
+//   2020-04-06T04:00,
+//   2020-04-06T06:00,
+//   2020-04-06T08:00
 // )
 ```
 
@@ -171,7 +175,7 @@ import java.time.LocalTime
 import scala.concurrent.ExecutionContext
 
 implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
-// timer: Timer[IO] = cats.effect.internals.IOTimer@51e676ac
+// timer: Timer[IO] = cats.effect.internals.IOTimer@73f09a39
 
 val printTime = IO(println(LocalTime.now))
 // printTime: IO[Unit] = Delay(<function0>)
@@ -188,7 +192,112 @@ val task = CalevFs2.awakeEvery[IO](event).evalMap(_ => printTime)
 // task: Stream[IO[x], Unit] = Stream(..)
 
 task.take(3).compile.drain.unsafeRunSync
-// 18:13:44.020
-// 18:13:46.001
-// 18:13:48.001
+// 22:56:20.020
+// 22:56:22.001
+// 22:56:24.001
+```
+
+
+### Doobie
+
+When using doobie, this module contains instances to write and read
+calendar event expressions through SQL.
+
+```scala
+import com.github.eikek.calev._
+import com.github.eikek.calev.doobie.CalevDoobieMeta._
+import _root_.doobie._
+import _root_.doobie.implicits._
+
+case class Record(event: CalEvent)
+
+val r = Record(CalEvent.unsafe("Mon *-*-* 0/2:15"))
+// r: Record = Record(
+//   CalEvent(
+//     List(Vector(Single(Mon))),
+//     DateEvent(All, All, All),
+//     TimeEvent(
+//       List(Vector(Single(0, Some(2)))),
+//       List(Vector(Single(15, None))),
+//       List(List(Single(0, None)))
+//     ),
+//     None
+//   )
+// )
+
+val insert =
+  sql"INSERT INTO mytable (event) VALUES (${r.event})".update.run
+// insert: ConnectionIO[Int] = Suspend(
+//   BracketCase(
+//     Suspend(PrepareStatement("INSERT INTO mytable (event) VALUES (?)")),
+//     doobie.hi.connection$$$Lambda$7352/1770138997@5bdae96e,
+//     cats.effect.Bracket$$Lambda$7354/1651383845@2b30a755
+//   )
+// )
+
+val select =
+  sql"SELECT event FROM mytable WHERE id = 1".query[Record].unique
+// select: ConnectionIO[Record] = Suspend(
+//   BracketCase(
+//     Suspend(PrepareStatement("SELECT event FROM mytable WHERE id = 1")),
+//     doobie.hi.connection$$$Lambda$7352/1770138997@5c66d158,
+//     cats.effect.Bracket$$Lambda$7354/1651383845@6fc78f83
+//   )
+// )
+```
+
+
+### Circe
+
+The defined encoders/decoders can be put in scope to use calendar
+event expressions in json.
+
+```scala
+import com.github.eikek.calev._
+import com.github.eikek.calev.circe.CalevCirceCodec._
+import io.circe._
+import io.circe.generic.semiauto._
+import io.circe.syntax._
+
+case class Meeting(name: String, event: CalEvent)
+object Meeting {
+  implicit val jsonDecoder = deriveDecoder[Meeting]
+  implicit val jsonEncoder = deriveEncoder[Meeting]
+}
+
+val meeting = Meeting("trash can", CalEvent.unsafe("Mon..Fri *-*-* 14,18:0"))
+// meeting: Meeting = Meeting(
+//   "trash can",
+//   CalEvent(
+//     List(Vector(Range(WeekdayRange(Mon, Fri)))),
+//     DateEvent(All, All, All),
+//     TimeEvent(
+//       List(Vector(Single(14, None), Single(18, None))),
+//       List(Vector(Single(0, None))),
+//       List(List(Single(0, None)))
+//     ),
+//     None
+//   )
+// )
+val json = meeting.asJson.noSpaces
+// json: String = "{\"name\":\"trash can\",\"event\":\"Mon..Fri *-*-* 14,18:00:00\"}"
+val read = for {
+  parsed <- parser.parse(json)
+  value <- parsed.as[Meeting]
+} yield value
+// read: Either[Error, Meeting] = Right(
+//   Meeting(
+//     "trash can",
+//     CalEvent(
+//       List(Vector(Range(WeekdayRange(Mon, Fri)))),
+//       DateEvent(All, All, All),
+//       TimeEvent(
+//         List(Vector(Single(14, None), Single(18, None))),
+//         List(Vector(Single(0, None))),
+//         List(Vector(Single(0, None)))
+//       ),
+//       None
+//     )
+//   )
+// )
 ```
