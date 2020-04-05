@@ -64,8 +64,15 @@ compared to systemd:
 - The *doobie* module contains `Meta`, `Read` and `Write` instances
   for `CalEvent` to use with
   [doobie](https://github.com/tpolecat/doobie).
-- The *circe* module defines json decoder and encoder for `CalEvent`
-  instances.
+  ```sbt
+  libraryDependencies += "com.github.eikek" %% "calev-doobie" % "@VERSION@"
+  ```
+- The *circe* module defines a json decoder and encoder for `CalEvent`
+  instances to use with [circe](https://github.com/circe/circe).
+  ```sbt
+  libraryDependencies += "com.github.eikek" %% "calev-circe" % "@VERSION@"
+  ```
+
 
 ## Examples
 

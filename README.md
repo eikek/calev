@@ -64,8 +64,15 @@ compared to systemd:
 - The *doobie* module contains `Meta`, `Read` and `Write` instances
   for `CalEvent` to use with
   [doobie](https://github.com/tpolecat/doobie).
-- The *circe* module defines json decoder and encoder for `CalEvent`
-  instances.
+  ```sbt
+  libraryDependencies += "com.github.eikek" %% "calev-doobie" % "0.3.0"
+  ```
+- The *circe* module defines a json decoder and encoder for `CalEvent`
+  instances to use with [circe](https://github.com/circe/circe).
+  ```sbt
+  libraryDependencies += "com.github.eikek" %% "calev-circe" % "0.3.0"
+  ```
+
 
 ## Examples
 
@@ -139,7 +146,7 @@ import java.time._
 ce.asString
 // res4: String = "*-*-* 00/2:00:00"
 val now = LocalDateTime.now
-// now: LocalDateTime = 2020-04-05T22:56:18.457
+// now: LocalDateTime = 2020-04-05T23:03:43.891
 ce.nextElapse(now)
 // res5: Option[LocalDateTime] = Some(2020-04-06T00:00)
 ce.nextElapses(now, 5)
@@ -175,7 +182,7 @@ import java.time.LocalTime
 import scala.concurrent.ExecutionContext
 
 implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
-// timer: Timer[IO] = cats.effect.internals.IOTimer@73f09a39
+// timer: Timer[IO] = cats.effect.internals.IOTimer@5849fbbf
 
 val printTime = IO(println(LocalTime.now))
 // printTime: IO[Unit] = Delay(<function0>)
@@ -192,9 +199,9 @@ val task = CalevFs2.awakeEvery[IO](event).evalMap(_ => printTime)
 // task: Stream[IO[x], Unit] = Stream(..)
 
 task.take(3).compile.drain.unsafeRunSync
-// 22:56:20.020
-// 22:56:22.001
-// 22:56:24.001
+// 23:03:46.023
+// 23:03:48.001
+// 23:03:50.001
 ```
 
 
@@ -230,8 +237,8 @@ val insert =
 // insert: ConnectionIO[Int] = Suspend(
 //   BracketCase(
 //     Suspend(PrepareStatement("INSERT INTO mytable (event) VALUES (?)")),
-//     doobie.hi.connection$$$Lambda$7352/1770138997@5bdae96e,
-//     cats.effect.Bracket$$Lambda$7354/1651383845@2b30a755
+//     doobie.hi.connection$$$Lambda$5848/236820174@66b0438,
+//     cats.effect.Bracket$$Lambda$5850/931356058@67b81493
 //   )
 // )
 
@@ -240,8 +247,8 @@ val select =
 // select: ConnectionIO[Record] = Suspend(
 //   BracketCase(
 //     Suspend(PrepareStatement("SELECT event FROM mytable WHERE id = 1")),
-//     doobie.hi.connection$$$Lambda$7352/1770138997@5c66d158,
-//     cats.effect.Bracket$$Lambda$7354/1651383845@6fc78f83
+//     doobie.hi.connection$$$Lambda$5848/236820174@703b9fd8,
+//     cats.effect.Bracket$$Lambda$5850/931356058@22b5b673
 //   )
 // )
 ```
