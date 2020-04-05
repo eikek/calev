@@ -3,12 +3,12 @@ import sbt._
 object Dependencies {
 
   val circeVersion = "0.13.0"
-  val doobieVersion = "0.8.8"
+  val doobieVersion = "0.9.0"
   val fs2Version = "2.3.0"
   val h2Version = "1.4.200"
   val log4sVersion = "1.8.2"
   val logbackVersion = "1.2.3"
-  val miniTestVersion = "2.8.1"
+  val miniTestVersion = "2.8.2"
 
   val fs2 = Seq(
     "co.fs2" %% "fs2-core" % fs2Version
