@@ -2,7 +2,9 @@ import sbt._
 
 object Dependencies {
 
+  val doobieVersion = "0.8.8"
   val fs2Version = "2.3.0"
+  val h2Version = "1.4.200"
   val log4sVersion = "1.8.2"
   val logbackVersion = "1.2.3"
   val miniTestVersion = "2.8.1"
@@ -30,4 +32,12 @@ object Dependencies {
   val logback = Seq(
     "ch.qos.logback" % "logback-classic" % logbackVersion
   )
+
+  val doobie = Seq(
+    "org.tpolecat" %% "doobie-core" % doobieVersion
+  )
+  val h2 = Seq(
+    "com.h2database" % "h2" % h2Version
+  )
+
 }

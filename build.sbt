@@ -120,6 +120,18 @@ lazy val fs2 = project
   )
   .dependsOn(core)
 
+lazy val doobie = project
+  .in(file("modules/doobie"))
+  .settings(sharedSettings)
+  .settings(testSettings)
+  .settings(
+    name := "calev-doobie",
+    libraryDependencies ++=
+      Dependencies.doobie ++
+      Dependencies.h2.map(_ % Test)
+  )
+  .dependsOn(core)
+
 lazy val readme = project
   .in(file("modules/readme"))
   .enablePlugins(MdocPlugin)
@@ -141,7 +153,7 @@ lazy val readme = project
       ()
     }
   )
-  .dependsOn(core, fs2)
+  .dependsOn(core, fs2, doobie)
 
 val root = project
   .in(file("."))
@@ -150,4 +162,4 @@ val root = project
   .settings(
     name := "calev-root"
   )
-  .aggregate(core, fs2)
+  .aggregate(core, fs2, doobie)

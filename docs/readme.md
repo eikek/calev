@@ -61,6 +61,9 @@ compared to systemd:
   ```sbt
   libraryDependencies += "com.github.eikek" %% "calev-fs2" % "@VERSION@"
   ```
+- The *doobie* module contains `Meta`, `Read` and `Write` instances
+  for `CalEvent` to use with
+  [doobie](https://github.com/tpolecat/doobie).
 
 
 ## Examples
@@ -134,4 +137,27 @@ val event = CalEvent.unsafe("*-*-* *:*:0/2")
 val task = CalevFs2.awakeEvery[IO](event).evalMap(_ => printTime)
 
 task.take(3).compile.drain.unsafeRunSync
+```
+
+
+### Doobie
+
+When using doobie, this module contains instances to write and read
+calendar event expressions through SQL.
+
+```scala mdoc
+import com.github.eikek.calev._
+import com.github.eikek.calev.doobie.CalevDoobieMeta._
+import _root_.doobie._
+import _root_.doobie.implicits._
+
+case class Record(event: CalEvent)
+
+val r = Record(CalEvent.unsafe("Mon *-*-* 0/2:15"))
+
+val insert =
+  sql"INSERT INTO mytable (event) VALUES (${r.event})".update.run
+
+val select =
+  sql"SELECT event FROM mytable WHERE id = 1".query[Record].unique
 ```
