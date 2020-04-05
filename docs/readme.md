@@ -64,7 +64,8 @@ compared to systemd:
 - The *doobie* module contains `Meta`, `Read` and `Write` instances
   for `CalEvent` to use with
   [doobie](https://github.com/tpolecat/doobie).
-
+- The *circe* module defines json decoder and encoder for `CalEvent`
+  instances.
 
 ## Examples
 
@@ -160,4 +161,31 @@ val insert =
 
 val select =
   sql"SELECT event FROM mytable WHERE id = 1".query[Record].unique
+```
+
+
+### Circe
+
+The defined encoders/decoders can be put in scope to use calendar
+event expressions in json.
+
+```scala mdoc
+import com.github.eikek.calev._
+import com.github.eikek.calev.circe.CalevCirceCodec._
+import io.circe._
+import io.circe.generic.semiauto._
+import io.circe.syntax._
+
+case class Meeting(name: String, event: CalEvent)
+object Meeting {
+  implicit val jsonDecoder = deriveDecoder[Meeting]
+  implicit val jsonEncoder = deriveEncoder[Meeting]
+}
+
+val meeting = Meeting("trash can", CalEvent.unsafe("Mon..Fri *-*-* 14,18:0"))
+val json = meeting.asJson.noSpaces
+val read = for {
+  parsed <- parser.parse(json)
+  value <- parsed.as[Meeting]
+} yield value
 ```

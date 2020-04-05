@@ -132,6 +132,19 @@ lazy val doobie = project
   )
   .dependsOn(core)
 
+lazy val circe = project
+  .in(file("modules/circe"))
+  .settings(sharedSettings)
+  .settings(testSettings)
+  .settings(
+    name := "calev-circe",
+    libraryDependencies ++=
+      Dependencies.circe ++
+      Dependencies.circeAll.map(_ % Test)
+  )
+  .dependsOn(core)
+
+
 lazy val readme = project
   .in(file("modules/readme"))
   .enablePlugins(MdocPlugin)
@@ -139,6 +152,8 @@ lazy val readme = project
   .settings(noPublish)
   .settings(
     name := "calev-readme",
+    libraryDependencies ++=
+      Dependencies.circeAll,
     scalacOptions := Seq(),
     mdocVariables := Map(
       "VERSION" -> version.value
@@ -153,7 +168,7 @@ lazy val readme = project
       ()
     }
   )
-  .dependsOn(core, fs2, doobie)
+  .dependsOn(core, fs2, doobie, circe)
 
 val root = project
   .in(file("."))
@@ -162,4 +177,4 @@ val root = project
   .settings(
     name := "calev-root"
   )
-  .aggregate(core, fs2, doobie)
+  .aggregate(core, fs2, doobie, circe)

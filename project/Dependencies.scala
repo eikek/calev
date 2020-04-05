@@ -2,6 +2,7 @@ import sbt._
 
 object Dependencies {
 
+  val circeVersion = "0.13.0"
   val doobieVersion = "0.8.8"
   val fs2Version = "2.3.0"
   val h2Version = "1.4.200"
@@ -40,4 +41,11 @@ object Dependencies {
     "com.h2database" % "h2" % h2Version
   )
 
+  val circe = Seq(
+    "io.circe" %% "circe-core" % circeVersion
+  )
+  val circeAll = Seq(
+    "io.circe" %% "circe-generic" % circeVersion,
+    "io.circe" %% "circe-parser" % circeVersion
+  )
 }
