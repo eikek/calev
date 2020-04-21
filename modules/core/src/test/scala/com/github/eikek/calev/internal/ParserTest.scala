@@ -98,7 +98,7 @@ object ParserTest extends SimpleTestSuite {
     assertEquals(p.run("12:*:*"), Right("" -> time(12.c, All, All)))
   }
 
-  test("calevents") {
+  test("valid calevents") {
     val p = CalEventParser.calevent
     assertEquals(
       p.run("*-*-* 12:00:00"),
@@ -119,5 +119,16 @@ object ParserTest extends SimpleTestSuite {
       p.run("*-*-* 0..5:0/1"),
       Right("" -> CalEvent(AllWeekdays, DateEvent.All, time(0 ~ 5, 0 #/ 1, 0.c)))
     )
+  }
+
+  test("invalid calevents") {
+    val p = CalEventParser.calevent
+    assert(p.run("*-a-* 6:0").isLeft, "An 'a' for month")
+    assert(p.run("*-*-8..2 0:0").isLeft, "Range end<start")
+    assert(p.run("*-*-* 6:5a").isLeft, "Input not exhausted")
+    assert(p.run("*-*-* 1a6:05").isLeft, "Letter in between numbers")
+    assert(p.run("hello world").isLeft, "hello world")
+    assert(p.run("*-*-*-* 0:0").isLeft, "too many date parts")
+    assert(p.run("*-*-* 0:0:x").isLeft, "x in seconds")
   }
 }

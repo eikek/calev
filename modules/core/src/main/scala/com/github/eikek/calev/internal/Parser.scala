@@ -1,8 +1,9 @@
 package com.github.eikek.calev.internal
+
 import scala.util.control.NonFatal
+import java.time.ZoneId
 
 import com.github.eikek.calev._
-import java.time.ZoneId
 
 object Parser {
 
@@ -32,6 +33,9 @@ object Parser {
       case (c0, Some(c1)) => readInt(s"$c0$c1")
       case (c0, None)     => readInt(s"$c0")
     }
+
+  val atEnd: P[Unit] =
+    P(in => if (in.isEmpty) Right(("", ())) else Left(s"Input left: $in"))
 
   val repVal: P[Option[Int]] =
     (const("/") ~> num2).opt

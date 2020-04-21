@@ -24,7 +24,7 @@ object CalEventParser {
     }
 
   def calevent: P[CalEvent] =
-    ((weekdays <~ space).opt ~ (date <~ space) ~ time ~ (space ~> zoneId).opt)
+    ((weekdays <~ space).opt ~ (date <~ space) ~ time ~ (space ~> zoneId).opt <~ atEnd)
       .map {
         case (((wd, dt), tt), z) =>
           CalEvent(wd.getOrElse(WeekdayComponent.All), dt, tt, z)

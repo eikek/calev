@@ -59,7 +59,6 @@ object CalEventTest extends SimpleTestSuite {
     assertEquals(next.getNano, 0L)
   }
 
-
   test("nextElapses ends") {
     val ref = zdt(2020, 3, 8, 1, 47, 12).withZoneSameLocal(CalEvent.UTC)
     val ce =

@@ -47,7 +47,6 @@ object Value {
   }
 
   case class Range(start: Int, end: Int, rep: Option[Int]) extends Value {
-    require(start <= end, "start must be <= end")
 
     def contains(n: Int): Boolean =
       n >= start && n <= end &&
@@ -62,8 +61,15 @@ object Value {
       val errs = Single(start, None).validate(min, max) ++
         Single(end, None).validate(min, max)
 
-      if (min < max) errs
-      else errs ++ Seq(s"Range invalid: $min >= $max")
+      val rangeErrs =
+        if (start > end) Seq(s"Range invalid: $start (start) > $end (end)")
+        else Seq.empty
+
+      val subErrs =
+        if (min < max) Seq.empty
+        else Seq(s"Subrange invalid: $min >= $max")
+
+      errs ++ rangeErrs ++ subErrs
     }
 
     def expand(max: Int): Vector[Int] =
