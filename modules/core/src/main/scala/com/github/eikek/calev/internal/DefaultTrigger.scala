@@ -40,8 +40,7 @@ object DefaultTrigger extends Trigger {
 
     @annotation.tailrec
     def go(c: Calc): Option[ZonedDateTime] = {
-      val next = run(c)
-      next match {
+      run(c) match {
         case Some(dt) =>
           val zd = dt.toLocalDateTime.atZone(ref.getZone)
           if (ev.weekday.contains(Weekday.from(zd.getDayOfWeek))) Some(zd)
@@ -54,6 +53,7 @@ object DefaultTrigger extends Trigger {
     go(Calc.init(refDate, ev))
   }
 
+  @annotation.tailrec
   private def run(calc: Calc): Option[DateTime] =
     calc.pos match {
       case DateTime.Pos.Year =>
@@ -61,10 +61,13 @@ object DefaultTrigger extends Trigger {
           case Flag.Exact =>
             Some(calc.date)
           case Flag.Next =>
-            Some(calc.date.incYear)
+            val (ref, comp) = calc.components
+            if (comp.contains(ref)) Some(calc.date)
+            else Some(calc.date.incYear)
               .filter(dt => calc.ce.date.year.contains(dt.date.year))
           case Flag.First =>
-            None
+            Some(calc.date.incYear)
+              .filter(dt => calc.ce.date.year.contains(dt.date.year))
         }
 
       case _ =>
