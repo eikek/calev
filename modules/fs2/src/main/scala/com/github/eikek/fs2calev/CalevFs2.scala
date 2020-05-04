@@ -51,8 +51,8 @@ object CalevFs2 {
   def awakeEvery[F[_]: Sync](ce: CalEvent)(implicit T: Timer[F]): Stream[F, Unit] =
     sleep(ce).repeat
 
-  def schedule[F[_]: Concurrent, A](tasks: List[(CalEvent, Stream[F, A])])(
-      implicit timer: Timer[F]
+  def schedule[F[_]: Concurrent, A](tasks: List[(CalEvent, Stream[F, A])])(implicit
+      timer: Timer[F]
   ): Stream[F, A] = {
     val scheduled = tasks.map { case (ce, task) => awakeEvery[F](ce) >> task }
     Stream.emits(scheduled).covary[F].parJoinUnbounded

@@ -11,7 +11,7 @@ object DefaultTriggerTest extends SimpleTestSuite {
 
   test("Calc.atStartBelow") {
     val dt = DateTime(LocalDateTime.now)
-    val c = Calc(Flag.Exact, dt, DateTime.Pos.Hour, ce)
+    val c  = Calc(Flag.Exact, dt, DateTime.Pos.Hour, ce)
 
     val next = c.atStartBelowCurrent
     assertEquals(next.date.time.second, 0)
@@ -22,7 +22,7 @@ object DefaultTriggerTest extends SimpleTestSuite {
 
   test("Calc.atStartBelow 2") {
     val dt = DateTime(LocalDateTime.now)
-    val c = Calc(Flag.Exact, dt, DateTime.Pos.Month, ce)
+    val c  = Calc(Flag.Exact, dt, DateTime.Pos.Month, ce)
 
     val next = c.atStartBelowCurrent
     assertEquals(next.date.time.second, 0)
@@ -36,7 +36,7 @@ object DefaultTriggerTest extends SimpleTestSuite {
   test("Calc.atStartBelow 3") {
     val ce = CalEvent.unsafe("*-*-* 0/2:10,20,50:0")
     val dt = DateTime(Date(2020, 2, 15), Time(12, 13, 14))
-    val c = Calc(Flag.Exact, dt, DateTime.Pos.Hour, ce)
+    val c  = Calc(Flag.Exact, dt, DateTime.Pos.Hour, ce)
 
     val next = c.atStartBelowCurrent
     assertEquals(next.date.time.second, 0)
@@ -47,7 +47,7 @@ object DefaultTriggerTest extends SimpleTestSuite {
 
   test("Calc.maxValue") {
     val dt = DateTime(Date(2020, 2, 15), Time(12, 0, 0))
-    val c = Calc(Flag.Exact, dt, DateTime.Pos.Day, ce)
+    val c  = Calc(Flag.Exact, dt, DateTime.Pos.Day, ce)
 
     assertEquals(c.maxValue, 29)
     assertEquals(c.nextPos.maxValue, 12)

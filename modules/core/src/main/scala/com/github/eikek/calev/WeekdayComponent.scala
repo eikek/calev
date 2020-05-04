@@ -14,10 +14,10 @@ sealed trait WeekdayComponent {
 object WeekdayComponent {
 
   case object All extends WeekdayComponent {
-    def contains(day: Weekday): Boolean = true
+    def contains(day: Weekday): Boolean            = true
     def ++(wc: WeekdayComponent): WeekdayComponent = this
-    def asString: String = ""
-    def validate: Seq[String] = Nil
+    def asString: String                           = ""
+    def validate: Seq[String]                      = Nil
   }
 
   sealed trait WeekdayVal {

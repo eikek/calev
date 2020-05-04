@@ -44,17 +44,15 @@ object WeekdayComponentTest extends SimpleTestSuite {
   }
 
   test("asString") {
-    for (wd <- Weekday.all) {
+    for (wd <- Weekday.all)
       assertEquals(wd.c.asString, wd.shortName)
-    }
     assertEquals((Tue ~ Thu).asString, "Tue..Thu")
     assertEquals((Sat ~ Sun).asString, "Sat..Sun")
   }
 
   test("validate") {
-    for (wd <- Weekday.all) {
+    for (wd <- Weekday.all)
       assertEquals(wd.c.validate, Nil)
-    }
     assertEquals((Wed ~ Tue).validate.size, 1)
     assertEquals((Tue ~ Wed).validate, Nil)
   }

@@ -22,10 +22,11 @@ object Value {
           n == value
       }
 
-    def asString: String = rep match {
-      case Some(r) => f"$value%02d/$r"
-      case None    => f"$value%02d"
-    }
+    def asString: String =
+      rep match {
+        case Some(r) => f"$value%02d/$r"
+        case None    => f"$value%02d"
+      }
 
     def validate(min: Int, max: Int): Seq[String] =
       if (min <= value && value <= max) Nil
@@ -52,10 +53,11 @@ object Value {
       n >= start && n <= end &&
         (rep == None || Single(start, rep).contains(n))
 
-    def asString: String = rep match {
-      case None    => f"$start%02d..$end%02d"
-      case Some(r) => f"$start%02d..$end%02d/$r"
-    }
+    def asString: String =
+      rep match {
+        case None    => f"$start%02d..$end%02d"
+        case Some(r) => f"$start%02d..$end%02d/$r"
+      }
 
     def validate(min: Int, max: Int): Seq[String] = {
       val errs = Single(start, None).validate(min, max) ++

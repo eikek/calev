@@ -205,9 +205,8 @@ object Parser {
     catchNonFatal(str.toInt)
 
   private def catchNonFatal[A](code: => A): Either[String, A] =
-    try {
-      Right(code)
-    } catch {
+    try Right(code)
+    catch {
       case NonFatal(e) => Left(e.getMessage)
     }
 }

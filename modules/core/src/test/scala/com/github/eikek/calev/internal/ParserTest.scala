@@ -41,7 +41,7 @@ object ParserTest extends SimpleTestSuite {
   }
 
   test("values") {
-    val p = Parser.value(Parser.num2)
+    val p  = Parser.value(Parser.num2)
     val ps = Parser.singleValue(Parser.num2)
     assertEquals(ps.run("23"), Right("" -> Value(23)))
     assertEquals(p.run("23"), Right("" -> Value(23)))

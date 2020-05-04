@@ -22,7 +22,7 @@ object TriggerDataTest extends SimpleTestSuite {
   data.foreach {
     case (data, index) =>
       test(s"test dataset $index") {
-        val num = data.expect.size
+        val num   = data.expect.size
         val nexts = data.event.nextElapses(data.ref, num).toList
         assertEquals(nexts, data.expect)
       }

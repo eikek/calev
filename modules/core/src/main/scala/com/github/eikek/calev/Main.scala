@@ -42,9 +42,9 @@ object Main {
       }
 
     val first = args.headOption
-    if (first == None || first == Some("--help") || first == Some("-h")) {
+    if (first == None || first == Some("--help") || first == Some("-h"))
       Opts(None, 1, LocalDateTime.now, true)
-    } else {
+    else
       CalEvent.parse(args.last) match {
         case Right(ce) =>
           val options = args
@@ -57,7 +57,6 @@ object Main {
         case Left(err) =>
           sys.error(s"Cannot read timer ${args.last}: $err")
       }
-    }
   }
 
   def printHelp(): Unit =

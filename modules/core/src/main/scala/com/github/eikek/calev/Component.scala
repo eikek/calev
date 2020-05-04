@@ -18,9 +18,9 @@ sealed trait Component {
 object Component {
 
   case object All extends Component {
-    def contains(n: Int): Boolean = true
-    def ++(c: Component): Component = this
-    def asString: String = "*"
+    def contains(n: Int): Boolean                 = true
+    def ++(c: Component): Component               = this
+    def asString: String                          = "*"
     def validate(min: Int, max: Int): Seq[String] = Nil
     def findFirst(min: Int, max: Int): Option[Int] =
       Some(min).filter(_ <= max)
@@ -33,11 +33,12 @@ object Component {
     def contains(n: Int): Boolean =
       values.exists(_.contains(n))
 
-    def ++(c: Component): Component = c match {
-      case All => All
-      case List(vs) =>
-        List(values ++ vs)
-    }
+    def ++(c: Component): Component =
+      c match {
+        case All => All
+        case List(vs) =>
+          List(values ++ vs)
+      }
 
     def asString: String =
       values.map(_.asString).mkString(",")

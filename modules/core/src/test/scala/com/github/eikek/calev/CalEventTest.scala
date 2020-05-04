@@ -13,7 +13,7 @@ import cats.effect._
 object CalEventTest extends SimpleTestSuite {
 
   implicit val CS = IO.contextShift(ExecutionContext.global)
-  val blocker = Blocker.liftExecutionContext(ExecutionContext.global)
+  val blocker     = Blocker.liftExecutionContext(ExecutionContext.global)
 
   test("contains") {
     val ce = CalEvent(Mon ~ Tue, DateEvent.All, time(0.c, 10.c ++ 20.c, 0.c))
@@ -52,7 +52,7 @@ object CalEventTest extends SimpleTestSuite {
   }
 
   test("nextElapse no millis") {
-    val ce = CalEvent.unsafe("*-*-* 0/2:0/10")
+    val ce  = CalEvent.unsafe("*-*-* 0/2:0/10")
     val ref = zdt(2020, 4, 2, 18, 31, 12).`with`(ChronoField.MILLI_OF_SECOND, 156)
     assertEquals(ref.getNano, 156000000L)
     val next = ce.nextElapse(ref).get

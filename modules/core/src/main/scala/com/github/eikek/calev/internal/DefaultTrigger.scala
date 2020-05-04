@@ -72,11 +72,11 @@ object DefaultTrigger extends Trigger {
 
       case _ =>
         val (ref, comp) = calc.components
-        val prevFlag = calc.flag
+        val prevFlag    = calc.flag
 
-        if (comp.contains(ref) && prevFlag != Flag.First) {
+        if (comp.contains(ref) && prevFlag != Flag.First)
           run(calc.copy(flag = Flag.Exact).nextPos)
-        } else {
+        else
           comp.findFirst(ref + 1, calc.maxValue) match {
             case Some(v) =>
               run(calc.set(v, Flag.Next).atStartBelowCurrent.nextPos)
@@ -86,7 +86,6 @@ object DefaultTrigger extends Trigger {
                 comp.findFirst(calc.minValue, calc.maxValue).getOrElse(calc.minValue)
               run(calc.set(n, Flag.First).nextPos)
           }
-        }
     }
 
   case class Date(year: Int, month: Int, day: Int) {
@@ -164,43 +163,46 @@ object DefaultTrigger extends Trigger {
   sealed trait Flag
   object Flag {
     case object Exact extends Flag
-    case object Next extends Flag
+    case object Next  extends Flag
     case object First extends Flag
   }
 
   case class Calc(flag: Flag, date: DateTime, pos: DateTime.Pos, ce: CalEvent) {
-    def components = pos match {
-      case DateTime.Pos.Sec =>
-        (date.time.second, ce.time.seconds)
-      case DateTime.Pos.Min =>
-        (date.time.minute, ce.time.minute)
-      case DateTime.Pos.Hour =>
-        (date.time.hour, ce.time.hour)
-      case DateTime.Pos.Day =>
-        (date.date.day, ce.date.day)
-      case DateTime.Pos.Month =>
-        (date.date.month, ce.date.month)
-      case DateTime.Pos.Year =>
-        (date.date.year, ce.date.year)
-    }
+    def components =
+      pos match {
+        case DateTime.Pos.Sec =>
+          (date.time.second, ce.time.seconds)
+        case DateTime.Pos.Min =>
+          (date.time.minute, ce.time.minute)
+        case DateTime.Pos.Hour =>
+          (date.time.hour, ce.time.hour)
+        case DateTime.Pos.Day =>
+          (date.date.day, ce.date.day)
+        case DateTime.Pos.Month =>
+          (date.date.month, ce.date.month)
+        case DateTime.Pos.Year =>
+          (date.date.year, ce.date.year)
+      }
 
-    def maxValue: Int = pos match {
-      case DateTime.Pos.Sec  => 59
-      case DateTime.Pos.Min  => 59
-      case DateTime.Pos.Hour => 23
-      case DateTime.Pos.Day =>
-        val isLeap = date.date.toLocalDate.isLeapYear
-        Month.of(date.date.month).length(isLeap)
-      case DateTime.Pos.Month => 12
-      case DateTime.Pos.Year  => Int.MaxValue
-    }
+    def maxValue: Int =
+      pos match {
+        case DateTime.Pos.Sec  => 59
+        case DateTime.Pos.Min  => 59
+        case DateTime.Pos.Hour => 23
+        case DateTime.Pos.Day =>
+          val isLeap = date.date.toLocalDate.isLeapYear
+          Month.of(date.date.month).length(isLeap)
+        case DateTime.Pos.Month => 12
+        case DateTime.Pos.Year  => Int.MaxValue
+      }
 
-    def minValue: Int = pos match {
-      case DateTime.Pos.Day   => 1
-      case DateTime.Pos.Month => 1
-      case DateTime.Pos.Year  => Int.MaxValue
-      case _                  => 0
-    }
+    def minValue: Int =
+      pos match {
+        case DateTime.Pos.Day   => 1
+        case DateTime.Pos.Month => 1
+        case DateTime.Pos.Year  => Int.MaxValue
+        case _                  => 0
+      }
 
     def nextPos: Calc =
       copy(pos = pos.next)
