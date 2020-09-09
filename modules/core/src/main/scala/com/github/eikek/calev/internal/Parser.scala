@@ -41,13 +41,13 @@ object Parser {
     (const("/") ~> num2).opt
 
   def singleValue(num: P[Int]): P[Value] =
-    (num ~ repVal).map {
-      case (n, rep) => Value.Single(n, rep)
+    (num ~ repVal).map { case (n, rep) =>
+      Value.Single(n, rep)
     }
 
   def rangeValue(num: P[Int]): P[Value] =
-    ((num <~ colons) ~ num ~ repVal).map {
-      case ((start, end), rep) => Value.Range(start, end, rep)
+    ((num <~ colons) ~ num ~ repVal).map { case ((start, end), rep) =>
+      Value.Range(start, end, rep)
     }
 
   def value(num: P[Int]): P[Value] =
@@ -72,8 +72,8 @@ object Parser {
     Weekday.all.map(weekday).reduce(_ | _)
 
   val weekdayRange: P[WeekdayRange] =
-    ((anyWeekday <~ colons) ~ anyWeekday).map {
-      case (s, e) => WeekdayRange(s, e)
+    ((anyWeekday <~ colons) ~ anyWeekday).map { case (s, e) =>
+      WeekdayRange(s, e)
     }
 
   private val weekdayCompSingleVal: P[WeekdayComponent.WeekdayVal] =
@@ -104,8 +104,8 @@ object Parser {
   }
 
   def repsep[A](p: P[A], sep: P[Unit]): P[Vector[A]] =
-    (rep(p <~ sep) ~ p).map {
-      case (list, el) => list :+ el
+    (rep(p <~ sep) ~ p).map { case (list, el) =>
+      list :+ el
     }
 
   def rep[A](p: P[A]): P[Vector[A]] = {
