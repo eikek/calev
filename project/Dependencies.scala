@@ -8,7 +8,7 @@ object Dependencies {
   val h2Version = "1.4.200"
   val log4sVersion = "1.8.2"
   val logbackVersion = "1.2.3"
-  val miniTestVersion = "2.9.1"
+  val miniTestVersion = "2.9.2"
 
   val fs2 = Seq(
     "co.fs2" %% "fs2-core" % fs2Version
