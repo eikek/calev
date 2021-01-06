@@ -2,9 +2,9 @@ package com.github.eikek.calev.doobie
 
 import cats.implicits._
 import com.github.eikek.calev._
-import scala.reflect.runtime.universe.TypeTag
 import _root_.doobie.{Meta, Read, Write}
 import _root_.doobie.util.invariant._
+import org.tpolecat.typename.TypeName
 import CalevDoobieMeta.parseOrThrow
 
 trait CalevDoobieMeta {
@@ -24,7 +24,7 @@ object CalevDoobieMeta extends CalevDoobieMeta {
 
   private def parseOrThrow[A](
       f: String => Either[String, A]
-  )(str: String)(implicit ev: TypeTag[A]): A =
+  )(str: String)(implicit ev: TypeName[A]): A =
     f(str) match {
       case Right(a)  => a
       case Left(err) => throw InvalidValue[String, A](str, err)
