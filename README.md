@@ -51,7 +51,7 @@ compared to systemd:
 - The *core* module has zero dependencies and implements the parser
   and generator for calendar events. With sbt, use:
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-core" % "0.3.1"
+  libraryDependencies += "com.github.eikek" %% "calev-core" % "0.4.0"
   ```
 - The *fs2* module contains utilities to work with
   [FS2](https://github.com/functional-streams-for-scala/fs2) streams.
@@ -59,18 +59,18 @@ compared to systemd:
   for calendar events, from the
   [fs2-cron](https://github.com/fthomas/fs2-cron) library. With sbt, use
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-fs2" % "0.3.1"
+  libraryDependencies += "com.github.eikek" %% "calev-fs2" % "0.4.0"
   ```
 - The *doobie* module contains `Meta`, `Read` and `Write` instances
   for `CalEvent` to use with
   [doobie](https://github.com/tpolecat/doobie).
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-doobie" % "0.3.1"
+  libraryDependencies += "com.github.eikek" %% "calev-doobie" % "0.4.0"
   ```
 - The *circe* module defines a json decoder and encoder for `CalEvent`
   instances to use with [circe](https://github.com/circe/circe).
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-circe" % "0.3.1"
+  libraryDependencies += "com.github.eikek" %% "calev-circe" % "0.4.0"
   ```
 
 
@@ -85,20 +85,29 @@ import com.github.eikek.calev._
 
 CalEvent.parse("Mon..Fri *-*-* 6,14:0:0")
 // res0: Either[String, CalEvent] = Right(
-//   CalEvent(
-//     List(Vector(Range(WeekdayRange(Mon, Fri)))),
-//     DateEvent(All, All, All),
-//     TimeEvent(
-//       List(Vector(Single(6, None), Single(14, None))),
-//       List(Vector(Single(0, None))),
-//       List(Vector(Single(0, None)))
+//   value = CalEvent(
+//     weekday = List(
+//       values = Vector(Range(range = WeekdayRange(start = Mon, end = Fri)))
 //     ),
-//     None
+//     date = DateEvent(year = All, month = All, day = All),
+//     time = TimeEvent(
+//       hour = List(
+//         values = Vector(
+//           Single(value = 6, rep = None),
+//           Single(value = 14, rep = None)
+//         )
+//       ),
+//       minute = List(values = Vector(Single(value = 0, rep = None))),
+//       seconds = List(values = Vector(Single(value = 0, rep = None)))
+//     ),
+//     zone = None
 //   )
 // )
 
 CalEvent.parse("Mon *-*-* 6,88:0:0")
-// res1: Either[String, CalEvent] = Left("Value 88 not in range [0,23]")
+// res1: Either[String, CalEvent] = Left(
+//   value = "Value 88 not in range [0,23]"
+// )
 ```
 
 There is an `unsafe` way that throws exceptions:
@@ -106,14 +115,14 @@ There is an `unsafe` way that throws exceptions:
 ```scala
 CalEvent.unsafe("*-*-* 0/2:0:0")
 // res2: CalEvent = CalEvent(
-//   All,
-//   DateEvent(All, All, All),
-//   TimeEvent(
-//     List(Vector(Single(0, Some(2)))),
-//     List(Vector(Single(0, None))),
-//     List(Vector(Single(0, None)))
+//   weekday = All,
+//   date = DateEvent(year = All, month = All, day = All),
+//   time = TimeEvent(
+//     hour = List(values = Vector(Single(value = 0, rep = Some(value = 2)))),
+//     minute = List(values = Vector(Single(value = 0, rep = None))),
+//     seconds = List(values = Vector(Single(value = 0, rep = None)))
 //   ),
-//   None
+//   zone = None
 // )
 ```
 
@@ -124,14 +133,14 @@ import com.github.eikek.calev.Dsl._
 
 val ce = CalEvent(AllWeekdays, DateEvent.All, time(0 #/ 2, 0.c, 0.c))
 // ce: CalEvent = CalEvent(
-//   All,
-//   DateEvent(All, All, All),
-//   TimeEvent(
-//     List(List(Single(0, Some(2)))),
-//     List(List(Single(0, None))),
-//     List(List(Single(0, None)))
+//   weekday = All,
+//   date = DateEvent(year = All, month = All, day = All),
+//   time = TimeEvent(
+//     hour = List(values = List(Single(value = 0, rep = Some(value = 2)))),
+//     minute = List(values = List(Single(value = 0, rep = None))),
+//     seconds = List(values = List(Single(value = 0, rep = None)))
 //   ),
-//   None
+//   zone = None
 // )
 ce.asString
 // res3: String = "*-*-* 00/2:00:00"
@@ -146,16 +155,16 @@ import java.time._
 ce.asString
 // res4: String = "*-*-* 00/2:00:00"
 val now = LocalDateTime.now
-// now: LocalDateTime = 2020-04-26T11:34:34.584
+// now: LocalDateTime = 2021-01-06T08:16:40.744
 ce.nextElapse(now)
-// res5: Option[LocalDateTime] = Some(2020-04-26T12:00)
+// res5: Option[LocalDateTime] = Some(value = 2021-01-06T10:00)
 ce.nextElapses(now, 5)
 // res6: List[LocalDateTime] = List(
-//   2020-04-26T12:00,
-//   2020-04-26T14:00,
-//   2020-04-26T16:00,
-//   2020-04-26T18:00,
-//   2020-04-26T20:00
+//   2021-01-06T10:00,
+//   2021-01-06T12:00,
+//   2021-01-06T14:00,
+//   2021-01-06T16:00,
+//   2021-01-06T18:00
 // )
 ```
 
@@ -163,7 +172,7 @@ If an event is in the past, the `nextElapsed` returns a `None`:
 
 ```scala
 CalEvent.unsafe("1900-01-* 12,14:0:0").nextElapse(LocalDateTime.now)
-// res7: Option[LocalDateTime] = None
+// res7: Option[LocalDateTime] = Some(value = 2021-01-06T12:00)
 ```
 
 
@@ -182,26 +191,30 @@ import java.time.LocalTime
 import scala.concurrent.ExecutionContext
 
 implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
-// timer: Timer[IO] = cats.effect.internals.IOTimer@405b6ebb
+// timer: Timer[IO] = cats.effect.internals.IOTimer@214849f2
 
 val printTime = IO(println(LocalTime.now))
-// printTime: IO[Unit] = Delay(<function0>)
+// printTime: IO[Unit] = Delay(thunk = <function0>)
 
 val event = CalEvent.unsafe("*-*-* *:*:0/2")
 // event: CalEvent = CalEvent(
-//   All,
-//   DateEvent(All, All, All),
-//   TimeEvent(All, All, List(Vector(Single(0, Some(2))))),
-//   None
+//   weekday = All,
+//   date = DateEvent(year = All, month = All, day = All),
+//   time = TimeEvent(
+//     hour = All,
+//     minute = All,
+//     seconds = List(values = Vector(Single(value = 0, rep = Some(value = 2))))
+//   ),
+//   zone = None
 // )
 
 val task = CalevFs2.awakeEvery[IO](event).evalMap(_ => printTime)
 // task: Stream[IO[x], Unit] = Stream(..)
 
 task.take(3).compile.drain.unsafeRunSync
-// 11:34:36.021
-// 11:34:38.001
-// 11:34:40.001
+// 08:16:42.026
+// 08:16:44.001
+// 08:16:46.002
 ```
 
 
@@ -220,35 +233,39 @@ case class Record(event: CalEvent)
 
 val r = Record(CalEvent.unsafe("Mon *-*-* 0/2:15"))
 // r: Record = Record(
-//   CalEvent(
-//     List(Vector(Single(Mon))),
-//     DateEvent(All, All, All),
-//     TimeEvent(
-//       List(Vector(Single(0, Some(2)))),
-//       List(Vector(Single(15, None))),
-//       List(List(Single(0, None)))
+//   event = CalEvent(
+//     weekday = List(values = Vector(Single(day = Mon))),
+//     date = DateEvent(year = All, month = All, day = All),
+//     time = TimeEvent(
+//       hour = List(values = Vector(Single(value = 0, rep = Some(value = 2)))),
+//       minute = List(values = Vector(Single(value = 15, rep = None))),
+//       seconds = List(values = List(Single(value = 0, rep = None)))
 //     ),
-//     None
+//     zone = None
 //   )
 // )
 
 val insert =
   sql"INSERT INTO mytable (event) VALUES (${r.event})".update.run
 // insert: ConnectionIO[Int] = Suspend(
-//   BracketCase(
-//     Suspend(PrepareStatement("INSERT INTO mytable (event) VALUES (?)")),
-//     doobie.hi.connection$$$Lambda$7825/109277604@31054516,
-//     cats.effect.Bracket$$Lambda$7827/1917232790@5d5c1682
+//   a = BracketCase(
+//     acquire = Suspend(
+//       a = PrepareStatement(a = "INSERT INTO mytable (event) VALUES (?)")
+//     ),
+//     use = doobie.hi.connection$$$Lambda$8336/982067706@5c6527e2,
+//     release = cats.effect.Bracket$$Lambda$8338/1877866535@76cf5baf
 //   )
 // )
 
 val select =
   sql"SELECT event FROM mytable WHERE id = 1".query[Record].unique
 // select: ConnectionIO[Record] = Suspend(
-//   BracketCase(
-//     Suspend(PrepareStatement("SELECT event FROM mytable WHERE id = 1")),
-//     doobie.hi.connection$$$Lambda$7825/109277604@46e99524,
-//     cats.effect.Bracket$$Lambda$7827/1917232790@6d189071
+//   a = BracketCase(
+//     acquire = Suspend(
+//       a = PrepareStatement(a = "SELECT event FROM mytable WHERE id = 1")
+//     ),
+//     use = doobie.hi.connection$$$Lambda$8336/982067706@152b8b5d,
+//     release = cats.effect.Bracket$$Lambda$8338/1877866535@68e87e4e
 //   )
 // )
 ```
@@ -274,16 +291,23 @@ object Meeting {
 
 val meeting = Meeting("trash can", CalEvent.unsafe("Mon..Fri *-*-* 14,18:0"))
 // meeting: Meeting = Meeting(
-//   "trash can",
-//   CalEvent(
-//     List(Vector(Range(WeekdayRange(Mon, Fri)))),
-//     DateEvent(All, All, All),
-//     TimeEvent(
-//       List(Vector(Single(14, None), Single(18, None))),
-//       List(Vector(Single(0, None))),
-//       List(List(Single(0, None)))
+//   name = "trash can",
+//   event = CalEvent(
+//     weekday = List(
+//       values = Vector(Range(range = WeekdayRange(start = Mon, end = Fri)))
 //     ),
-//     None
+//     date = DateEvent(year = All, month = All, day = All),
+//     time = TimeEvent(
+//       hour = List(
+//         values = Vector(
+//           Single(value = 14, rep = None),
+//           Single(value = 18, rep = None)
+//         )
+//       ),
+//       minute = List(values = Vector(Single(value = 0, rep = None))),
+//       seconds = List(values = List(Single(value = 0, rep = None)))
+//     ),
+//     zone = None
 //   )
 // )
 val json = meeting.asJson.noSpaces
@@ -293,17 +317,24 @@ val read = for {
   value <- parsed.as[Meeting]
 } yield value
 // read: Either[Error, Meeting] = Right(
-//   Meeting(
-//     "trash can",
-//     CalEvent(
-//       List(Vector(Range(WeekdayRange(Mon, Fri)))),
-//       DateEvent(All, All, All),
-//       TimeEvent(
-//         List(Vector(Single(14, None), Single(18, None))),
-//         List(Vector(Single(0, None))),
-//         List(Vector(Single(0, None)))
+//   value = Meeting(
+//     name = "trash can",
+//     event = CalEvent(
+//       weekday = List(
+//         values = Vector(Range(range = WeekdayRange(start = Mon, end = Fri)))
 //       ),
-//       None
+//       date = DateEvent(year = All, month = All, day = All),
+//       time = TimeEvent(
+//         hour = List(
+//           values = Vector(
+//             Single(value = 14, rep = None),
+//             Single(value = 18, rep = None)
+//           )
+//         ),
+//         minute = List(values = Vector(Single(value = 0, rep = None))),
+//         seconds = List(values = Vector(Single(value = 0, rep = None)))
+//       ),
+//       zone = None
 //     )
 //   )
 // )
