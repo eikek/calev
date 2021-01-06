@@ -51,7 +51,7 @@ compared to systemd:
 - The *core* module has zero dependencies and implements the parser
   and generator for calendar events. With sbt, use:
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-core" % "0.4.0"
+  libraryDependencies += "com.github.eikek" %% "calev-core" % "0.4.1"
   ```
 - The *fs2* module contains utilities to work with
   [FS2](https://github.com/functional-streams-for-scala/fs2) streams.
@@ -59,18 +59,18 @@ compared to systemd:
   for calendar events, from the
   [fs2-cron](https://github.com/fthomas/fs2-cron) library. With sbt, use
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-fs2" % "0.4.0"
+  libraryDependencies += "com.github.eikek" %% "calev-fs2" % "0.4.1"
   ```
 - The *doobie* module contains `Meta`, `Read` and `Write` instances
   for `CalEvent` to use with
   [doobie](https://github.com/tpolecat/doobie).
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-doobie" % "0.4.0"
+  libraryDependencies += "com.github.eikek" %% "calev-doobie" % "0.4.1"
   ```
 - The *circe* module defines a json decoder and encoder for `CalEvent`
   instances to use with [circe](https://github.com/circe/circe).
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-circe" % "0.4.0"
+  libraryDependencies += "com.github.eikek" %% "calev-circe" % "0.4.1"
   ```
 
 
@@ -155,16 +155,16 @@ import java.time._
 ce.asString
 // res4: String = "*-*-* 00/2:00:00"
 val now = LocalDateTime.now
-// now: LocalDateTime = 2021-01-06T08:16:40.744
+// now: LocalDateTime = 2021-01-06T22:50:19.958
 ce.nextElapse(now)
-// res5: Option[LocalDateTime] = Some(value = 2021-01-06T10:00)
+// res5: Option[LocalDateTime] = Some(value = 2021-01-07T00:00)
 ce.nextElapses(now, 5)
 // res6: List[LocalDateTime] = List(
-//   2021-01-06T10:00,
-//   2021-01-06T12:00,
-//   2021-01-06T14:00,
-//   2021-01-06T16:00,
-//   2021-01-06T18:00
+//   2021-01-07T00:00,
+//   2021-01-07T02:00,
+//   2021-01-07T04:00,
+//   2021-01-07T06:00,
+//   2021-01-07T08:00
 // )
 ```
 
@@ -172,7 +172,7 @@ If an event is in the past, the `nextElapsed` returns a `None`:
 
 ```scala
 CalEvent.unsafe("1900-01-* 12,14:0:0").nextElapse(LocalDateTime.now)
-// res7: Option[LocalDateTime] = Some(value = 2021-01-06T12:00)
+// res7: Option[LocalDateTime] = None
 ```
 
 
@@ -191,7 +191,7 @@ import java.time.LocalTime
 import scala.concurrent.ExecutionContext
 
 implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
-// timer: Timer[IO] = cats.effect.internals.IOTimer@214849f2
+// timer: Timer[IO] = cats.effect.internals.IOTimer@63d7488f
 
 val printTime = IO(println(LocalTime.now))
 // printTime: IO[Unit] = Delay(thunk = <function0>)
@@ -212,9 +212,9 @@ val task = CalevFs2.awakeEvery[IO](event).evalMap(_ => printTime)
 // task: Stream[IO[x], Unit] = Stream(..)
 
 task.take(3).compile.drain.unsafeRunSync
-// 08:16:42.026
-// 08:16:44.001
-// 08:16:46.002
+// 22:50:22.019
+// 22:50:24.001
+// 22:50:26.001
 ```
 
 
@@ -252,8 +252,8 @@ val insert =
 //     acquire = Suspend(
 //       a = PrepareStatement(a = "INSERT INTO mytable (event) VALUES (?)")
 //     ),
-//     use = doobie.hi.connection$$$Lambda$8336/982067706@5c6527e2,
-//     release = cats.effect.Bracket$$Lambda$8338/1877866535@76cf5baf
+//     use = doobie.hi.connection$$$Lambda$7895/916798095@7df07221,
+//     release = cats.effect.Bracket$$Lambda$7897/1556857256@685dc451
 //   )
 // )
 
@@ -264,8 +264,8 @@ val select =
 //     acquire = Suspend(
 //       a = PrepareStatement(a = "SELECT event FROM mytable WHERE id = 1")
 //     ),
-//     use = doobie.hi.connection$$$Lambda$8336/982067706@152b8b5d,
-//     release = cats.effect.Bracket$$Lambda$8338/1877866535@68e87e4e
+//     use = doobie.hi.connection$$$Lambda$7895/916798095@31977ae5,
+//     release = cats.effect.Bracket$$Lambda$7897/1556857256@1a7e2e5
 //   )
 // )
 ```
