@@ -58,7 +58,9 @@ object DefaultTrigger extends Trigger {
       case DateTime.Pos.Year =>
         calc.flag match {
           case Flag.Exact =>
-            Some(calc.date)
+            val (ref, comp) = calc.components
+            if (comp.contains(ref)) Some(calc.date)
+            else None
           case Flag.Next =>
             val (ref, comp) = calc.components
             if (comp.contains(ref)) Some(calc.date)
