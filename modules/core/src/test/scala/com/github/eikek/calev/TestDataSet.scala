@@ -14,7 +14,7 @@ object TestDataSet {
   def readResource[F[_]: Sync: ContextShift](
       name: String,
       blocker: Blocker
-  ): Stream[F, TestDataSet] =
+  ): Stream[F, EA[TestDataSet]] =
     Option(getClass.getResource(name)) match {
       case Some(url) =>
         read[F](url, blocker)
@@ -23,7 +23,10 @@ object TestDataSet {
         sys.error(s"Resource not found: $name")
     }
 
-  def read[F[_]: Sync: ContextShift](url: URL, blocker: Blocker): Stream[F, TestDataSet] =
+  def read[F[_]: Sync: ContextShift](
+      url: URL,
+      blocker: Blocker
+  ): Stream[F, EA[TestDataSet]] =
     fs2.io
       .readInputStream(Sync[F].delay(url.openStream), 8192, blocker)
       .through(fs2.text.utf8Decode)
@@ -32,7 +35,6 @@ object TestDataSet {
       .split(_.trim.isEmpty)
       .filter(_.nonEmpty)
       .map(c => fromLines(c.toList))
-      .rethrow
 
   def fromLines(lines: List[String]): Either[Throwable, TestDataSet] =
     lines match {
