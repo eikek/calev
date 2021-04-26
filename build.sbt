@@ -1,24 +1,36 @@
 import com.typesafe.sbt.SbtGit.GitKeys._
-import xerial.sbt.Sonatype._
-import ReleaseTransformations._
 
 val scala212 = "2.12.13"
 val scala213 = "2.13.5"
 
 val updateReadme = inputKey[Unit]("Update readme")
 
+addCommandAlias("ci", "; lint; +test; +publishLocal")
+addCommandAlias(
+  "lint",
+  "; scalafmtSbtCheck; scalafmtCheckAll; Compile/scalafix --check; Test/scalafix --check"
+)
+addCommandAlias("fix", "; Compile/scalafix; Test/scalafix; scalafmtSbt; scalafmtAll")
+
 val sharedSettings = Seq(
   organization := "com.github.eikek",
   scalaVersion := scala213,
   scalacOptions ++=
-    Seq("-feature", "-deprecation", "-unchecked", "-encoding", "UTF-8", "-language:higherKinds") ++
+    Seq(
+      "-feature",
+      "-deprecation",
+      "-unchecked",
+      "-encoding",
+      "UTF-8",
+      "-language:higherKinds"
+    ) ++
       (if (scalaBinaryVersion.value.startsWith("2.12"))
          List(
            "-Xfatal-warnings", // fail when there are warnings
            "-Xlint",
            "-Yno-adapted-args",
            "-Ywarn-dead-code",
-           "-Ywarn-unused-import",
+           "-Ywarn-unused",
            "-Ypartial-unification",
            "-Ywarn-value-discard"
          )
@@ -27,15 +39,14 @@ val sharedSettings = Seq(
        else
          Nil),
   crossScalaVersions := Seq(scala212, scala213),
-  scalacOptions in Test := Seq(),
-  scalacOptions in (Compile, console) := Seq(),
+  Test / console / scalacOptions := Seq(),
+  Compile / console / scalacOptions := Seq(),
   licenses := Seq("MIT" -> url("http://spdx.org/licenses/MIT")),
-  homepage := Some(url("https://github.com/eikek/calev"))
+  homepage := Some(url("https://github.com/eikek/calev")),
+  versionScheme := Some("early-semver")
 ) ++ publishSettings
 
 lazy val publishSettings = Seq(
-  publishTo := sonatypePublishToBundle.value,
-  publishMavenStyle := true,
   scmInfo := Some(
     ScmInfo(
       url("https://github.com/eikek/calev.git"),
@@ -50,24 +61,7 @@ lazy val publishSettings = Seq(
       email = ""
     )
   ),
-  publishArtifact in Test := false,
-  releaseCrossBuild := true,
-  releaseProcess := Seq[ReleaseStep](
-    checkSnapshotDependencies,
-    inquireVersions,
-    runClean,
-    runTest,
-    setReleaseVersion,
-    commitReleaseVersion,
-    tagRelease,
-    //For non cross-build projects, use releaseStepCommand("publishSigned")
-    releaseStepCommandAndRemaining("+publishSigned"),
-    releaseStepCommand("sonatypeBundleRelease"),
-    setNextVersion,
-    commitNextVersion,
-    pushChanges
-  ),
-  sonatypeProjectHosting := Some(GitHubHosting("eikek", "calev", "eike.kettner@posteo.de"))
+  Test / publishArtifact := false
 )
 
 lazy val noPublish = Seq(
@@ -98,21 +92,29 @@ val buildInfoSettings = Seq(
   buildInfoOptions += BuildInfoOption.BuildTime
 )
 
+val scalafixSettings = Seq(
+  semanticdbEnabled := true,                        // enable SemanticDB
+  semanticdbVersion := scalafixSemanticdb.revision, // use Scalafix compatible version
+  ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
+)
+
 lazy val core = project
   .in(file("modules/core"))
   .settings(sharedSettings)
   .settings(testSettings)
+  .settings(scalafixSettings)
   .settings(
     name := "calev-core",
     libraryDependencies ++=
-      Dependencies.fs2.map(_ % Test) ++
-      Dependencies.fs2io.map(_ % Test)
+      Dependencies.fs2.map(_     % Test) ++
+        Dependencies.fs2io.map(_ % Test)
   )
 
 lazy val fs2 = project
   .in(file("modules/fs2"))
   .settings(sharedSettings)
   .settings(testSettings)
+  .settings(scalafixSettings)
   .settings(
     name := "calev-fs2",
     libraryDependencies ++=
@@ -124,11 +126,12 @@ lazy val doobie = project
   .in(file("modules/doobie"))
   .settings(sharedSettings)
   .settings(testSettings)
+  .settings(scalafixSettings)
   .settings(
     name := "calev-doobie",
     libraryDependencies ++=
       Dependencies.doobie ++
-      Dependencies.h2.map(_ % Test)
+        Dependencies.h2.map(_ % Test)
   )
   .dependsOn(core)
 
@@ -136,14 +139,14 @@ lazy val circe = project
   .in(file("modules/circe"))
   .settings(sharedSettings)
   .settings(testSettings)
+  .settings(scalafixSettings)
   .settings(
     name := "calev-circe",
     libraryDependencies ++=
       Dependencies.circe ++
-      Dependencies.circeAll.map(_ % Test)
+        Dependencies.circeAll.map(_ % Test)
   )
   .dependsOn(core)
-
 
 lazy val readme = project
   .in(file("modules/readme"))
@@ -160,7 +163,7 @@ lazy val readme = project
     ),
     updateReadme := {
       mdoc.evaluated
-      val out = mdocOut.value / "readme.md"
+      val out    = mdocOut.value / "readme.md"
       val target = (LocalRootProject / baseDirectory).value / "README.md"
       val logger = streams.value.log
       logger.info(s"Updating readme: $out -> $target")

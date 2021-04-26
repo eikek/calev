@@ -1,14 +1,15 @@
 package com.github.eikek.calev
 
-import minitest._
-import Dsl._
-import java.time.ZonedDateTime
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.temporal.ChronoUnit
+import java.time.ZonedDateTime
 import java.time.temporal.ChronoField
+
 import scala.concurrent.ExecutionContext
+
 import cats.effect._
+import com.github.eikek.calev.Dsl._
+import minitest._
 
 object CalEventTest extends SimpleTestSuite {
 

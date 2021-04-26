@@ -1,7 +1,7 @@
 package com.github.eikek.calev.internal
 
 import com.github.eikek.calev._
-import Parser._
+import com.github.eikek.calev.internal.Parser._
 
 object CalEventParser {
 

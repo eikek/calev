@@ -1,9 +1,10 @@
 package com.github.eikek.calev.internal
 
-import minitest._
-import DefaultTrigger._
 import java.time.LocalDateTime
+
 import com.github.eikek.calev.CalEvent
+import com.github.eikek.calev.internal.DefaultTrigger._
+import minitest._
 
 object DefaultTriggerTest extends SimpleTestSuite {
 

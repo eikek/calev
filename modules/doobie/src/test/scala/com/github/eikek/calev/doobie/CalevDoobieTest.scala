@@ -1,11 +1,12 @@
 package com.github.eikek.calev.doobie
 
-import minitest._
-import cats.effect._
 import scala.concurrent.ExecutionContext
+
 import _root_.doobie._
 import _root_.doobie.implicits._
+import cats.effect._
 import com.github.eikek.calev._
+import minitest._
 
 object CalevDoobieTest extends SimpleTestSuite with CalevDoobieMeta {
   implicit val CS: ContextShift[IO] = IO.contextShift(ExecutionContext.global)

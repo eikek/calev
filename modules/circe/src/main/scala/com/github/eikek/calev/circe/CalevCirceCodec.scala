@@ -1,7 +1,7 @@
 package com.github.eikek.calev.circe
 
-import io.circe._
 import com.github.eikek.calev._
+import io.circe._
 
 trait CalevCirceCodec {
 
