@@ -1,7 +1,8 @@
 package com.github.eikek.calev.internal
 
-import scala.util.control.NonFatal
 import java.time.ZoneId
+
+import scala.util.control.NonFatal
 
 import com.github.eikek.calev._
 

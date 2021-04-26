@@ -1,7 +1,8 @@
 package com.github.eikek.calev
 
-import java.time._
 import java.net._
+import java.time._
+
 import cats.effect._
 import cats.implicits._
 import fs2.Stream

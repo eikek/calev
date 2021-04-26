@@ -1,7 +1,7 @@
 package com.github.eikek.calev
 
+import com.github.eikek.calev.Dsl._
 import minitest._
-import Dsl._
 
 object WeekdayComponentTest extends SimpleTestSuite {
 

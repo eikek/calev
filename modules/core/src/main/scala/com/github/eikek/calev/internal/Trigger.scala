@@ -1,6 +1,7 @@
 package com.github.eikek.calev.internal
 
 import java.time.ZonedDateTime
+
 import com.github.eikek.calev._
 
 /** Evaluates a calendar event against a reference date to provide the

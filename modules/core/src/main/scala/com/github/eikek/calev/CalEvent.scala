@@ -1,9 +1,9 @@
 package com.github.eikek.calev
 
 import java.time.Instant
+import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.time.LocalDateTime
 
 final case class CalEvent(
     weekday: WeekdayComponent,

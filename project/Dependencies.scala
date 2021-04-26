@@ -2,12 +2,12 @@ import sbt._
 
 object Dependencies {
 
-  val circeVersion = "0.13.0"
-  val doobieVersion = "0.13.1"
-  val fs2Version = "2.5.5"
-  val h2Version = "1.4.200"
-  val log4sVersion = "1.8.2"
-  val logbackVersion = "1.2.3"
+  val circeVersion    = "0.13.0"
+  val doobieVersion   = "0.13.1"
+  val fs2Version      = "2.5.5"
+  val h2Version       = "1.4.200"
+  val log4sVersion    = "1.8.2"
+  val logbackVersion  = "1.2.3"
   val miniTestVersion = "2.9.5"
 
   val fs2 = Seq(
@@ -21,7 +21,7 @@ object Dependencies {
   val miniTest = Seq(
     // https://github.com/monix/minitest
     // Apache 2.0
-    "io.monix" %% "minitest" % miniTestVersion,
+    "io.monix" %% "minitest"      % miniTestVersion,
     "io.monix" %% "minitest-laws" % miniTestVersion
   )
 
@@ -46,6 +46,6 @@ object Dependencies {
   )
   val circeAll = Seq(
     "io.circe" %% "circe-generic" % circeVersion,
-    "io.circe" %% "circe-parser" % circeVersion
+    "io.circe" %% "circe-parser"  % circeVersion
   )
 }

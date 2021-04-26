@@ -1,10 +1,7 @@
 package com.github.eikek.calev
 
+import com.github.eikek.calev.Dsl._
 import minitest._
-import Dsl._
-import java.time.ZonedDateTime
-import java.time.LocalDate
-import java.time.LocalTime
 
 object ComponentTest extends SimpleTestSuite {
 

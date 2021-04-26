@@ -106,8 +106,8 @@ lazy val core = project
   .settings(
     name := "calev-core",
     libraryDependencies ++=
-      Dependencies.fs2.map(_ % Test) ++
-      Dependencies.fs2io.map(_ % Test)
+      Dependencies.fs2.map(_     % Test) ++
+        Dependencies.fs2io.map(_ % Test)
   )
 
 lazy val fs2 = project
@@ -131,7 +131,7 @@ lazy val doobie = project
     name := "calev-doobie",
     libraryDependencies ++=
       Dependencies.doobie ++
-      Dependencies.h2.map(_ % Test)
+        Dependencies.h2.map(_ % Test)
   )
   .dependsOn(core)
 
@@ -144,10 +144,9 @@ lazy val circe = project
     name := "calev-circe",
     libraryDependencies ++=
       Dependencies.circe ++
-      Dependencies.circeAll.map(_ % Test)
+        Dependencies.circeAll.map(_ % Test)
   )
   .dependsOn(core)
-
 
 lazy val readme = project
   .in(file("modules/readme"))
@@ -164,7 +163,7 @@ lazy val readme = project
     ),
     updateReadme := {
       mdoc.evaluated
-      val out = mdocOut.value / "readme.md"
+      val out    = mdocOut.value / "readme.md"
       val target = (LocalRootProject / baseDirectory).value / "README.md"
       val logger = streams.value.log
       logger.info(s"Updating readme: $out -> $target")

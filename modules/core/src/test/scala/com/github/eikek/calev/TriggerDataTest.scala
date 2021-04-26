@@ -1,23 +1,24 @@
 package com.github.eikek.calev
 
-import minitest._
-import cats.effect._
 import scala.concurrent.ExecutionContext
-import java.util.concurrent.Executors
-import scala.concurrent.duration._
+
+import cats.effect._
+import minitest._
 
 object TriggerDataTest extends SimpleTestSuite {
   implicit val CS = IO.contextShift(ExecutionContext.global)
 
   val resource = "trigger-data.txt"
 
-  val data = Blocker[IO].use { blocker =>
-    TestDataSet
-      .readResource[IO](resource, blocker)
-      .zipWithIndex
-      .compile
-      .toVector
-  }.unsafeRunSync
+  val data = Blocker[IO]
+    .use { blocker =>
+      TestDataSet
+        .readResource[IO](resource, blocker)
+        .zipWithIndex
+        .compile
+        .toVector
+    }
+    .unsafeRunSync()
 
   data.foreach {
     case (Left(ex), index) =>

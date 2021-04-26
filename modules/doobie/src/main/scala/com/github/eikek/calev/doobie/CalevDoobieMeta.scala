@@ -1,11 +1,11 @@
 package com.github.eikek.calev.doobie
 
+import _root_.doobie.util.invariant._
+import _root_.doobie.{Meta, Read, Write}
 import cats.implicits._
 import com.github.eikek.calev._
-import _root_.doobie.{Meta, Read, Write}
-import _root_.doobie.util.invariant._
+import com.github.eikek.calev.doobie.CalevDoobieMeta.parseOrThrow
 import org.tpolecat.typename.TypeName
-import CalevDoobieMeta.parseOrThrow
 
 trait CalevDoobieMeta {
 

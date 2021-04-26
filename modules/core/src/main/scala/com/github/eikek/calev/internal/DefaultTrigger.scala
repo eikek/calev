@@ -1,6 +1,7 @@
 package com.github.eikek.calev.internal
 
 import java.time._
+
 import com.github.eikek.calev._
 
 /** Generate the next date-time that matches a calendar event and is

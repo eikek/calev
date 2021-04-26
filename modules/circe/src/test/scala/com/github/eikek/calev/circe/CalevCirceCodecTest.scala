@@ -1,10 +1,10 @@
 package com.github.eikek.calev.circe
 
-import minitest._
 import com.github.eikek.calev._
 import io.circe._
-import io.circe.syntax._
 import io.circe.generic.semiauto._
+import io.circe.syntax._
+import minitest._
 
 object CalevCirceCodecTest extends SimpleTestSuite with CalevCirceCodec {
 

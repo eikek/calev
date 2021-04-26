@@ -1,7 +1,7 @@
 package com.github.eikek.calev
 
+import com.github.eikek.calev.Weekday._
 import minitest._
-import Weekday._
 
 object WeekdayRangeTest extends SimpleTestSuite {
 

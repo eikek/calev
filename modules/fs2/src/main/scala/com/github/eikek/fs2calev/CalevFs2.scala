@@ -1,14 +1,16 @@
 package com.github.eikek.fs2calev
 
-import _root_.fs2._
-import cats.implicits._
-import cats.effect._
-import com.github.eikek.calev._
-import cats.ApplicativeError
 import java.time.ZonedDateTime
-import scala.concurrent.duration.FiniteDuration
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
+
+import scala.concurrent.duration.FiniteDuration
+
+import _root_.fs2._
+import cats.ApplicativeError
+import cats.effect._
+import cats.implicits._
+import com.github.eikek.calev._
 
 object CalevFs2 {
 

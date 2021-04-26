@@ -1,6 +1,6 @@
 package com.github.eikek.calev
 
-import WeekdayComponent._
+import com.github.eikek.calev.WeekdayComponent._
 
 object Dsl {
 

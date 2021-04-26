@@ -1,8 +1,8 @@
 package com.github.eikek.calev.internal
 
-import minitest._
-import com.github.eikek.calev._
 import com.github.eikek.calev.Dsl._
+import com.github.eikek.calev._
+import minitest._
 
 object ParserTest extends SimpleTestSuite {
 
@@ -24,18 +24,18 @@ object ParserTest extends SimpleTestSuite {
 
   test("num2") {
     val p = Parser.num2
-    assertEquals(p.run("01"), Right("", 1))
-    assertEquals(p.run("1"), Right("", 1))
-    assertEquals(p.run("01a"), Right("a", 1))
-    assertEquals(p.run("1a"), Right("a", 1))
-    assertEquals(p.run("561a"), Right("1a", 56))
+    assertEquals(p.run("01"), Right("" -> 1))
+    assertEquals(p.run("1"), Right("" -> 1))
+    assertEquals(p.run("01a"), Right("a" -> 1))
+    assertEquals(p.run("1a"), Right("a" -> 1))
+    assertEquals(p.run("561a"), Right("1a" -> 56))
     assert(p.run("abcd").isLeft)
   }
 
   test("num4") {
     val p = Parser.num4
-    assertEquals(p.run("2002"), Right("", 2002))
-    assertEquals(p.run("2022abc"), Right("abc", 2022))
+    assertEquals(p.run("2002"), Right("" -> 2002))
+    assertEquals(p.run("2022abc"), Right("abc" -> 2022))
     assert(p.run("120").isLeft)
     assert(p.run("120ab").isLeft)
   }
