@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
 
-  val circeVersion    = "0.14.0"
+  val circeVersion    = "0.14.1"
   val doobieVersion   = "0.13.4"
   val fs2Version      = "2.5.6"
   val h2Version       = "1.4.200"
