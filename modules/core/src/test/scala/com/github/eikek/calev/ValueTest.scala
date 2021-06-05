@@ -1,8 +1,8 @@
 package com.github.eikek.calev
 
-import minitest._
+import munit._
 
-object ValueTest extends SimpleTestSuite {
+class ValueTest extends FunSuite {
 
   test("contains (single values)") {
     for (n <- 1 to 50) {

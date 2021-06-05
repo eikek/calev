@@ -6,9 +6,9 @@ import scala.concurrent.ExecutionContext
 
 import cats.effect._
 import com.github.eikek.calev._
-import minitest._
+import munit._
 
-object CalevFs2Test extends SimpleTestSuite {
+class CalevFs2Test extends FunSuite {
 
   implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
 

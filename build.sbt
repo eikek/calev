@@ -82,10 +82,8 @@ lazy val noPublish = Seq(
 )
 
 val testSettings = Seq(
-  testFrameworks += new TestFramework("minitest.runner.Framework"),
-  libraryDependencies ++=
-    (Dependencies.miniTest ++
-      Dependencies.logback).map(_ % Test)
+  libraryDependencies ++= (Dependencies.munit ++ Dependencies.logback).map(_ % Test),
+  testFrameworks += new TestFramework("munit.Framework")
 )
 
 val buildInfoSettings = Seq(

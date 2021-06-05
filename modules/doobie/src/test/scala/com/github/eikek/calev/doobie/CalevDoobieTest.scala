@@ -6,9 +6,9 @@ import _root_.doobie._
 import _root_.doobie.implicits._
 import cats.effect._
 import com.github.eikek.calev._
-import minitest._
+import munit._
 
-object CalevDoobieTest extends SimpleTestSuite with CalevDoobieMeta {
+class CalevDoobieTest extends FunSuite with CalevDoobieMeta {
   implicit val CS: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 
   val xa = Transactor.fromDriverManager[IO](

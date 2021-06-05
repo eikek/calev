@@ -1,9 +1,9 @@
 package com.github.eikek.calev
 
 import com.github.eikek.calev.Dsl._
-import minitest._
+import munit._
 
-object ComponentTest extends SimpleTestSuite {
+class ComponentTest extends FunSuite {
 
   test("create components") {
 
