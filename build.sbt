@@ -98,7 +98,8 @@ val scalafixSettings = Seq(
   ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
 )
 
-lazy val core = project
+lazy val core = crossProject(JSPlatform, JVMPlatform)
+  .crossType(CrossType.Pure)
   .in(file("modules/core"))
   .settings(sharedSettings)
   .settings(testSettings)
@@ -109,8 +110,11 @@ lazy val core = project
       Dependencies.fs2.map(_     % Test) ++
         Dependencies.fs2io.map(_ % Test)
   )
+lazy val coreJVM = core.jvm
+lazy val coreJS  = core.js
 
-lazy val fs2 = project
+lazy val fs2 = crossProject(JSPlatform, JVMPlatform)
+  .crossType(CrossType.Pure)
   .in(file("modules/fs2"))
   .settings(sharedSettings)
   .settings(testSettings)
@@ -121,8 +125,10 @@ lazy val fs2 = project
       Dependencies.fs2
   )
   .dependsOn(core)
+lazy val fs2JVM = fs2.jvm
+lazy val fs2JS  = fs2.js
 
-lazy val doobie = project
+lazy val doobieJVM = project
   .in(file("modules/doobie"))
   .settings(sharedSettings)
   .settings(testSettings)
@@ -133,9 +139,10 @@ lazy val doobie = project
       Dependencies.doobie ++
         Dependencies.h2.map(_ % Test)
   )
-  .dependsOn(core)
+  .dependsOn(coreJVM)
 
-lazy val circe = project
+lazy val circe = crossProject(JSPlatform, JVMPlatform)
+  .crossType(CrossType.Pure)
   .in(file("modules/circe"))
   .settings(sharedSettings)
   .settings(testSettings)
@@ -147,6 +154,8 @@ lazy val circe = project
         Dependencies.circeAll.map(_ % Test)
   )
   .dependsOn(core)
+lazy val circeJVM = circe.jvm
+lazy val circeJS  = circe.js
 
 lazy val readme = project
   .in(file("modules/readme"))
@@ -171,7 +180,7 @@ lazy val readme = project
       ()
     }
   )
-  .dependsOn(core, fs2, doobie, circe)
+  .dependsOn(coreJVM, fs2JVM, doobieJVM, circeJVM)
 
 val root = project
   .in(file("."))
@@ -180,4 +189,4 @@ val root = project
   .settings(
     name := "calev-root"
   )
-  .aggregate(core, fs2, doobie, circe)
+  .aggregate(coreJVM, coreJS, fs2JVM, fs2JS, doobieJVM, circeJVM, circeJS)
