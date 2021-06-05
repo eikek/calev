@@ -20,8 +20,8 @@ object CalevCirceCodecTest extends SimpleTestSuite with CalevCirceCodec {
 
   case class Meeting(name: String, event: CalEvent)
   object Meeting {
-    implicit val jsonDecoder = deriveDecoder[Meeting]
-    implicit val jsonEncoder = deriveEncoder[Meeting]
+    implicit val jsonDecoder: Decoder[Meeting] = deriveDecoder[Meeting]
+    implicit val jsonEncoder: Encoder[Meeting] = deriveEncoder[Meeting]
   }
 
   test("encode/decode derived") {

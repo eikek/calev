@@ -37,7 +37,7 @@ object Main {
             case "--ref" => readOpts(rest, opts.copy(ref = LocalDateTime.parse(value)))
             case _       => sys.error(s"Unknown option: $name")
           }
-        case _ =>
+        case null =>
           opts
       }
 

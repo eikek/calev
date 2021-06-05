@@ -2,6 +2,7 @@ import com.typesafe.sbt.SbtGit.GitKeys._
 
 val scala212 = "2.12.13"
 val scala213 = "2.13.5"
+val scala3   = "3.0.0"
 
 val updateReadme = inputKey[Unit]("Update readme")
 
@@ -36,9 +37,19 @@ val sharedSettings = Seq(
          )
        else if (scalaBinaryVersion.value.startsWith("2.13"))
          List("-Werror", "-Wdead-code", "-Wunused", "-Wvalue-discard")
+       else if (scalaBinaryVersion.value.startsWith("3"))
+         List(
+           "-explain",
+           "-explain-types",
+           "-indent",
+           "-print-lines",
+           "-Ykind-projector",
+           "-Xmigration",
+           "-Xfatal-warnings"
+         )
        else
          Nil),
-  crossScalaVersions := Seq(scala212, scala213),
+  crossScalaVersions := Seq(scala212, scala213, scala3),
   Test / console / scalacOptions := Seq(),
   Compile / console / scalacOptions := Seq(),
   licenses := Seq("MIT" -> url("http://spdx.org/licenses/MIT")),
