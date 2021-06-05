@@ -9,9 +9,9 @@ import scala.concurrent.ExecutionContext
 
 import cats.effect._
 import com.github.eikek.calev.Dsl._
-import minitest._
+import munit._
 
-object CalEventTest extends SimpleTestSuite {
+class CalEventTest extends FunSuite {
 
   implicit val CS: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
   val blocker                       = Blocker.liftExecutionContext(ExecutionContext.global)
@@ -55,9 +55,9 @@ object CalEventTest extends SimpleTestSuite {
   test("nextElapse no millis") {
     val ce  = CalEvent.unsafe("*-*-* 0/2:0/10")
     val ref = zdt(2020, 4, 2, 18, 31, 12).`with`(ChronoField.MILLI_OF_SECOND, 156)
-    assertEquals(ref.getNano, 156000000L)
+    assertEquals(ref.getNano, 156000000)
     val next = ce.nextElapse(ref).get
-    assertEquals(next.getNano, 0L)
+    assertEquals(next.getNano, 0)
   }
 
   test("nextElapses ends") {

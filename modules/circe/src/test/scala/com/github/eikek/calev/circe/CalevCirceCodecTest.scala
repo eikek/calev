@@ -4,9 +4,9 @@ import com.github.eikek.calev._
 import io.circe._
 import io.circe.generic.semiauto._
 import io.circe.syntax._
-import minitest._
+import munit._
 
-object CalevCirceCodecTest extends SimpleTestSuite with CalevCirceCodec {
+class CalevCirceCodecTest extends FunSuite with CalevCirceCodec {
 
   def parseJson(str: String): Json =
     parser.parse(str).fold(throw _, identity)

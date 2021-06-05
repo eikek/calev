@@ -3,9 +3,9 @@ package com.github.eikek.calev
 import scala.concurrent.ExecutionContext
 
 import cats.effect._
-import minitest._
+import munit._
 
-object TriggerDataTest extends SimpleTestSuite {
+class TriggerDataTest extends FunSuite {
   implicit val CS: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 
   val resource = "trigger-data.txt"

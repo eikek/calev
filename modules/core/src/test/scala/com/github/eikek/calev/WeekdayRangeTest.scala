@@ -1,9 +1,9 @@
 package com.github.eikek.calev
 
 import com.github.eikek.calev.Weekday._
-import minitest._
+import munit._
 
-object WeekdayRangeTest extends SimpleTestSuite {
+class WeekdayRangeTest extends FunSuite {
 
   test("contains") {
     assert(WeekdayRange(Mon, Wed).contains(Mon))

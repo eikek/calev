@@ -2,9 +2,9 @@ package com.github.eikek.calev.internal
 
 import com.github.eikek.calev.Dsl._
 import com.github.eikek.calev._
-import minitest._
+import munit._
 
-object ParserTest extends SimpleTestSuite {
+class ParserTest extends FunSuite {
 
   test("const") {
     val p = Parser.const("ab")

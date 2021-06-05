@@ -1,9 +1,9 @@
 package com.github.eikek.calev
 
 import com.github.eikek.calev.Dsl._
-import minitest._
+import munit._
 
-object WeekdayComponentTest extends SimpleTestSuite {
+class WeekdayComponentTest extends FunSuite {
 
   test("contains") {
     for (wd <- Weekday.all) {

@@ -4,9 +4,9 @@ import java.time.LocalDateTime
 
 import com.github.eikek.calev.CalEvent
 import com.github.eikek.calev.internal.DefaultTrigger._
-import minitest._
+import munit._
 
-object DefaultTriggerTest extends SimpleTestSuite {
+class DefaultTriggerTest extends FunSuite {
 
   val ce = CalEvent.unsafe("*-*-* 0/2:0")
 
