@@ -6,7 +6,7 @@ import cats.effect._
 import minitest._
 
 object TriggerDataTest extends SimpleTestSuite {
-  implicit val CS = IO.contextShift(ExecutionContext.global)
+  implicit val CS: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 
   val resource = "trigger-data.txt"
 

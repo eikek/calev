@@ -4,8 +4,8 @@
 [![Scala Steward badge](https://img.shields.io/badge/Scala_Steward-helping-blue.svg?style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAMAAAARSr4IAAAAVFBMVEUAAACHjojlOy5NWlrKzcYRKjGFjIbp293YycuLa3pYY2LSqql4f3pCUFTgSjNodYRmcXUsPD/NTTbjRS+2jomhgnzNc223cGvZS0HaSD0XLjbaSjElhIr+AAAAAXRSTlMAQObYZgAAAHlJREFUCNdNyosOwyAIhWHAQS1Vt7a77/3fcxxdmv0xwmckutAR1nkm4ggbyEcg/wWmlGLDAA3oL50xi6fk5ffZ3E2E3QfZDCcCN2YtbEWZt+Drc6u6rlqv7Uk0LdKqqr5rk2UCRXOk0vmQKGfc94nOJyQjouF9H/wCc9gECEYfONoAAAAASUVORK5CYII=)](https://scala-steward.org)
 
 Small Scala library for parsing systemd.time like calendar event
-expressions. It is available for Scala 2.12 and 2.13. The core module
-has no dependencies.
+expressions. It is available for Scala (JVM and ScalaJS) 2.12, 2.13
+and 3.0. The core module has no dependencies.
 
 ## What are calendar events?
 
@@ -49,7 +49,8 @@ compared to systemd:
 ## Modules
 
 - The *core* module has zero dependencies and implements the parser
-  and generator for calendar events. With sbt, use:
+  and generator for calendar events. It is also published for ScalaJS.
+  With sbt, use:
   ```sbt
   libraryDependencies += "com.github.eikek" %% "calev-core" % "@VERSION@"
   ```
@@ -57,7 +58,8 @@ compared to systemd:
   [FS2](https://github.com/functional-streams-for-scala/fs2) streams.
   These were taken, thankfully and slightly modified to exchange cron expressions
   for calendar events, from the
-  [fs2-cron](https://github.com/fthomas/fs2-cron) library. With sbt, use
+  [fs2-cron](https://github.com/fthomas/fs2-cron) library.  It is also published
+  for ScalaJS. With sbt, use
   ```sbt
   libraryDependencies += "com.github.eikek" %% "calev-fs2" % "@VERSION@"
   ```
@@ -68,7 +70,8 @@ compared to systemd:
   libraryDependencies += "com.github.eikek" %% "calev-doobie" % "@VERSION@"
   ```
 - The *circe* module defines a json decoder and encoder for `CalEvent`
-  instances to use with [circe](https://github.com/circe/circe).
+  instances to use with [circe](https://github.com/circe/circe).  It is also
+  published for ScalaJS.
   ```sbt
   libraryDependencies += "com.github.eikek" %% "calev-circe" % "@VERSION@"
   ```
