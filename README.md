@@ -4,8 +4,8 @@
 [![Scala Steward badge](https://img.shields.io/badge/Scala_Steward-helping-blue.svg?style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAMAAAARSr4IAAAAVFBMVEUAAACHjojlOy5NWlrKzcYRKjGFjIbp293YycuLa3pYY2LSqql4f3pCUFTgSjNodYRmcXUsPD/NTTbjRS+2jomhgnzNc223cGvZS0HaSD0XLjbaSjElhIr+AAAAAXRSTlMAQObYZgAAAHlJREFUCNdNyosOwyAIhWHAQS1Vt7a77/3fcxxdmv0xwmckutAR1nkm4ggbyEcg/wWmlGLDAA3oL50xi6fk5ffZ3E2E3QfZDCcCN2YtbEWZt+Drc6u6rlqv7Uk0LdKqqr5rk2UCRXOk0vmQKGfc94nOJyQjouF9H/wCc9gECEYfONoAAAAASUVORK5CYII=)](https://scala-steward.org)
 
 Small Scala library for parsing systemd.time like calendar event
-expressions. It is available for Scala 2.12 and 2.13. The core module
-has no dependencies.
+expressions. It is available for Scala (JVM and ScalaJS) 2.12, 2.13
+and 3.0. The core module has no dependencies.
 
 ## What are calendar events?
 
@@ -49,28 +49,31 @@ compared to systemd:
 ## Modules
 
 - The *core* module has zero dependencies and implements the parser
-  and generator for calendar events. With sbt, use:
+  and generator for calendar events. It is also published for ScalaJS.
+  With sbt, use:
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-core" % "0.4.2"
+  libraryDependencies += "com.github.eikek" %% "calev-core" % "0.5.0"
   ```
 - The *fs2* module contains utilities to work with
   [FS2](https://github.com/functional-streams-for-scala/fs2) streams.
   These were taken, thankfully and slightly modified to exchange cron expressions
   for calendar events, from the
-  [fs2-cron](https://github.com/fthomas/fs2-cron) library. With sbt, use
+  [fs2-cron](https://github.com/fthomas/fs2-cron) library.  It is also published
+  for ScalaJS. With sbt, use
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-fs2" % "0.4.2"
+  libraryDependencies += "com.github.eikek" %% "calev-fs2" % "0.5.0"
   ```
 - The *doobie* module contains `Meta`, `Read` and `Write` instances
   for `CalEvent` to use with
   [doobie](https://github.com/tpolecat/doobie).
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-doobie" % "0.4.2"
+  libraryDependencies += "com.github.eikek" %% "calev-doobie" % "0.5.0"
   ```
 - The *circe* module defines a json decoder and encoder for `CalEvent`
-  instances to use with [circe](https://github.com/circe/circe).
+  instances to use with [circe](https://github.com/circe/circe).  It is also
+  published for ScalaJS.
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-circe" % "0.4.2"
+  libraryDependencies += "com.github.eikek" %% "calev-circe" % "0.5.0"
   ```
 
 
@@ -155,16 +158,16 @@ import java.time._
 ce.asString
 // res4: String = "*-*-* 00/2:00:00"
 val now = LocalDateTime.now
-// now: LocalDateTime = 2021-03-12T08:33:51.335
+// now: LocalDateTime = 2021-06-05T17:29:00.678
 ce.nextElapse(now)
-// res5: Option[LocalDateTime] = Some(value = 2021-03-12T10:00)
+// res5: Option[LocalDateTime] = Some(value = 2021-06-05T18:00)
 ce.nextElapses(now, 5)
 // res6: List[LocalDateTime] = List(
-//   2021-03-12T10:00,
-//   2021-03-12T12:00,
-//   2021-03-12T14:00,
-//   2021-03-12T16:00,
-//   2021-03-12T18:00
+//   2021-06-05T18:00,
+//   2021-06-05T20:00,
+//   2021-06-05T22:00,
+//   2021-06-06T00:00,
+//   2021-06-06T02:00
 // )
 ```
 
@@ -191,7 +194,7 @@ import java.time.LocalTime
 import scala.concurrent.ExecutionContext
 
 implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
-// timer: Timer[IO] = cats.effect.internals.IOTimer@47b98c30
+// timer: Timer[IO] = cats.effect.internals.IOTimer@6c133820
 
 val printTime = IO(println(LocalTime.now))
 // printTime: IO[Unit] = Delay(thunk = <function0>)
@@ -212,9 +215,9 @@ val task = CalevFs2.awakeEvery[IO](event).evalMap(_ => printTime)
 // task: Stream[IO[x], Unit] = Stream(..)
 
 task.take(3).compile.drain.unsafeRunSync
-// 08:33:52.027
-// 08:33:54.001
-// 08:33:56.002
+// 17:29:02.019
+// 17:29:04.001
+// 17:29:06.001
 ```
 
 
@@ -252,8 +255,8 @@ val insert =
 //     acquire = Suspend(
 //       a = PrepareStatement(a = "INSERT INTO mytable (event) VALUES (?)")
 //     ),
-//     use = doobie.hi.connection$$$Lambda$8339/582656530@28b13b8,
-//     release = cats.effect.Bracket$$Lambda$8341/1552829415@6fdbd0ee
+//     use = doobie.hi.connection$$$Lambda$12951/281663703@14cc31e2,
+//     release = cats.effect.Bracket$$Lambda$12953/1405681209@44dfcdba
 //   )
 // )
 
@@ -264,8 +267,8 @@ val select =
 //     acquire = Suspend(
 //       a = PrepareStatement(a = "SELECT event FROM mytable WHERE id = 1")
 //     ),
-//     use = doobie.hi.connection$$$Lambda$8339/582656530@69ba4dcc,
-//     release = cats.effect.Bracket$$Lambda$8341/1552829415@261883ea
+//     use = doobie.hi.connection$$$Lambda$12951/281663703@5ec37a39,
+//     release = cats.effect.Bracket$$Lambda$12953/1405681209@57abff07
 //   )
 // )
 ```
