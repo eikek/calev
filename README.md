@@ -158,16 +158,16 @@ import java.time._
 ce.asString
 // res4: String = "*-*-* 00/2:00:00"
 val now = LocalDateTime.now
-// now: LocalDateTime = 2021-06-05T17:29:00.678
+// now: LocalDateTime = 2021-06-07T08:58:36.220
 ce.nextElapse(now)
-// res5: Option[LocalDateTime] = Some(value = 2021-06-05T18:00)
+// res5: Option[LocalDateTime] = Some(value = 2021-06-07T10:00)
 ce.nextElapses(now, 5)
 // res6: List[LocalDateTime] = List(
-//   2021-06-05T18:00,
-//   2021-06-05T20:00,
-//   2021-06-05T22:00,
-//   2021-06-06T00:00,
-//   2021-06-06T02:00
+//   2021-06-07T10:00,
+//   2021-06-07T12:00,
+//   2021-06-07T14:00,
+//   2021-06-07T16:00,
+//   2021-06-07T18:00
 // )
 ```
 
@@ -186,6 +186,12 @@ This is the same as [fs2-cron](https://github.com/fthomas/fs2-cron)
 provides, only adopted to use calendar events instead of cron
 expressions. The example is also from there.
 
+**Note:** `calev-fs2` is still build against fs2 2.x. This module will
+be removed in the future, because the
+[fs2-cron](https://github.com/fthomas/fs2-cron) project now provides
+this via its `fs2-cron-calev` module, which is built against fs2 3
+already.
+
 ```scala
 import cats.effect.{IO, Timer}
 import fs2.Stream
@@ -194,7 +200,7 @@ import java.time.LocalTime
 import scala.concurrent.ExecutionContext
 
 implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
-// timer: Timer[IO] = cats.effect.internals.IOTimer@6c133820
+// timer: Timer[IO] = cats.effect.internals.IOTimer@2b83ba8c
 
 val printTime = IO(println(LocalTime.now))
 // printTime: IO[Unit] = Delay(thunk = <function0>)
@@ -215,9 +221,9 @@ val task = CalevFs2.awakeEvery[IO](event).evalMap(_ => printTime)
 // task: Stream[IO[x], Unit] = Stream(..)
 
 task.take(3).compile.drain.unsafeRunSync
-// 17:29:02.019
-// 17:29:04.001
-// 17:29:06.001
+// 08:58:38.017
+// 08:58:40.001
+// 08:58:42
 ```
 
 
@@ -255,8 +261,8 @@ val insert =
 //     acquire = Suspend(
 //       a = PrepareStatement(a = "INSERT INTO mytable (event) VALUES (?)")
 //     ),
-//     use = doobie.hi.connection$$$Lambda$12951/281663703@14cc31e2,
-//     release = cats.effect.Bracket$$Lambda$12953/1405681209@44dfcdba
+//     use = doobie.hi.connection$$$Lambda$7902/37512530@6f0227ba,
+//     release = cats.effect.Bracket$$Lambda$7904/1537174318@5df8aeda
 //   )
 // )
 
@@ -267,8 +273,8 @@ val select =
 //     acquire = Suspend(
 //       a = PrepareStatement(a = "SELECT event FROM mytable WHERE id = 1")
 //     ),
-//     use = doobie.hi.connection$$$Lambda$12951/281663703@5ec37a39,
-//     release = cats.effect.Bracket$$Lambda$12953/1405681209@57abff07
+//     use = doobie.hi.connection$$$Lambda$7902/37512530@55d0504f,
+//     release = cats.effect.Bracket$$Lambda$7904/1537174318@30746cde
 //   )
 // )
 ```

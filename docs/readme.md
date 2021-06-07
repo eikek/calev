@@ -132,6 +132,12 @@ This is the same as [fs2-cron](https://github.com/fthomas/fs2-cron)
 provides, only adopted to use calendar events instead of cron
 expressions. The example is also from there.
 
+**Note:** `calev-fs2` is still build against fs2 2.x. This module will
+be removed in the future, because the
+[fs2-cron](https://github.com/fthomas/fs2-cron) project now provides
+this via its `fs2-cron-calev` module, which is built against fs2 3
+already.
+
 ```scala mdoc
 import cats.effect.{IO, Timer}
 import fs2.Stream
