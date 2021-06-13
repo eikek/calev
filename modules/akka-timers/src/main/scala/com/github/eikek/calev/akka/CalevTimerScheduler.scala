@@ -18,13 +18,14 @@ object CalevTimerScheduler {
       factory(new CalevTimerSchedulerImpl[T](scheduler, DefaultTrigger, clock))
     }
 
-  def withCalendarEvent[B, T <: B : ClassTag](
+  def withCalendarEvent[B, T <: B: ClassTag](
       clock: Clock,
       calEvent: CalEvent,
       triggerFactory: ZonedDateTime => T
-  )(inner: Behavior[B]): Behavior[T] = Behaviors.intercept(() =>
-    new CalevInterceptor[B, T](clock, calEvent, triggerFactory)
-  )(inner)
+  )(inner: Behavior[B]): Behavior[T] =
+    Behaviors.intercept(() =>
+      new CalevInterceptor[B, T](clock, calEvent, triggerFactory)
+    )(inner)
 
 }
 
@@ -39,11 +40,11 @@ private[akka] class CalevTimerSchedulerImpl[T](
 ) extends CalevTimerScheduler[T] {
 
   def scheduleUpcoming(calEvent: CalEvent, triggerFactory: ZonedDateTime => T): Unit = {
-    val timeRef = clock.instant().atZone(clock.getZone)
+    val refInstant = clock.instant().atZone(clock.getZone)
     calendar
-      .next(timeRef, calEvent)
+      .next(refInstant, calEvent)
       .map { instant =>
-        (instant, JavaDuration.between(timeRef, instant).getSeconds.seconds)
+        (instant, JavaDuration.between(refInstant, instant).getSeconds.seconds)
       }
       .foreach { case (instant, delay) =>
         scheduler.startSingleTimer(triggerFactory.apply(instant), delay)
