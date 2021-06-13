@@ -12,10 +12,11 @@ import scala.reflect.ClassTag
 object CalevTimerScheduler {
 
   def withCalevTimers[T](
-      clock: Clock
+      clock: Clock,
+      minInterval: Option[FiniteDuration] = None
   )(factory: CalevTimerScheduler[T] => Behavior[T]): Behavior[T] =
     Behaviors.withTimers { scheduler =>
-      factory(new CalevTimerSchedulerImpl[T](scheduler, DefaultTrigger, clock))
+      factory(new CalevTimerSchedulerImpl[T](scheduler, DefaultTrigger, clock, minInterval))
     }
 
   def withCalendarEvent[B, T <: B: ClassTag](
@@ -36,10 +37,12 @@ trait CalevTimerScheduler[T] {
 private[akka] class CalevTimerSchedulerImpl[T](
     scheduler: TimerScheduler[T],
     calendar: Trigger,
-    clock: Clock
+    clock: Clock,
+    minInterval: Option[FiniteDuration]
 ) extends CalevTimerScheduler[T] {
 
-  private val upcomingEventProvider = new UpcomingEventProvider(calendar, clock, minInterval = Some(500.millis))
+  private val upcomingEventProvider =
+    new UpcomingEventProvider(calendar, clock, minInterval)
 
   def scheduleUpcoming(calEvent: CalEvent, triggerFactory: ZonedDateTime => T): Unit =
     upcomingEventProvider(calEvent)

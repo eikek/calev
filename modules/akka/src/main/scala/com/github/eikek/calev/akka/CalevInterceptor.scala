@@ -1,7 +1,9 @@
 package com.github.eikek.calev.akka
 
+import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{Behavior, BehaviorInterceptor, TypedActorContext}
 import com.github.eikek.calev.CalEvent
+import com.github.eikek.calev.akka.CalevActorScheduling.ConfigOps
 
 import java.time.{Clock, ZonedDateTime}
 import scala.reflect.ClassTag
@@ -25,9 +27,16 @@ private[akka] class CalevInterceptor[B, T <: B: ClassTag](
   ): Behavior[B] =
     scheduleUpcoming(target(ctx, msg))
 
-  private def scheduleUpcoming(target: Behavior[B]): Behavior[B] =
-    CalevTimerScheduler.withCalevTimers(clock) { scheduler =>
-      scheduler.scheduleUpcoming(calEvent, triggerFactory)
-      target
-    }
+  private def scheduleUpcoming(target: Behavior[B]): Behavior[B] = Behaviors.setup {
+    ctx =>
+      val config      = ctx.system.settings.config
+      val minInterval = config.getDurationMillis("akka.scheduler.tick-duration") * 4
+
+      CalevTimerScheduler.withCalevTimers(clock, Some(minInterval)) { scheduler =>
+        scheduler.scheduleUpcoming(calEvent, triggerFactory)
+        target
+      }
+  }
+
 }
+
