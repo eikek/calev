@@ -2,6 +2,7 @@ import sbt._
 
 object Dependencies {
 
+  val akkaVersion    = "2.6.15"
   val circeVersion   = "0.14.1"
   val doobieVersion  = "0.13.4"
   val fs2Version     = "2.5.6"
@@ -45,5 +46,9 @@ object Dependencies {
   val circeAll = Seq(
     "io.circe" %% "circe-generic" % circeVersion,
     "io.circe" %% "circe-parser"  % circeVersion
+  )
+
+  val akkaTimersAll = Seq(
+    "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion
   )
 }
