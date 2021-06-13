@@ -5,8 +5,7 @@ import akka.actor.typed.scaladsl.{Behaviors, TimerScheduler}
 import com.github.eikek.calev.CalEvent
 import com.github.eikek.calev.internal.{DefaultTrigger, Trigger}
 
-import java.time.{Clock, ZonedDateTime, Duration => JavaDuration}
-import scala.annotation.tailrec
+import java.time.{Clock, ZonedDateTime}
 import scala.concurrent.duration._
 import scala.reflect.ClassTag
 
@@ -40,25 +39,12 @@ private[akka] class CalevTimerSchedulerImpl[T](
     clock: Clock
 ) extends CalevTimerScheduler[T] {
 
-  def scheduleUpcoming(calEvent: CalEvent, triggerFactory: ZonedDateTime => T): Unit = {
-    def now = clock.instant().atZone(clock.getZone)
+  private val upcomingEventProvider = new UpcomingEventProvider(calendar, clock, minInterval = Some(1.seconds))
 
-    @tailrec def nextEvent(refInstant: ZonedDateTime): Option[(ZonedDateTime, FiniteDuration)] =
-      calendar.next(refInstant, calEvent).map { instant =>
-        (instant, JavaDuration.between(refInstant, instant).getSeconds.seconds)
-      } match {
-        case Some((_, duration)) if duration.toMillis < 500 => // avoid loop
-          nextEvent(now)
-        case result @ Some(_) =>
-          result
-        case None =>
-          Option.empty
-      }
-
-    nextEvent(now)
+  def scheduleUpcoming(calEvent: CalEvent, triggerFactory: ZonedDateTime => T): Unit =
+    upcomingEventProvider(calEvent)
       .foreach { case (instant, delay) =>
         scheduler.startSingleTimer(triggerFactory.apply(instant), delay)
       }
-  }
 
 }

@@ -10,10 +10,11 @@ case class Ping(timestamp: ZonedDateTime)
 
 object CalevTimerSchedulerTest extends App {
   val calEvent = CalEvent.unsafe("*-*-* *:0/1:0")
+  val clock = Clock.systemUTC()
 
-  val behavior = CalevTimerScheduler.withCalendarEvent(Clock.systemUTC(), calEvent, Ping)(
+  val behavior = CalevTimerScheduler.withCalendarEvent(clock, calEvent, Ping)(
     receiveMessage[Ping] { case Ping(ts) =>
-      println("Ping received at: " + ts)
+      println(s"Ping scheduled at $ts received at: ${clock.instant()}")
       same
     }
   )
