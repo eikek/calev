@@ -39,7 +39,7 @@ private[akka] class CalevTimerSchedulerImpl[T](
     clock: Clock
 ) extends CalevTimerScheduler[T] {
 
-  private val upcomingEventProvider = new UpcomingEventProvider(calendar, clock, minInterval = Some(1.seconds))
+  private val upcomingEventProvider = new UpcomingEventProvider(calendar, clock, minInterval = Some(500.millis))
 
   def scheduleUpcoming(calEvent: CalEvent, triggerFactory: ZonedDateTime => T): Unit =
     upcomingEventProvider(calEvent)
