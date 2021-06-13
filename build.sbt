@@ -166,16 +166,22 @@ lazy val circe = crossProject(JSPlatform, JVMPlatform)
 lazy val circeJVM = circe.jvm
 lazy val circeJS  = circe.js
 
-lazy val akkaTimersJVM = project
-  .in(file("modules/akka-timers"))
+lazy val akkaJVM = project
+  .in(file("modules/akka"))
   .dependsOn(coreJVM)
   .settings(sharedSettings)
   .settings(testSettings)
   .settings(scalafixSettings)
   .settings(
-    name := "calev-akka-timers",
+    name := "calev-akka",
+    developers += Developer(
+      id = "pawelkaczor",
+      name = "Paweł Kaczor",
+      url = url("https://github.com/pawelkaczor"),
+      email = ""
+    ),
     libraryDependencies ++=
-      Dependencies.akkaTimersAll,
+      Dependencies.akkaAll
   )
 
 lazy val readme = project

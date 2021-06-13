@@ -48,7 +48,7 @@ object Dependencies {
     "io.circe" %% "circe-parser"  % circeVersion
   )
 
-  val akkaTimersAll = Seq(
+  val akkaAll = Seq(
     "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion
   )
 }
