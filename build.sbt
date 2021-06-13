@@ -82,7 +82,7 @@ lazy val noPublish = Seq(
 )
 
 val testSettings = Seq(
-  libraryDependencies ++= (Dependencies.munit ++ Dependencies.logback).map(_ % Test),
+  libraryDependencies ++= inTests(Dependencies.munit ++ Dependencies.logback),
   testFrameworks += new TestFramework("munit.Framework")
 )
 
@@ -116,8 +116,7 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
   .settings(
     name := "calev-core",
     libraryDependencies ++=
-      Dependencies.fs2.map(_     % Test) ++
-        Dependencies.fs2io.map(_ % Test)
+      inTests(Dependencies.fs2 ++ Dependencies.fs2io)
   )
 lazy val coreJVM = core.jvm
 lazy val coreJS  = core.js
@@ -146,7 +145,7 @@ lazy val doobieJVM = project
     name := "calev-doobie",
     libraryDependencies ++=
       Dependencies.doobie ++
-        Dependencies.h2.map(_ % Test)
+        inTests(Dependencies.h2)
   )
   .dependsOn(coreJVM)
 
@@ -160,7 +159,7 @@ lazy val circe = crossProject(JSPlatform, JVMPlatform)
     name := "calev-circe",
     libraryDependencies ++=
       Dependencies.circe ++
-        Dependencies.circeAll.map(_ % Test)
+        inTests(Dependencies.circeAll)
   )
   .dependsOn(core)
 lazy val circeJVM = circe.jvm
@@ -199,3 +198,7 @@ val root = project
     name := "calev-root"
   )
   .aggregate(coreJVM, coreJS, fs2JVM, fs2JS, doobieJVM, circeJVM, circeJS)
+
+def inTests(modules: Seq[ModuleID]) = {
+  modules.map(_ % Test)
+}
