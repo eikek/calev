@@ -166,9 +166,9 @@ lazy val circe = crossProject(JSPlatform, JVMPlatform)
 lazy val circeJVM = circe.jvm
 lazy val circeJS  = circe.js
 
-lazy val akkaTimers = project
+lazy val akkaTimersJVM = project
   .in(file("modules/akka-timers"))
-  .dependsOn(core)
+  .dependsOn(coreJVM)
   .settings(sharedSettings)
   .settings(testSettings)
   .settings(scalafixSettings)
