@@ -17,7 +17,6 @@ class CalevTimerSchedulerTest
     with AnyWordSpecLike {
 
   val log        = LoggerFactory.getLogger(getClass)
-  val calEvent   = CalEvent.unsafe("*-*-* *:0/1:0")
   val manualTime = ManualTime()
   val clock      = new TestClock
 
@@ -25,6 +24,9 @@ class CalevTimerSchedulerTest
     val probe = TestProbe[Tick]()
 
     "trigger periodically according to given CalEvent" in {
+
+      val calEvent   = CalEvent.unsafe("*-*-* *:0/1:0") // every day, every full minute
+
       val behavior = CalevTimerScheduler.withCalendarEvent(clock, calEvent, Tick)(
         receiveMessage[Tick] { tick =>
           probe.ref ! tick
