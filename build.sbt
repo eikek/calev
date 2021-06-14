@@ -181,7 +181,7 @@ lazy val akkaJVM = project
       email = ""
     ),
     libraryDependencies ++=
-      Dependencies.akkaAll
+      Dependencies.akkaAll ++ Dependencies.scalaTest
   )
 
 lazy val readme = project

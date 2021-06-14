@@ -2,14 +2,20 @@ import sbt._
 
 object Dependencies {
 
-  val akkaVersion    = "2.6.15"
-  val circeVersion   = "0.14.1"
-  val doobieVersion  = "0.13.4"
-  val fs2Version     = "2.5.6"
-  val h2Version      = "1.4.200"
-  val log4sVersion   = "1.8.2"
-  val logbackVersion = "1.2.3"
-  val munitVersion   = "0.7.26"
+  val akkaVersion      = "2.6.15"
+  val circeVersion     = "0.14.1"
+  val doobieVersion    = "0.13.4"
+  val fs2Version       = "2.5.6"
+  val h2Version        = "1.4.200"
+  val log4sVersion     = "1.8.2"
+  val logbackVersion   = "1.2.3"
+  val munitVersion     = "0.7.26"
+  val scalaTestVersion = "3.2.9"
+
+  val scalaTest = Seq(
+    "org.scalactic" %% "scalactic" % scalaTestVersion,
+    "org.scalatest" %% "scalatest" % scalaTestVersion % Test
+  )
 
   val munit = Seq(
     "org.scalameta" %% "munit"            % munitVersion,
@@ -49,6 +55,7 @@ object Dependencies {
   )
 
   val akkaAll = Seq(
-    "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion
+    "com.typesafe.akka" %% "akka-actor-typed"         % akkaVersion,
+    "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion % Test
   )
 }
