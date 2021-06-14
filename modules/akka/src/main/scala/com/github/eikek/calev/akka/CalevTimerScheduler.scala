@@ -3,7 +3,6 @@ package com.github.eikek.calev.akka
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.{Behaviors, TimerScheduler}
 import com.github.eikek.calev.CalEvent
-import com.github.eikek.calev.internal.{DefaultTrigger, Trigger}
 
 import java.time.{Clock, ZonedDateTime}
 import scala.concurrent.duration._
@@ -16,7 +15,7 @@ object CalevTimerScheduler {
       minInterval: Option[FiniteDuration] = None
   )(factory: CalevTimerScheduler[T] => Behavior[T]): Behavior[T] =
     Behaviors.withTimers { scheduler =>
-      factory(new CalevTimerSchedulerImpl[T](scheduler, DefaultTrigger, clock, minInterval))
+      factory(new CalevTimerSchedulerImpl[T](scheduler, clock, minInterval))
     }
 
   def withCalendarEvent[B, T <: B: ClassTag](
@@ -36,13 +35,12 @@ trait CalevTimerScheduler[T] {
 
 private[akka] class CalevTimerSchedulerImpl[T](
     scheduler: TimerScheduler[T],
-    calendar: Trigger,
     clock: Clock,
     minInterval: Option[FiniteDuration]
 ) extends CalevTimerScheduler[T] {
 
   private val upcomingEventProvider =
-    new UpcomingEventProvider(calendar, clock, minInterval)
+    new UpcomingEventProvider(clock, minInterval)
 
   def scheduleUpcoming(calEvent: CalEvent, triggerFactory: ZonedDateTime => T): Unit =
     upcomingEventProvider(calEvent)

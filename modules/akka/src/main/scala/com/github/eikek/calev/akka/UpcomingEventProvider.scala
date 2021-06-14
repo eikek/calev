@@ -1,13 +1,11 @@
 package com.github.eikek.calev.akka
 
 import com.github.eikek.calev.CalEvent
-import com.github.eikek.calev.internal.Trigger
 
 import java.time.{Clock, ZonedDateTime, Duration => JavaDuration}
 import scala.concurrent.duration._
 
 class UpcomingEventProvider(
-    calendar: Trigger,
     clock: Clock,
     minInterval: Option[FiniteDuration] = None
 ) {
@@ -15,8 +13,7 @@ class UpcomingEventProvider(
 
   def apply(calEvent: CalEvent, delay: FiniteDuration = Duration.Zero): Option[(ZonedDateTime, FiniteDuration)] = {
     val refInstant = now.minusNanos(delay.toNanos)
-    calendar
-      .next(refInstant, calEvent)
+    calEvent.nextElapse(refInstant)
       .map { instant =>
         (instant, JavaDuration.between(refInstant, instant).toMillis.millis)
       }
