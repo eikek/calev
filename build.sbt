@@ -170,7 +170,6 @@ lazy val akkaJVM = project
   .in(file("modules/akka"))
   .dependsOn(coreJVM)
   .settings(sharedSettings)
-  .settings(testSettings)
   .settings(scalafixSettings)
   .settings(
     name := "calev-akka",
@@ -181,7 +180,7 @@ lazy val akkaJVM = project
       email = ""
     ),
     libraryDependencies ++=
-      Dependencies.akkaAll ++ Dependencies.scalaTest
+      Dependencies.akkaAll ++ Dependencies.scalaTest ++ Dependencies.logback.map(_ % Test)
   )
 
 lazy val readme = project
