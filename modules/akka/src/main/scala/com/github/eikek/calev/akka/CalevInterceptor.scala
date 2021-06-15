@@ -1,12 +1,13 @@
 package com.github.eikek.calev.akka
 
+import java.time.{Clock, ZonedDateTime}
+
+import scala.reflect.ClassTag
+
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{Behavior, BehaviorInterceptor, TypedActorContext}
 import com.github.eikek.calev.CalEvent
 import com.github.eikek.calev.akka.CalevActorScheduling.ConfigOps
-
-import java.time.{Clock, ZonedDateTime}
-import scala.reflect.ClassTag
 
 private[akka] class CalevInterceptor[B, T <: B: ClassTag](
     clock: Clock,
@@ -39,4 +40,3 @@ private[akka] class CalevInterceptor[B, T <: B: ClassTag](
   }
 
 }
-

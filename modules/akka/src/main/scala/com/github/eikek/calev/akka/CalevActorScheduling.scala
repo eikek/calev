@@ -1,13 +1,14 @@
 package com.github.eikek.calev.akka
 
+import java.time.{Clock, ZonedDateTime}
+import java.util.concurrent.TimeUnit
+
+import scala.concurrent.duration.{Duration, FiniteDuration}
+
 import akka.actor.typed.ActorRef
 import akka.actor.typed.scaladsl.ActorContext
 import com.github.eikek.calev.CalEvent
 import com.typesafe.config.Config
-
-import java.time.{Clock, ZonedDateTime}
-import java.util.concurrent.TimeUnit
-import scala.concurrent.duration.{Duration, FiniteDuration}
 
 object CalevActorScheduling {
 
@@ -23,10 +24,12 @@ object CalevActorScheduling {
     }
   }
 
-  private[akka] final implicit class ConfigOps(val config: Config) extends AnyVal {
-    def getDurationMillis(path: String): FiniteDuration = getDuration(path, TimeUnit.MILLISECONDS)
+  implicit final private[akka] class ConfigOps(val config: Config) extends AnyVal {
+    def getDurationMillis(path: String): FiniteDuration =
+      getDuration(path, TimeUnit.MILLISECONDS)
 
-    def getDurationNanos(path: String): FiniteDuration = getDuration(path, TimeUnit.NANOSECONDS)
+    def getDurationNanos(path: String): FiniteDuration =
+      getDuration(path, TimeUnit.NANOSECONDS)
 
     private def getDuration(path: String, unit: TimeUnit): FiniteDuration =
       Duration(config.getDuration(path, unit), unit)

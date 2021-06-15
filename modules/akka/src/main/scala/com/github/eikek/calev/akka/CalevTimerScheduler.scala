@@ -1,12 +1,13 @@
 package com.github.eikek.calev.akka
 
+import java.time.{Clock, ZonedDateTime}
+
+import scala.concurrent.duration._
+import scala.reflect.ClassTag
+
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.{Behaviors, TimerScheduler}
 import com.github.eikek.calev.CalEvent
-
-import java.time.{Clock, ZonedDateTime}
-import scala.concurrent.duration._
-import scala.reflect.ClassTag
 
 object CalevTimerScheduler {
 
