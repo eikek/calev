@@ -11,17 +11,17 @@ import scala.reflect.ClassTag
 object CalevTimerScheduler {
 
   def withCalevTimers[T](
-      clock: Clock,
-      minInterval: Option[FiniteDuration] = None
+      minInterval: Option[FiniteDuration] = None,
+      clock: Clock = Clock.systemDefaultZone()
   )(factory: CalevTimerScheduler[T] => Behavior[T]): Behavior[T] =
     Behaviors.withTimers { scheduler =>
       factory(new CalevTimerSchedulerImpl[T](scheduler, clock, minInterval))
     }
 
   def withCalendarEvent[B, T <: B: ClassTag](
-      clock: Clock,
       calEvent: CalEvent,
-      triggerFactory: ZonedDateTime => T
+      triggerFactory: ZonedDateTime => T,
+      clock: Clock = Clock.systemDefaultZone()
   )(inner: Behavior[B]): Behavior[T] =
     Behaviors.intercept(() =>
       new CalevInterceptor[B, T](clock, calEvent, triggerFactory)
