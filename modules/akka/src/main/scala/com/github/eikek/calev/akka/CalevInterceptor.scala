@@ -32,7 +32,7 @@ private[akka] class CalevInterceptor[B, T <: B: ClassTag](
       val config      = ctx.system.settings.config
       val minInterval = config.getDurationMillis("akka.scheduler.tick-duration") * 4
 
-      CalevTimerScheduler.withCalevTimers(clock, Some(minInterval)) { scheduler =>
+      CalevTimerScheduler.withCalevTimers(Some(minInterval), clock) { scheduler =>
         scheduler.scheduleUpcoming(calEvent, triggerFactory)
         target
       }

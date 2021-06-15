@@ -27,7 +27,7 @@ class CalevTimerSchedulerTest
 
       val calEvent   = CalEvent.unsafe("*-*-* *:0/1:0") // every day, every full minute
 
-      val behavior = CalevTimerScheduler.withCalendarEvent(clock, calEvent, Tick)(
+      val behavior = CalevTimerScheduler.withCalendarEvent(calEvent, Tick, clock)(
         receiveMessage[Tick] { tick =>
           probe.ref ! tick
           log.info(s"Tick scheduled at ${tick.timestamp.toLocalTime} received at: ${LocalTime.now(clock)}")
