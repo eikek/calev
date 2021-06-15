@@ -2,7 +2,6 @@ package com.github.eikek.calev.akka
 
 import java.time._
 
-import scala.compat.java8.DurationConverters.FiniteDurationops
 import scala.concurrent.duration.FiniteDuration
 
 class TestClock extends Clock {
@@ -20,14 +19,12 @@ class TestClock extends Clock {
   def setInstant(newInstant: Instant): Unit =
     _instant = roundToMillis(newInstant)
 
-  def tick(duration: FiniteDuration): Instant =
-    tick(duration.toJava)
-
-  def tick(duration: Duration): Instant = {
-    val newInstant = roundToMillis(_instant.plus(duration))
+  def tick(duration: FiniteDuration): Instant = {
+    val newInstant = roundToMillis(_instant.plusMillis(duration.toMillis))
     _instant = newInstant
     newInstant
   }
+
 
   private def roundToMillis(i: Instant): Instant = {
     // algo taken from java.time.Clock.tick
