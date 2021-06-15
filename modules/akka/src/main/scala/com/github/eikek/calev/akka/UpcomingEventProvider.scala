@@ -27,7 +27,7 @@ class UpcomingEventProvider(
             if minInterval.exists(min => duration.toMillis < min.toMillis) =>
           apply(calEvent, minInterval.get)
         case (dt, duration) =>
-          Some(dt, duration)
+          Some((dt, duration))
       }
   }
 
