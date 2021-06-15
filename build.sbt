@@ -215,4 +215,4 @@ val root = project
   .settings(
     name := "calev-root"
   )
-  .aggregate(coreJVM, coreJS, fs2JVM, fs2JS, doobieJVM, circeJVM, circeJS)
+  .aggregate(coreJVM, coreJS, fs2JVM, fs2JS, doobieJVM, circeJVM, circeJS, akkaJVM)
