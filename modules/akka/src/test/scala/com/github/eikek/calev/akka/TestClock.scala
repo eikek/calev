@@ -25,7 +25,6 @@ class TestClock extends Clock {
     newInstant
   }
 
-
   private def roundToMillis(i: Instant): Instant = {
     // algo taken from java.time.Clock.tick
     val epochMilli = i.toEpochMilli
