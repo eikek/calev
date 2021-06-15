@@ -173,6 +173,7 @@ lazy val akkaJVM = project
   .settings(scalafixSettings)
   .settings(
     name := "calev-akka",
+    crossScalaVersions := Seq(scala212, scala213),
     developers += Developer(
       id = "pawelkaczor",
       name = "Paweł Kaczor",
@@ -191,7 +192,7 @@ lazy val readme = project
   .settings(
     name := "calev-readme",
     libraryDependencies ++=
-      Dependencies.circeAll ++ Dependencies.akkaAll,
+      Dependencies.circeAll,
     scalacOptions := Seq(),
     mdocVariables := Map(
       "VERSION" -> version.value
