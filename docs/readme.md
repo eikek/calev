@@ -212,14 +212,18 @@ val read = for {
 ```
 ### Akka
 
-```
+```scala mdoc
+import com.github.eikek.calev._
+import com.github.eikek.calev.akka.CalevTimerScheduler
+import akka.actor.typed.scaladsl.Behaviors._
+
 case class Tick(timestamp: ZonedDateTime)
 
 val calEvent   = CalEvent.unsafe("*-*-* *:0/1:0") // every day, every full minute
 
 val behavior = CalevTimerScheduler.withCalendarEvent(calEvent, Tick)(
   receiveMessage[Tick] { tick =>
-    log.info(s"Tick scheduled at ${tick.timestamp} received at: ${Instant.now}")
+    println(s"Tick scheduled at ${tick.timestamp} received at: ${Instant.now}")
     same
   }
 )

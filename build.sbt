@@ -191,7 +191,7 @@ lazy val readme = project
   .settings(
     name := "calev-readme",
     libraryDependencies ++=
-      Dependencies.circeAll,
+      Dependencies.circeAll ++ Dependencies.akkaAll,
     scalacOptions := Seq(),
     mdocVariables := Map(
       "VERSION" -> version.value
@@ -206,7 +206,7 @@ lazy val readme = project
       ()
     }
   )
-  .dependsOn(coreJVM, fs2JVM, doobieJVM, circeJVM)
+  .dependsOn(coreJVM, fs2JVM, doobieJVM, circeJVM, akkaJVM)
 
 val root = project
   .in(file("."))
