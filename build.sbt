@@ -36,7 +36,7 @@ val sharedSettings = Seq(
            "-Ywarn-value-discard"
          )
        else if (scalaBinaryVersion.value.startsWith("2.13"))
-         List("-Werror", "-Wdead-code", "-Wunused", "-Wvalue-discard")
+         List("-Werror", "-Wdead-code", "-Wunused", "-Wvalue-discard", "-Ytasty-reader")
        else if (scalaBinaryVersion.value.startsWith("3"))
          List(
            "-explain",
