@@ -36,7 +36,7 @@ val sharedSettings = Seq(
            "-Ywarn-value-discard"
          )
        else if (scalaBinaryVersion.value.startsWith("2.13"))
-         List("-Werror", "-Wdead-code", "-Wunused", "-Wvalue-discard")
+         List("-Werror", "-Wdead-code", "-Wunused", "-Wvalue-discard", "-Ytasty-reader")
        else if (scalaBinaryVersion.value.startsWith("3"))
          List(
            "-explain",
@@ -82,7 +82,7 @@ lazy val noPublish = Seq(
 )
 
 val testSettings = Seq(
-  libraryDependencies ++= inTests(Dependencies.munit ++ Dependencies.logback),
+  libraryDependencies ++= (Dependencies.munit ++ Dependencies.logback).map(_ % Test),
   testFrameworks += new TestFramework("munit.Framework")
 )
 
@@ -116,7 +116,8 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
   .settings(
     name := "calev-core",
     libraryDependencies ++=
-      inTests(Dependencies.fs2 ++ Dependencies.fs2io)
+      Dependencies.fs2.map(_     % Test) ++
+        Dependencies.fs2io.map(_ % Test)
   )
 lazy val coreJVM = core.jvm
 lazy val coreJS  = core.js
@@ -145,7 +146,7 @@ lazy val doobieJVM = project
     name := "calev-doobie",
     libraryDependencies ++=
       Dependencies.doobie ++
-        inTests(Dependencies.h2)
+        Dependencies.h2.map(_ % Test)
   )
   .dependsOn(coreJVM)
 
@@ -159,11 +160,29 @@ lazy val circe = crossProject(JSPlatform, JVMPlatform)
     name := "calev-circe",
     libraryDependencies ++=
       Dependencies.circe ++
-        inTests(Dependencies.circeAll)
+        Dependencies.circeAll.map(_ % Test)
   )
   .dependsOn(core)
 lazy val circeJVM = circe.jvm
 lazy val circeJS  = circe.js
+
+lazy val akkaJVM = project
+  .in(file("modules/akka"))
+  .dependsOn(coreJVM)
+  .settings(sharedSettings)
+  .settings(scalafixSettings)
+  .settings(
+    name := "calev-akka",
+    crossScalaVersions := Seq(scala212, scala213),
+    developers += Developer(
+      id = "pawelkaczor",
+      name = "Paweł Kaczor",
+      url = url("https://github.com/pawelkaczor"),
+      email = ""
+    ),
+    libraryDependencies ++=
+      Dependencies.akkaAll ++ Dependencies.scalaTest ++ Dependencies.logback.map(_ % Test)
+  )
 
 lazy val readme = project
   .in(file("modules/readme"))
@@ -188,7 +207,7 @@ lazy val readme = project
       ()
     }
   )
-  .dependsOn(coreJVM, fs2JVM, doobieJVM, circeJVM)
+  .dependsOn(coreJVM, fs2JVM, doobieJVM, circeJVM, akkaJVM)
 
 val root = project
   .in(file("."))
@@ -197,8 +216,4 @@ val root = project
   .settings(
     name := "calev-root"
   )
-  .aggregate(coreJVM, coreJS, fs2JVM, fs2JS, doobieJVM, circeJVM, circeJS)
-
-def inTests(modules: Seq[ModuleID]) = {
-  modules.map(_ % Test)
-}
+  .aggregate(coreJVM, coreJS, fs2JVM, fs2JS, doobieJVM, circeJVM, circeJS, akkaJVM)
