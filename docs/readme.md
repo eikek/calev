@@ -75,6 +75,11 @@ compared to systemd:
   ```sbt
   libraryDependencies += "com.github.eikek" %% "calev-circe" % "@VERSION@"
   ```
+- The *akka* module allows to use calendar events with [Akka Scheduler](https://doc.akka.io/docs/akka/current/scheduler.html)
+  and [Akka Timers](https://doc.akka.io/docs/akka/current/typed/interaction-patterns.html#typed-scheduling). 
+  ```sbt
+  libraryDependencies += "com.github.eikek" %% "calev-akka" % "@VERSION@"
+  ```
 
 
 ## Examples
@@ -205,3 +210,22 @@ val read = for {
   value <- parsed.as[Meeting]
 } yield value
 ```
+### Akka
+
+```scala mdoc
+import com.github.eikek.calev.CalEvent
+import com.github.eikek.calev.akka.CalevTimerScheduler
+import _root_.akka.actor.typed.scaladsl.Behaviors._
+
+case class Tick(timestamp: ZonedDateTime)
+
+def calEvent   = CalEvent.unsafe("*-*-* *:0/1:0") // every day, every full minute
+
+def behavior = CalevTimerScheduler.withCalendarEvent(calEvent, Tick)(
+  receiveMessage[Tick] { tick =>
+    println(s"Tick scheduled at ${tick.timestamp} received at: ${Instant.now}")
+    same
+  }
+)
+```
+More examples to come...

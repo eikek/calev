@@ -36,7 +36,7 @@ val sharedSettings = Seq(
            "-Ywarn-value-discard"
          )
        else if (scalaBinaryVersion.value.startsWith("2.13"))
-         List("-Werror", "-Wdead-code", "-Wunused", "-Wvalue-discard")
+         List("-Werror", "-Wdead-code", "-Wunused", "-Wvalue-discard", "-Ytasty-reader")
        else if (scalaBinaryVersion.value.startsWith("3"))
          List(
            "-explain",
@@ -166,6 +166,24 @@ lazy val circe = crossProject(JSPlatform, JVMPlatform)
 lazy val circeJVM = circe.jvm
 lazy val circeJS  = circe.js
 
+lazy val akkaJVM = project
+  .in(file("modules/akka"))
+  .dependsOn(coreJVM)
+  .settings(sharedSettings)
+  .settings(scalafixSettings)
+  .settings(
+    name := "calev-akka",
+    crossScalaVersions := Seq(scala212, scala213),
+    developers += Developer(
+      id = "pawelkaczor",
+      name = "Paweł Kaczor",
+      url = url("https://github.com/pawelkaczor"),
+      email = ""
+    ),
+    libraryDependencies ++=
+      Dependencies.akkaAll ++ Dependencies.scalaTest ++ Dependencies.logback.map(_ % Test)
+  )
+
 lazy val readme = project
   .in(file("modules/readme"))
   .enablePlugins(MdocPlugin)
@@ -189,7 +207,7 @@ lazy val readme = project
       ()
     }
   )
-  .dependsOn(coreJVM, fs2JVM, doobieJVM, circeJVM)
+  .dependsOn(coreJVM, fs2JVM, doobieJVM, circeJVM, akkaJVM)
 
 val root = project
   .in(file("."))
@@ -198,4 +216,4 @@ val root = project
   .settings(
     name := "calev-root"
   )
-  .aggregate(coreJVM, coreJS, fs2JVM, fs2JS, doobieJVM, circeJVM, circeJS)
+  .aggregate(coreJVM, coreJS, fs2JVM, fs2JS, doobieJVM, circeJVM, circeJS, akkaJVM)

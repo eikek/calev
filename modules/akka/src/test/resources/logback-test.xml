@@ -1,0 +1,11 @@
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{dd.MM HH:mm:ss.SSS} %.-1level [%10.10t] %-25.25logger{24} %X{device}%X{model} %m%n%ex</pattern>
+        </encoder>
+    </appender>
+
+<root level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>
