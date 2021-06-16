@@ -16,7 +16,7 @@ class UpcomingEventProvider(
       calEvent: CalEvent,
       delay: FiniteDuration = Duration.Zero
   ): Option[(ZonedDateTime, FiniteDuration)] = {
-    val refInstant = now.minusNanos(delay.toNanos)
+    val refInstant: ZonedDateTime = now.minusNanos(delay.toNanos)
     calEvent
       .nextElapse(refInstant)
       .map { instant =>
