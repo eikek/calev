@@ -19,14 +19,12 @@ object CalevTimerScheduler {
       factory(new CalevTimerSchedulerImpl[T](scheduler, clock, minInterval))
     }
 
-  def withCalendarEvent[B, T <: B: ClassTag](
+  def withCalendarEvent[I, O <: I: ClassTag](
       calEvent: CalEvent,
-      triggerFactory: ZonedDateTime => T,
       clock: Clock = Clock.systemDefaultZone()
-  )(inner: Behavior[B]): Behavior[T] =
-    Behaviors.intercept(() =>
-      new CalevInterceptor[B, T](clock, calEvent, triggerFactory)
-    )(inner)
+  )(triggerFactory: ZonedDateTime => O, inner: Behavior[I]): Behavior[I] =
+    Behaviors
+      .intercept(() => new CalevInterceptor[I, O](clock, calEvent, triggerFactory))(inner).asInstanceOf[Behavior[I]]
 
 }
 

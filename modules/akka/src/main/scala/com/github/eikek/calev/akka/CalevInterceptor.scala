@@ -9,26 +9,26 @@ import akka.actor.typed.{Behavior, BehaviorInterceptor, TypedActorContext}
 import com.github.eikek.calev.CalEvent
 import com.github.eikek.calev.akka.CalevActorScheduling.ConfigOps
 
-private[akka] class CalevInterceptor[B, T <: B: ClassTag](
+private[akka] class CalevInterceptor[I, O <: I: ClassTag](
     clock: Clock,
     calEvent: CalEvent,
-    triggerFactory: ZonedDateTime => T
-) extends BehaviorInterceptor[T, B] {
+    triggerFactory: ZonedDateTime => O
+) extends BehaviorInterceptor[O, I] {
 
   override def aroundStart(
-      ctx: TypedActorContext[T],
-      target: BehaviorInterceptor.PreStartTarget[B]
-  ): Behavior[B] =
+      ctx: TypedActorContext[O],
+      target: BehaviorInterceptor.PreStartTarget[I]
+  ): Behavior[I] =
     scheduleUpcoming(target.start(ctx))
 
   override def aroundReceive(
-      ctx: TypedActorContext[T],
-      msg: T,
-      target: BehaviorInterceptor.ReceiveTarget[B]
-  ): Behavior[B] =
+      ctx: TypedActorContext[O],
+      msg: O,
+      target: BehaviorInterceptor.ReceiveTarget[I]
+  ): Behavior[I] =
     scheduleUpcoming(target(ctx, msg))
 
-  private def scheduleUpcoming(target: Behavior[B]): Behavior[B] = Behaviors.setup {
+  private def scheduleUpcoming(target: Behavior[I]): Behavior[I] = Behaviors.setup {
     ctx =>
       val config      = ctx.system.settings.config
       val minInterval = config.getDurationMillis("akka.scheduler.tick-duration") * 4

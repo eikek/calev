@@ -2,20 +2,20 @@ package com.github.eikek.calev.akka
 
 import java.time.temporal.ChronoField
 import java.time.{LocalTime, ZonedDateTime}
-
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
-
-import akka.actor.testkit.typed.scaladsl.{
-  ManualTime,
-  ScalaTestWithActorTestKit,
-  TestProbe
-}
+import akka.actor.testkit.typed.scaladsl.{ManualTime, ScalaTestWithActorTestKit, TestProbe}
 import akka.actor.typed.scaladsl.Behaviors.{receiveMessage, same}
 import com.github.eikek.calev.CalEvent
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.slf4j.LoggerFactory
+import CalevTimerSchedulerTest._
+import akka.actor.typed.ActorRef
 
-case class Tick(timestamp: ZonedDateTime)
+object CalevTimerSchedulerTest {
+  sealed trait Message
+  case class Tick(timestamp: ZonedDateTime) extends Message
+  case class Ping()                         extends Message
+}
 
 class CalevTimerSchedulerTest
     extends ScalaTestWithActorTestKit(ManualTime.config)
@@ -26,23 +26,32 @@ class CalevTimerSchedulerTest
   val clock      = new TestClock
 
   "Akka Timer" should {
-    val probe = TestProbe[Tick]()
+    val probe = TestProbe[Message]()
 
     "trigger periodically according to given CalEvent" in {
 
       val calEvent = CalEvent.unsafe("*-*-* *:0/1:0") // every day, every full minute
 
-      val behavior = CalevTimerScheduler.withCalendarEvent(calEvent, Tick, clock)(
-        receiveMessage[Tick] { tick =>
-          probe.ref ! tick
-          log.info(
-            s"Tick scheduled at ${tick.timestamp.toLocalTime} received at: ${LocalTime.now(clock)}"
-          )
-          same
+      val behavior = CalevTimerScheduler.withCalendarEvent(calEvent, clock)(
+        Tick,
+        receiveMessage[Message] {
+          case tick: Tick =>
+            probe.ref ! tick
+            log.info(
+              s"Tick scheduled at ${tick.timestamp.toLocalTime} received at: ${LocalTime.now(clock)}"
+            )
+            same
+          case ping: Ping =>
+            probe.ref ! ping
+            log.info("Ping received")
+            same
         }
       )
 
-      spawn(behavior)
+      val actor: ActorRef[Message] = spawn(behavior)
+
+      actor ! Ping()
+      probe.expectMessage(Ping())
 
       expectNoMessagesFor(
         (60 - LocalTime.now().get(ChronoField.SECOND_OF_MINUTE)).seconds - 1.second
