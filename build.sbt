@@ -36,7 +36,7 @@ val sharedSettings = Seq(
            "-Ywarn-value-discard"
          )
        else if (scalaBinaryVersion.value.startsWith("2.13"))
-         List("-Werror", "-Wdead-code", "-Wunused", "-Wvalue-discard", "-Ytasty-reader")
+         List("-Werror", "-Wdead-code", "-Wunused", "-Wvalue-discard")
        else if (scalaBinaryVersion.value.startsWith("3"))
          List(
            "-explain",
@@ -214,6 +214,7 @@ val root = project
   .settings(sharedSettings)
   .settings(noPublish)
   .settings(
-    name := "calev-root"
+    name := "calev-root",
+    crossScalaVersions := Nil
   )
   .aggregate(coreJVM, coreJS, fs2JVM, fs2JS, doobieJVM, circeJVM, circeJS, akkaJVM)

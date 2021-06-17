@@ -52,7 +52,7 @@ compared to systemd:
   and generator for calendar events. It is also published for ScalaJS.
   With sbt, use:
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-core" % "0.5.0+36-ff9f10ef+20210617-0903-SNAPSHOT"
+  libraryDependencies += "com.github.eikek" %% "calev-core" % "0.5.1"
   ```
 - The *fs2* module contains utilities to work with
   [FS2](https://github.com/functional-streams-for-scala/fs2) streams.
@@ -61,24 +61,24 @@ compared to systemd:
   [fs2-cron](https://github.com/fthomas/fs2-cron) library.  It is also published
   for ScalaJS. With sbt, use
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-fs2" % "0.5.0+36-ff9f10ef+20210617-0903-SNAPSHOT"
+  libraryDependencies += "com.github.eikek" %% "calev-fs2" % "0.5.1"
   ```
 - The *doobie* module contains `Meta`, `Read` and `Write` instances
   for `CalEvent` to use with
   [doobie](https://github.com/tpolecat/doobie).
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-doobie" % "0.5.0+36-ff9f10ef+20210617-0903-SNAPSHOT"
+  libraryDependencies += "com.github.eikek" %% "calev-doobie" % "0.5.1"
   ```
 - The *circe* module defines a json decoder and encoder for `CalEvent`
   instances to use with [circe](https://github.com/circe/circe).  It is also
   published for ScalaJS.
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-circe" % "0.5.0+36-ff9f10ef+20210617-0903-SNAPSHOT"
+  libraryDependencies += "com.github.eikek" %% "calev-circe" % "0.5.1"
   ```
 - The *akka* module allows to use calendar events with [Akka Scheduler](https://doc.akka.io/docs/akka/current/scheduler.html)
   and [Akka Timers](https://doc.akka.io/docs/akka/current/typed/interaction-patterns.html#typed-scheduling). 
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-akka" % "0.5.0+36-ff9f10ef+20210617-0903-SNAPSHOT"
+  libraryDependencies += "com.github.eikek" %% "calev-akka" % "0.5.1"
   ```
 
 
@@ -163,16 +163,16 @@ import java.time._
 ce.asString
 // res4: String = "*-*-* 00/2:00:00"
 val now = LocalDateTime.now
-// now: LocalDateTime = 2021-06-17T10:47:30.935
+// now: LocalDateTime = 2021-06-16T20:03:47.095
 ce.nextElapse(now)
-// res5: Option[LocalDateTime] = Some(value = 2021-06-17T12:00)
+// res5: Option[LocalDateTime] = Some(value = 2021-06-16T22:00)
 ce.nextElapses(now, 5)
 // res6: List[LocalDateTime] = List(
-//   2021-06-17T12:00,
-//   2021-06-17T14:00,
-//   2021-06-17T16:00,
-//   2021-06-17T18:00,
-//   2021-06-17T20:00
+//   2021-06-16T22:00,
+//   2021-06-17T00:00,
+//   2021-06-17T02:00,
+//   2021-06-17T04:00,
+//   2021-06-17T06:00
 // )
 ```
 
@@ -205,7 +205,7 @@ import java.time.LocalTime
 import scala.concurrent.ExecutionContext
 
 implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
-// timer: Timer[IO] = cats.effect.internals.IOTimer@339098d6
+// timer: Timer[IO] = cats.effect.internals.IOTimer@4ea5696b
 
 val printTime = IO(println(LocalTime.now))
 // printTime: IO[Unit] = Delay(thunk = <function0>)
@@ -226,9 +226,9 @@ val task = CalevFs2.awakeEvery[IO](event).evalMap(_ => printTime)
 // task: Stream[IO[x], Unit] = Stream(..)
 
 task.take(3).compile.drain.unsafeRunSync
-// 10:47:32.028
-// 10:47:34.001
-// 10:47:36.002
+// 20:03:48.019
+// 20:03:50.001
+// 20:03:52
 ```
 
 
@@ -266,8 +266,8 @@ val insert =
 //     acquire = Suspend(
 //       a = PrepareStatement(a = "INSERT INTO mytable (event) VALUES (?)")
 //     ),
-//     use = doobie.hi.connection$$$Lambda$30688/1375677848@522ce4f8,
-//     release = cats.effect.Bracket$$Lambda$30690/1001531893@654d9043
+//     use = doobie.hi.connection$$$Lambda$9122/471393862@6c82016d,
+//     release = cats.effect.Bracket$$Lambda$9124/417052477@2d4624e3
 //   )
 // )
 
@@ -278,8 +278,8 @@ val select =
 //     acquire = Suspend(
 //       a = PrepareStatement(a = "SELECT event FROM mytable WHERE id = 1")
 //     ),
-//     use = doobie.hi.connection$$$Lambda$30688/1375677848@551c300f,
-//     release = cats.effect.Bracket$$Lambda$30690/1001531893@11e65e83
+//     use = doobie.hi.connection$$$Lambda$9122/471393862@5768fb39,
+//     release = cats.effect.Bracket$$Lambda$9124/417052477@3bb03907
 //   )
 // )
 ```
