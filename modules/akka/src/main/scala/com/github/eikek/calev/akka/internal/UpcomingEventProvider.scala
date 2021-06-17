@@ -1,4 +1,4 @@
-package com.github.eikek.calev.akka
+package com.github.eikek.calev.akka.internal
 
 import java.time.{Clock, Duration => JavaDuration, ZonedDateTime}
 
@@ -6,7 +6,7 @@ import scala.concurrent.duration._
 
 import com.github.eikek.calev.CalEvent
 
-class UpcomingEventProvider(
+private[akka] class UpcomingEventProvider(
     clock: Clock,
     minInterval: Option[FiniteDuration] = None
 ) {

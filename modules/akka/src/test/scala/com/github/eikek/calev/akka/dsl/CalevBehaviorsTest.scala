@@ -1,23 +1,30 @@
-package com.github.eikek.calev.akka
+package com.github.eikek.calev.akka.dsl
 
 import java.time.temporal.ChronoField
 import java.time.{LocalTime, ZonedDateTime}
+
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
-import akka.actor.testkit.typed.scaladsl.{ManualTime, ScalaTestWithActorTestKit, TestProbe}
+
+import akka.actor.testkit.typed.scaladsl.{
+  ManualTime,
+  ScalaTestWithActorTestKit,
+  TestProbe
+}
+import akka.actor.typed.ActorRef
 import akka.actor.typed.scaladsl.Behaviors.{receiveMessage, same}
 import com.github.eikek.calev.CalEvent
+import com.github.eikek.calev.akka.TestClock
+import com.github.eikek.calev.akka.dsl.CalevBehaviorsTest._
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.slf4j.LoggerFactory
-import CalevTimerSchedulerTest._
-import akka.actor.typed.ActorRef
 
-object CalevTimerSchedulerTest {
+object CalevBehaviorsTest {
   sealed trait Message
   case class Tick(timestamp: ZonedDateTime) extends Message
   case class Ping()                         extends Message
 }
 
-class CalevTimerSchedulerTest
+class CalevBehaviorsTest
     extends ScalaTestWithActorTestKit(ManualTime.config)
     with AnyWordSpecLike {
 
@@ -30,9 +37,10 @@ class CalevTimerSchedulerTest
 
     "trigger periodically according to given CalEvent" in {
 
-      val calEvent = CalEvent.unsafe("*-*-* *:0/1:0") // every day, every full minute
+      // every day, every full minute
+      val calEvent = CalEvent.unsafe("*-*-* *:0/1:0")
 
-      val behavior = CalevTimerScheduler.withCalendarEvent(calEvent, clock)(
+      val behavior = CalevBehaviors.withCalendarEvent(calEvent, clock)(
         Tick,
         receiveMessage[Message] {
           case tick: Tick =>
