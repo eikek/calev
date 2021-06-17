@@ -163,16 +163,16 @@ import java.time._
 ce.asString
 // res4: String = "*-*-* 00/2:00:00"
 val now = LocalDateTime.now
-// now: LocalDateTime = 2021-06-17T09:20:39.442
+// now: LocalDateTime = 2021-06-17T10:47:30.935
 ce.nextElapse(now)
-// res5: Option[LocalDateTime] = Some(value = 2021-06-17T10:00)
+// res5: Option[LocalDateTime] = Some(value = 2021-06-17T12:00)
 ce.nextElapses(now, 5)
 // res6: List[LocalDateTime] = List(
-//   2021-06-17T10:00,
 //   2021-06-17T12:00,
 //   2021-06-17T14:00,
 //   2021-06-17T16:00,
-//   2021-06-17T18:00
+//   2021-06-17T18:00,
+//   2021-06-17T20:00
 // )
 ```
 
@@ -205,7 +205,7 @@ import java.time.LocalTime
 import scala.concurrent.ExecutionContext
 
 implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
-// timer: Timer[IO] = cats.effect.internals.IOTimer@16049589
+// timer: Timer[IO] = cats.effect.internals.IOTimer@339098d6
 
 val printTime = IO(println(LocalTime.now))
 // printTime: IO[Unit] = Delay(thunk = <function0>)
@@ -226,9 +226,9 @@ val task = CalevFs2.awakeEvery[IO](event).evalMap(_ => printTime)
 // task: Stream[IO[x], Unit] = Stream(..)
 
 task.take(3).compile.drain.unsafeRunSync
-// 09:20:40.027
-// 09:20:42.001
-// 09:20:44.002
+// 10:47:32.028
+// 10:47:34.001
+// 10:47:36.002
 ```
 
 
@@ -266,8 +266,8 @@ val insert =
 //     acquire = Suspend(
 //       a = PrepareStatement(a = "INSERT INTO mytable (event) VALUES (?)")
 //     ),
-//     use = doobie.hi.connection$$$Lambda$15801/1507072743@1d2f4223,
-//     release = cats.effect.Bracket$$Lambda$15803/1545118789@53ed44fc
+//     use = doobie.hi.connection$$$Lambda$30688/1375677848@522ce4f8,
+//     release = cats.effect.Bracket$$Lambda$30690/1001531893@654d9043
 //   )
 // )
 
@@ -278,8 +278,8 @@ val select =
 //     acquire = Suspend(
 //       a = PrepareStatement(a = "SELECT event FROM mytable WHERE id = 1")
 //     ),
-//     use = doobie.hi.connection$$$Lambda$15801/1507072743@7ca8f2b0,
-//     release = cats.effect.Bracket$$Lambda$15803/1545118789@4a2ef97b
+//     use = doobie.hi.connection$$$Lambda$30688/1375677848@551c300f,
+//     release = cats.effect.Bracket$$Lambda$30690/1001531893@11e65e83
 //   )
 // )
 ```
@@ -355,7 +355,8 @@ val read = for {
 ```
 ### Akka
 
-Use CalevBehaviors.withCalendarEvent DSL to get notifications according to given calendar event definition.   
+Get access to CalevTimerScheduler when building actor behavior by calling CalevBehaviors.withCalevTimers.
+Using CalevTimerScheduler you can start single Akka Timers for upcoming calendar events.
 
 ```scala
 import com.github.eikek.calev.CalEvent
@@ -371,7 +372,26 @@ case class Ping()                         extends Message
 // every day, every full minute
 def calEvent   = CalEvent.unsafe("*-*-* *:0/1:0")  
 
-def behavior = CalevBehaviors.withCalendarEvent(calEvent)(
+CalevBehaviors.withCalevTimers[Message]() { calevScheduler =>
+  calevScheduler.scheduleUpcoming(calEvent, Tick)
+        receiveMessage[Message] {
+          case tick: Tick =>
+            println(
+              s"Tick scheduled at ${tick.timestamp.toLocalTime} received at: ${LocalTime.now}"
+            )
+            same
+          case ping: Ping =>
+            println("Ping received")
+            same
+        }
+}
+// res9: <none>.<root>.akka.actor.typed.Behavior[Message] = Deferred(TimerSchedulerImpl.scala:29)
+```
+
+Use CalevBehaviors.withCalendarEvent to schedule messages according to the given calendar event definition.   
+
+```scala
+CalevBehaviors.withCalendarEvent(calEvent)(
   Tick,
   receiveMessage[Message] {
     case tick: Tick =>
@@ -384,5 +404,6 @@ def behavior = CalevBehaviors.withCalendarEvent(calEvent)(
       same
   }
 )
+// res10: <none>.<root>.akka.actor.typed.Behavior[Message] = Deferred(InterceptorImpl.scala:29-30)
 ```
 More examples to come...

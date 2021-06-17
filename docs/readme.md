@@ -212,7 +212,8 @@ val read = for {
 ```
 ### Akka
 
-Use CalevBehaviors.withCalendarEvent DSL to get notifications according to given calendar event definition.   
+Get access to CalevTimerScheduler when building actor behavior by calling CalevBehaviors.withCalevTimers.
+Using CalevTimerScheduler you can start single Akka Timers for upcoming calendar events.
 
 ```scala mdoc
 import com.github.eikek.calev.CalEvent
@@ -228,7 +229,25 @@ case class Ping()                         extends Message
 // every day, every full minute
 def calEvent   = CalEvent.unsafe("*-*-* *:0/1:0") 
 
-def behavior = CalevBehaviors.withCalendarEvent(calEvent)(
+CalevBehaviors.withCalevTimers[Message]() { calevScheduler =>
+  calevScheduler.scheduleUpcoming(calEvent, Tick)
+        receiveMessage[Message] {
+          case tick: Tick =>
+            println(
+              s"Tick scheduled at ${tick.timestamp.toLocalTime} received at: ${LocalTime.now}"
+            )
+            same
+          case ping: Ping =>
+            println("Ping received")
+            same
+        }
+}
+```
+
+Use CalevBehaviors.withCalendarEvent to schedule messages according to the given calendar event definition.   
+
+```scala mdoc
+CalevBehaviors.withCalendarEvent(calEvent)(
   Tick,
   receiveMessage[Message] {
     case tick: Tick =>

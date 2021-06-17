@@ -23,4 +23,23 @@ private[akka] class CalevTimerSchedulerImpl[T](
         scheduler.startSingleTimer(triggerFactory.apply(instant), delay)
       }
 
+  def scheduleUpcoming(
+      key: Any,
+      calEvent: CalEvent,
+      triggerFactory: ZonedDateTime => T
+  ): Unit =
+    upcomingEventProvider(calEvent)
+      .foreach { case (instant, delay) =>
+        scheduler.startSingleTimer(key, triggerFactory.apply(instant), delay)
+      }
+
+  def isTimerActive(key: Any): Boolean =
+    scheduler.isTimerActive(key)
+
+  def cancel(key: Any): Unit =
+    scheduler.cancel(key)
+
+  def cancelAll(): Unit =
+    scheduler.cancelAll()
+
 }
