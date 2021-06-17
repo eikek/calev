@@ -1,19 +1,22 @@
-package com.github.eikek.calev.akka
+package com.github.eikek.calev.akka.internal
 
 import java.time.Clock
 
 import scala.concurrent.ExecutionContext
 
+import akka.actor.Cancellable
 import akka.actor.typed.Scheduler
 import com.github.eikek.calev.CalEvent
+import com.github.eikek.calev.akka.dsl.CalevScheduler
 
-class CalevScheduler(scheduler: Scheduler, clock: Clock = Clock.systemDefaultZone()) {
+class CalevSchedulerImpl(scheduler: Scheduler, clock: Clock = Clock.systemDefaultZone())
+    extends CalevScheduler {
   private val upcomingEventProvider = new UpcomingEventProvider(clock)
 
   def scheduleUpcoming(calEvent: CalEvent, runnable: Runnable)(implicit
       executor: ExecutionContext
-  ): Unit =
-    upcomingEventProvider(calEvent).foreach { case (_, delay) =>
+  ): Option[Cancellable] =
+    upcomingEventProvider(calEvent).map { case (_, delay) =>
       scheduler.scheduleOnce(delay, runnable)
     }
 }
