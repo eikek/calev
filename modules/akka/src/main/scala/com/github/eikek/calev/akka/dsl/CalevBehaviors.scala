@@ -12,6 +12,12 @@ import com.github.eikek.calev.akka.internal.{CalevInterceptor, CalevTimerSchedul
 
 object CalevBehaviors {
 
+  /** Support for scheduled `self` messages in an actor.
+    * It takes care of the lifecycle of the timers such as cancelling them when the actor
+    * is restarted or stopped.
+    *
+    * @see [[CalevTimerScheduler]]
+    */
   def withCalevTimers[T](
       minInterval: Option[FiniteDuration] = None,
       clock: Clock = Clock.systemDefaultZone()
