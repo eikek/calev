@@ -297,4 +297,5 @@ calevScheduler().scheduleOnceWithCalendarEvent(calEvent, () => {
       s"Called at: ${LocalTime.now}"
   )
 })
+system.terminate()
 ```
