@@ -25,10 +25,10 @@ trait CalevTimerScheduler[T] {
     * previous timer is not received, even if it was already enqueued
     * in the mailbox when the new timer was started.
     */
-  def scheduleUpcoming(
-      key: Any,
+  def scheduleUpcoming[K](
+      key: K,
       calEvent: CalEvent,
-      triggerFactory: ZonedDateTime => T
+      triggerFactory: (K, ZonedDateTime) => T
   ): Unit
 
 }

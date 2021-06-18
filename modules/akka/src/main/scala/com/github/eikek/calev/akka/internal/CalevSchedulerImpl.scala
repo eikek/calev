@@ -9,7 +9,7 @@ import akka.actor.typed.Scheduler
 import com.github.eikek.calev.CalEvent
 import com.github.eikek.calev.akka.dsl.CalevScheduler
 
-class CalevSchedulerImpl(scheduler: Scheduler, clock: Clock = Clock.systemDefaultZone())
+private[akka] class CalevSchedulerImpl(val scheduler: Scheduler, clock: Clock = Clock.systemDefaultZone())
     extends CalevScheduler {
   private val upcomingEventProvider = new UpcomingEventProvider(clock)
 
