@@ -17,11 +17,11 @@ trait CalevActorScheduling {
       * calendar event definition.
       *
       * The scheduled action can be cancelled
-      * by invoking [[akka.actor.Cancellable#cancel]] on the returned
+      * by invoking Cancellable#cancel on the returned
       * handle.
       *
       * This method is thread-safe and can be called from other threads than the ordinary
-      * actor message processing thread, such as [[scala.concurrent.Future]] callbacks.
+      * actor message processing thread, such as Future callbacks.
       */
     def scheduleOnceWithCalendarEvent[T](
         calEvent: CalEvent,

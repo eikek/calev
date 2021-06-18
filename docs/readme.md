@@ -274,7 +274,6 @@ Schedule the sending of a message to the given target Actor at the time of
 the upcoming event according to the given calendar event definition.
 
 ```scala mdoc
-
 def behavior(tickReceiver: ActorRef[Tick]): Behavior[Message] = 
   setup { actorCtx =>
     actorCtx.scheduleOnceWithCalendarEvent(calEvent, tickReceiver, Tick)
@@ -286,12 +285,12 @@ Schedule the running of a ```Runnable``` at the time of the upcoming
 event according to the given calendar event definition.
 
 ```scala mdoc
-  implicit val system: ActorSystem[_] = ActorSystem(empty, "my-system")
-  import system.executionContext
-  
-  calevScheduler().scheduleOnceWithCalendarEvent(calEvent, () => {
-    println(
-        s"Called at: ${LocalTime.now}"
-    )
-  })
+implicit val system: ActorSystem[_] = ActorSystem(empty, "my-system")
+import system.executionContext
+
+calevScheduler().scheduleOnceWithCalendarEvent(calEvent, () => {
+  println(
+      s"Called at: ${LocalTime.now}"
+  )
+})
 ```
