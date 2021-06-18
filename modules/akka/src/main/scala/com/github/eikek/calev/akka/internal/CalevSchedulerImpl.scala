@@ -9,11 +9,13 @@ import akka.actor.typed.Scheduler
 import com.github.eikek.calev.CalEvent
 import com.github.eikek.calev.akka.dsl.CalevScheduler
 
-private[akka] class CalevSchedulerImpl(val scheduler: Scheduler, clock: Clock = Clock.systemDefaultZone())
-    extends CalevScheduler {
+private[akka] class CalevSchedulerImpl(
+    val scheduler: Scheduler,
+    clock: Clock = Clock.systemDefaultZone()
+) extends CalevScheduler {
   private val upcomingEventProvider = new UpcomingEventProvider(clock)
 
-  def scheduleUpcoming(calEvent: CalEvent, runnable: Runnable)(implicit
+  def scheduleOnceWithCalendarEvent(calEvent: CalEvent, runnable: Runnable)(implicit
       executor: ExecutionContext
   ): Option[Cancellable] =
     upcomingEventProvider(calEvent).map { case (_, delay) =>

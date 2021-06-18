@@ -17,20 +17,20 @@ private[akka] class CalevTimerSchedulerImpl[T](
   private val upcomingEventProvider =
     new UpcomingEventProvider(clock, minInterval)
 
-  def scheduleUpcoming(calEvent: CalEvent, triggerFactory: ZonedDateTime => T): Unit =
+  def startSingleTimer(calEvent: CalEvent, msgFactory: ZonedDateTime => T): Unit =
     upcomingEventProvider(calEvent)
       .foreach { case (instant, delay) =>
-        scheduler.startSingleTimer(triggerFactory.apply(instant), delay)
+        scheduler.startSingleTimer(msgFactory.apply(instant), delay)
       }
 
-  def scheduleUpcoming[K](
+  def startSingleTimer[K](
       key: K,
       calEvent: CalEvent,
-      triggerFactory: (K, ZonedDateTime) => T
+      msgFactory: (K, ZonedDateTime) => T
   ): Unit =
     upcomingEventProvider(calEvent)
       .foreach { case (instant, delay) =>
-        scheduler.startSingleTimer(key, triggerFactory(key, instant), delay)
+        scheduler.startSingleTimer(key, msgFactory(key, instant), delay)
       }
 
 }
