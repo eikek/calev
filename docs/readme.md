@@ -268,6 +268,10 @@ CalevBehaviors.withCalendarEvent(calEvent)(
   }
 )
 ```
+#### Testing
+
+See [CalevBehaviorsTest](https://github.com/eikek/calev/blob/master/modules/akka/src/test/scala/com/github/eikek/calev/akka/dsl/CalevBehaviorsTest.scala)
+
 #### Akka Scheduler 
 
 Schedule the sending of a message to the given target Actor at the time of 
