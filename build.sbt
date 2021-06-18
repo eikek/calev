@@ -6,7 +6,7 @@ val scala3   = "3.0.0"
 
 val updateReadme = inputKey[Unit]("Update readme")
 
-addCommandAlias("ci", "; lint; +test; +publishLocal")
+addCommandAlias("ci", "; lint; +test; readme/updateReadme; +publishLocal")
 addCommandAlias(
   "lint",
   "; scalafmtSbtCheck; scalafmtCheckAll; Compile/scalafix --check; Test/scalafix --check"
@@ -195,7 +195,7 @@ lazy val readme = project
       Dependencies.circeAll,
     scalacOptions := Seq(),
     mdocVariables := Map(
-      "VERSION" -> version.value
+      "VERSION" -> latestRelease.value
     ),
     updateReadme := {
       mdoc.evaluated
