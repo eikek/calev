@@ -226,7 +226,7 @@ lazy val readme = project
       ()
     }
   )
-  .dependsOn(coreJVM, fs2JVM, doobieJVM, circeJVM, akkaJVM)
+  .dependsOn(coreJVM, fs2JVM, doobieJVM, circeJVM, jacksonJVM, akkaJVM)
 
 val root = project
   .in(file("."))
