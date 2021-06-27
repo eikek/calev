@@ -6,18 +6,19 @@ import scala.concurrent.ExecutionContext
 
 import cats.effect._
 import com.github.eikek.calev._
+import fs2.Stream
 import munit._
 
 class CalevFs2Test extends FunSuite {
 
   implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
+  private val evalInstantNow    = Stream.eval(IO(Instant.now()))
 
   test("awake") {
-    val ce    = CalEvent.unsafe("*-*-* *:*:0/2")
-    val io    = CalevFs2.awakeEvery[IO](ce) >> CalevFs2.evalNow[IO]
-    val times = io.take(2).compile.toVector.unsafeRunSync()
-    assertEquals(times.size, 2)
-    assert(times.forall(dt => dt.getSecond % 2 == 0))
+    val evenSeconds = CalEvent.unsafe("*-*-* *:*:0/2")
+    val io          = CalevFs2.awakeEvery[IO](evenSeconds) >> evalInstantNow
+    val times       = io.map(_.getEpochSecond).take(2).forall(_ % 2 == 0).compile.last
+    assertEquals(times.unsafeRunSync(), Option(true))
   }
 
   test("nextElapses") {

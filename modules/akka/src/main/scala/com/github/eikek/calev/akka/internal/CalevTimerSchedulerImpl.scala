@@ -9,7 +9,7 @@ import com.github.eikek.calev.CalEvent
 import com.github.eikek.calev.akka.dsl.CalevTimerScheduler
 
 private[akka] class CalevTimerSchedulerImpl[T](
-    scheduler: TimerScheduler[T],
+    val scheduler: TimerScheduler[T],
     clock: Clock,
     minInterval: Option[FiniteDuration]
 ) extends CalevTimerScheduler[T] {
@@ -17,29 +17,20 @@ private[akka] class CalevTimerSchedulerImpl[T](
   private val upcomingEventProvider =
     new UpcomingEventProvider(clock, minInterval)
 
-  def scheduleUpcoming(calEvent: CalEvent, triggerFactory: ZonedDateTime => T): Unit =
+  def startSingleTimer(calEvent: CalEvent, msgFactory: ZonedDateTime => T): Unit =
     upcomingEventProvider(calEvent)
       .foreach { case (instant, delay) =>
-        scheduler.startSingleTimer(triggerFactory.apply(instant), delay)
+        scheduler.startSingleTimer(msgFactory.apply(instant), delay)
       }
 
-  def scheduleUpcoming(
-      key: Any,
+  def startSingleTimer[K](
+      key: K,
       calEvent: CalEvent,
-      triggerFactory: ZonedDateTime => T
+      msgFactory: (K, ZonedDateTime) => T
   ): Unit =
     upcomingEventProvider(calEvent)
       .foreach { case (instant, delay) =>
-        scheduler.startSingleTimer(key, triggerFactory.apply(instant), delay)
+        scheduler.startSingleTimer(key, msgFactory(key, instant), delay)
       }
-
-  def isTimerActive(key: Any): Boolean =
-    scheduler.isTimerActive(key)
-
-  def cancel(key: Any): Unit =
-    scheduler.cancel(key)
-
-  def cancelAll(): Unit =
-    scheduler.cancelAll()
 
 }

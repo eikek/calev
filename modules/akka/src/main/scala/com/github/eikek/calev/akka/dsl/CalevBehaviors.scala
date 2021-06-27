@@ -26,12 +26,15 @@ object CalevBehaviors {
       factory(new CalevTimerSchedulerImpl[T](scheduler, clock, minInterval))
     }
 
+  /** Schedule the sending of a message at a time of the upcoming event
+    * according to the given calendar event definition.
+    */
   def withCalendarEvent[I, O <: I: ClassTag](
       calEvent: CalEvent,
       clock: Clock = Clock.systemDefaultZone()
-  )(triggerFactory: ZonedDateTime => O, inner: Behavior[I]): Behavior[I] =
+  )(msgFactory: ZonedDateTime => O, inner: Behavior[I]): Behavior[I] =
     Behaviors
-      .intercept(() => new CalevInterceptor[I, O](clock, calEvent, triggerFactory))(inner)
+      .intercept(() => new CalevInterceptor[I, O](clock, calEvent, msgFactory))(inner)
       .asInstanceOf[Behavior[I]]
 
 }
