@@ -236,4 +236,14 @@ val root = project
     name := "calev-root",
     crossScalaVersions := Nil
   )
-  .aggregate(coreJVM, coreJS, fs2JVM, fs2JS, doobieJVM, circeJVM, circeJS, jacksonJVM, akkaJVM)
+  .aggregate(
+    coreJVM,
+    coreJS,
+    fs2JVM,
+    fs2JS,
+    doobieJVM,
+    circeJVM,
+    circeJS,
+    jacksonJVM,
+    akkaJVM
+  )
