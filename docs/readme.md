@@ -75,6 +75,10 @@ compared to systemd:
   ```sbt
   libraryDependencies += "com.github.eikek" %% "calev-circe" % "@VERSION@"
   ```
+- The *jackson* module defines `CalevModule` for [Jackson](https://github.com/FasterXML/jackson)
+  ```sbt
+  libraryDependencies += "com.github.eikek" %% "calev-jackson" % "@VERSION@"
+  ```
 - The *akka* module allows to use calendar events with [Akka Scheduler](https://doc.akka.io/docs/akka/current/scheduler.html)
   and [Akka Timers](https://doc.akka.io/docs/akka/current/typed/interaction-patterns.html#typed-scheduling). 
   ```sbt
@@ -209,6 +213,27 @@ val read = for {
   parsed <- parser.parse(json)
   value <- parsed.as[Meeting]
 } yield value
+```
+### Jackson
+
+Add `CalevModule` to use calendar event expressions in json: 
+
+```scala mdoc
+import com.github.eikek.calev._
+import com.fasterxml.jackson.core.`type`.TypeReference
+import com.fasterxml.jackson.databind.json.JsonMapper
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
+
+val jackson = JsonMapper
+  .builder()
+  .addModule(new CalevModule())
+  .addModule(DefaultScalaModule)
+  .build()
+
+val myMeeting = Meeting("trash can", CalEvent.unsafe("Mon..Fri *-*-* 14,18:0"))
+
+val myMeetingJson  = jackson.writeValueAsString(myMeeting)
+val myMeetingDeserialized  = jackson.readValue(myMeetingJson, new TypeReference[Meeting] {})
 ```
 ### Akka
 
