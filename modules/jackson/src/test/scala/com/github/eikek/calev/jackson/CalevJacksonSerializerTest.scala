@@ -31,7 +31,7 @@ class CalevJacksonSerializerTest extends FunSuite {
     assertEquals(event, eventDeserialized)
   }
 
-  test("encode/decode derived") {
+  test("serialize/deserialize derived") {
     val meeting = Meeting("trash can", CalEvent.unsafe("Mon..Fri *-*-* 14,18:0"))
     val json    = jackson.writeValueAsString(meeting)
     val read    = jackson.readValue(json, new TypeReference[Meeting] {})
