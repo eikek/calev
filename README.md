@@ -75,6 +75,10 @@ compared to systemd:
   ```sbt
   libraryDependencies += "com.github.eikek" %% "calev-circe" % "0.5.2"
   ```
+- The *jackson* module defines `CalevModule` for [Jackson](https://github.com/FasterXML/jackson)
+  ```sbt
+  libraryDependencies += "com.github.eikek" %% "calev-jackson" % "0.5.2"
+  ```
 - The *akka* module allows to use calendar events with [Akka Scheduler](https://doc.akka.io/docs/akka/current/scheduler.html)
   and [Akka Timers](https://doc.akka.io/docs/akka/current/typed/interaction-patterns.html#typed-scheduling). 
   ```sbt
@@ -163,16 +167,16 @@ import java.time._
 ce.asString
 // res4: String = "*-*-* 00/2:00:00"
 val now = LocalDateTime.now
-// now: LocalDateTime = 2021-06-18T20:09:33.810762
+// now: LocalDateTime = 2021-06-27T21:40:39.967
 ce.nextElapse(now)
-// res5: Option[LocalDateTime] = Some(value = 2021-06-18T22:00)
+// res5: Option[LocalDateTime] = Some(value = 2021-06-27T22:00)
 ce.nextElapses(now, 5)
 // res6: List[LocalDateTime] = List(
-//   2021-06-18T22:00,
-//   2021-06-19T00:00,
-//   2021-06-19T02:00,
-//   2021-06-19T04:00,
-//   2021-06-19T06:00
+//   2021-06-27T22:00,
+//   2021-06-28T00:00,
+//   2021-06-28T02:00,
+//   2021-06-28T04:00,
+//   2021-06-28T06:00
 // )
 ```
 
@@ -205,7 +209,7 @@ import java.time.LocalTime
 import scala.concurrent.ExecutionContext
 
 implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
-// timer: Timer[IO] = cats.effect.internals.IOTimer@34d70e20
+// timer: Timer[IO] = cats.effect.internals.IOTimer@a4d6952
 
 val printTime = IO(println(LocalTime.now))
 // printTime: IO[Unit] = Delay(thunk = <function0>)
@@ -226,9 +230,9 @@ val task = CalevFs2.awakeEvery[IO](event).evalMap(_ => printTime)
 // task: Stream[IO[x], Unit] = Stream(..)
 
 task.take(3).compile.drain.unsafeRunSync()
-// 20:09:36.016381
-// 20:09:38.000655
-// 20:09:40.000265
+// 21:40:42.032
+// 21:40:44.002
+// 21:40:46.002
 ```
 
 
@@ -266,8 +270,8 @@ val insert =
 //     acquire = Suspend(
 //       a = PrepareStatement(a = "INSERT INTO mytable (event) VALUES (?)")
 //     ),
-//     use = doobie.hi.connection$$$Lambda$9291/0x000000010265e040@6d0ea2c7,
-//     release = cats.effect.Bracket$$Lambda$9293/0x000000010265f840@4531bcff
+//     use = doobie.hi.connection$$$Lambda$19308/1865243025@120e2f1e,
+//     release = cats.effect.Bracket$$Lambda$19310/1063060071@d6098b5
 //   )
 // )
 
@@ -278,8 +282,8 @@ val select =
 //     acquire = Suspend(
 //       a = PrepareStatement(a = "SELECT event FROM mytable WHERE id = 1")
 //     ),
-//     use = doobie.hi.connection$$$Lambda$9291/0x000000010265e040@2229dfe5,
-//     release = cats.effect.Bracket$$Lambda$9293/0x000000010265f840@3a2959fd
+//     use = doobie.hi.connection$$$Lambda$19308/1865243025@4455c477,
+//     release = cats.effect.Bracket$$Lambda$19310/1063060071@4c3489e
 //   )
 // )
 ```
@@ -351,6 +355,48 @@ val read = for {
 //       zone = None
 //     )
 //   )
+// )
+```
+### Jackson
+
+Add `CalevModule` to use calendar event expressions in json: 
+
+```scala
+import com.github.eikek.calev._
+import com.fasterxml.jackson.core.`type`.TypeReference
+import com.fasterxml.jackson.databind.json.JsonMapper
+import com.github.eikek.calev.jackson.CalevModule
+
+val jackson = JsonMapper
+  .builder()
+  .addModule(new CalevModule())
+  .build()
+// jackson: JsonMapper = com.fasterxml.jackson.databind.json.JsonMapper@6756f1c7
+
+val myEvent    = CalEvent.unsafe("Mon *-*-* 05:00/10:00")
+// myEvent: CalEvent = CalEvent(
+//   weekday = List(values = Vector(Single(day = Mon))),
+//   date = DateEvent(year = All, month = All, day = All),
+//   time = TimeEvent(
+//     hour = List(values = Vector(Single(value = 5, rep = None))),
+//     minute = List(values = Vector(Single(value = 0, rep = Some(value = 10)))),
+//     seconds = List(values = Vector(Single(value = 0, rep = None)))
+//   ),
+//   zone = None
+// )
+
+val eventSerialized = jackson.writeValueAsString(myEvent)
+// eventSerialized: String = "\"Mon *-*-* 05:00/10:00\""
+val eventDeserialized = jackson.readValue(eventSerialized, new TypeReference[CalEvent] {})
+// eventDeserialized: CalEvent = CalEvent(
+//   weekday = List(values = Vector(Single(day = Mon))),
+//   date = DateEvent(year = All, month = All, day = All),
+//   time = TimeEvent(
+//     hour = List(values = Vector(Single(value = 5, rep = None))),
+//     minute = List(values = Vector(Single(value = 0, rep = Some(value = 10)))),
+//     seconds = List(values = Vector(Single(value = 0, rep = None)))
+//   ),
+//   zone = None
 // )
 ```
 ### Akka
@@ -444,7 +490,7 @@ calevScheduler().scheduleOnceWithCalendarEvent(calEvent, () => {
   )
 })
 // res11: Option[<none>.<root>.akka.actor.Cancellable] = Some(
-//   value = akka.actor.LightArrayRevolverScheduler$TaskHolder@379ad45a
+//   value = akka.actor.LightArrayRevolverScheduler$TaskHolder@45f21473
 // )
 system.terminate()
 ```

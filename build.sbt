@@ -166,6 +166,25 @@ lazy val circe = crossProject(JSPlatform, JVMPlatform)
 lazy val circeJVM = circe.jvm
 lazy val circeJS  = circe.js
 
+lazy val jacksonJVM = project
+  .in(file("modules/jackson"))
+  .dependsOn(coreJVM)
+  .settings(sharedSettings)
+  .settings(testSettings)
+  .settings(scalafixSettings)
+  .settings(
+    name := "calev-jackson",
+    crossScalaVersions := Seq(scala212, scala213),
+    developers += Developer(
+      id = "pawelkaczor",
+      name = "Paweł Kaczor",
+      url = url("https://github.com/pawelkaczor"),
+      email = ""
+    ),
+    libraryDependencies ++=
+      Dependencies.jacksonAll
+  )
+
 lazy val akkaJVM = project
   .in(file("modules/akka"))
   .dependsOn(coreJVM)
@@ -207,7 +226,7 @@ lazy val readme = project
       ()
     }
   )
-  .dependsOn(coreJVM, fs2JVM, doobieJVM, circeJVM, akkaJVM)
+  .dependsOn(coreJVM, fs2JVM, doobieJVM, circeJVM, jacksonJVM, akkaJVM)
 
 val root = project
   .in(file("."))
@@ -217,4 +236,14 @@ val root = project
     name := "calev-root",
     crossScalaVersions := Nil
   )
-  .aggregate(coreJVM, coreJS, fs2JVM, fs2JS, doobieJVM, circeJVM, circeJS, akkaJVM)
+  .aggregate(
+    coreJVM,
+    coreJS,
+    fs2JVM,
+    fs2JS,
+    doobieJVM,
+    circeJVM,
+    circeJS,
+    jacksonJVM,
+    akkaJVM
+  )

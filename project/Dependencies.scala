@@ -7,6 +7,7 @@ object Dependencies {
   val doobieVersion    = "0.13.4"
   val fs2Version       = "2.5.6"
   val h2Version        = "1.4.200"
+  val jacksonVersion   = "2.11.4"
   val log4sVersion     = "1.8.2"
   val logbackVersion   = "1.2.3"
   val munitVersion     = "0.7.26"
@@ -51,6 +52,11 @@ object Dependencies {
   val circeAll = Seq(
     "io.circe" %% "circe-generic" % circeVersion,
     "io.circe" %% "circe-parser"  % circeVersion
+  )
+
+  val jacksonAll = Seq(
+    "com.fasterxml.jackson.core"    % "jackson-databind"     % jacksonVersion,
+    "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion % Test
   )
 
   val akkaAll = Seq(
