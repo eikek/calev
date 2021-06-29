@@ -52,7 +52,7 @@ compared to systemd:
   and generator for calendar events. It is also published for ScalaJS.
   With sbt, use:
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-core" % "0.5.2"
+  libraryDependencies += "com.github.eikek" %% "calev-core" % "0.5.4"
   ```
 - The *fs2* module contains utilities to work with
   [FS2](https://github.com/functional-streams-for-scala/fs2) streams.
@@ -61,28 +61,28 @@ compared to systemd:
   [fs2-cron](https://github.com/fthomas/fs2-cron) library.  It is also published
   for ScalaJS. With sbt, use
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-fs2" % "0.5.2"
+  libraryDependencies += "com.github.eikek" %% "calev-fs2" % "0.5.4"
   ```
 - The *doobie* module contains `Meta`, `Read` and `Write` instances
   for `CalEvent` to use with
   [doobie](https://github.com/tpolecat/doobie).
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-doobie" % "0.5.2"
+  libraryDependencies += "com.github.eikek" %% "calev-doobie" % "0.5.4"
   ```
 - The *circe* module defines a json decoder and encoder for `CalEvent`
   instances to use with [circe](https://github.com/circe/circe).  It is also
   published for ScalaJS.
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-circe" % "0.5.2"
+  libraryDependencies += "com.github.eikek" %% "calev-circe" % "0.5.4"
   ```
 - The *jackson* module defines `CalevModule` for [Jackson](https://github.com/FasterXML/jackson)
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-jackson" % "0.5.2"
+  libraryDependencies += "com.github.eikek" %% "calev-jackson" % "0.5.4"
   ```
 - The *akka* module allows to use calendar events with [Akka Scheduler](https://doc.akka.io/docs/akka/current/scheduler.html)
   and [Akka Timers](https://doc.akka.io/docs/akka/current/typed/interaction-patterns.html#typed-scheduling). 
   ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-akka" % "0.5.2"
+  libraryDependencies += "com.github.eikek" %% "calev-akka" % "0.5.4"
   ```
 
 
@@ -167,16 +167,16 @@ import java.time._
 ce.asString
 // res4: String = "*-*-* 00/2:00:00"
 val now = LocalDateTime.now
-// now: LocalDateTime = 2021-06-27T21:40:39.967
+// now: LocalDateTime = 2021-06-30T00:21:12.170
 ce.nextElapse(now)
-// res5: Option[LocalDateTime] = Some(value = 2021-06-27T22:00)
+// res5: Option[LocalDateTime] = Some(value = 2021-06-30T02:00)
 ce.nextElapses(now, 5)
 // res6: List[LocalDateTime] = List(
-//   2021-06-27T22:00,
-//   2021-06-28T00:00,
-//   2021-06-28T02:00,
-//   2021-06-28T04:00,
-//   2021-06-28T06:00
+//   2021-06-30T02:00,
+//   2021-06-30T04:00,
+//   2021-06-30T06:00,
+//   2021-06-30T08:00,
+//   2021-06-30T10:00
 // )
 ```
 
@@ -209,7 +209,7 @@ import java.time.LocalTime
 import scala.concurrent.ExecutionContext
 
 implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
-// timer: Timer[IO] = cats.effect.internals.IOTimer@a4d6952
+// timer: Timer[IO] = cats.effect.internals.IOTimer@4406d447
 
 val printTime = IO(println(LocalTime.now))
 // printTime: IO[Unit] = Delay(thunk = <function0>)
@@ -230,9 +230,9 @@ val task = CalevFs2.awakeEvery[IO](event).evalMap(_ => printTime)
 // task: Stream[IO[x], Unit] = Stream(..)
 
 task.take(3).compile.drain.unsafeRunSync()
-// 21:40:42.032
-// 21:40:44.002
-// 21:40:46.002
+// 00:21:14.021
+// 00:21:16
+// 00:21:18.001
 ```
 
 
@@ -270,8 +270,8 @@ val insert =
 //     acquire = Suspend(
 //       a = PrepareStatement(a = "INSERT INTO mytable (event) VALUES (?)")
 //     ),
-//     use = doobie.hi.connection$$$Lambda$19308/1865243025@120e2f1e,
-//     release = cats.effect.Bracket$$Lambda$19310/1063060071@d6098b5
+//     use = doobie.hi.connection$$$Lambda$11625/2046523540@5c2fb3a6,
+//     release = cats.effect.Bracket$$Lambda$11627/540350284@8c0f281
 //   )
 // )
 
@@ -282,8 +282,8 @@ val select =
 //     acquire = Suspend(
 //       a = PrepareStatement(a = "SELECT event FROM mytable WHERE id = 1")
 //     ),
-//     use = doobie.hi.connection$$$Lambda$19308/1865243025@4455c477,
-//     release = cats.effect.Bracket$$Lambda$19310/1063060071@4c3489e
+//     use = doobie.hi.connection$$$Lambda$11625/2046523540@1c03aa81,
+//     release = cats.effect.Bracket$$Lambda$11627/540350284@430a5324
 //   )
 // )
 ```
@@ -371,7 +371,7 @@ val jackson = JsonMapper
   .builder()
   .addModule(new CalevModule())
   .build()
-// jackson: JsonMapper = com.fasterxml.jackson.databind.json.JsonMapper@6756f1c7
+// jackson: JsonMapper = com.fasterxml.jackson.databind.json.JsonMapper@62197a60
 
 val myEvent    = CalEvent.unsafe("Mon *-*-* 05:00/10:00")
 // myEvent: CalEvent = CalEvent(
@@ -490,7 +490,7 @@ calevScheduler().scheduleOnceWithCalendarEvent(calEvent, () => {
   )
 })
 // res11: Option[<none>.<root>.akka.actor.Cancellable] = Some(
-//   value = akka.actor.LightArrayRevolverScheduler$TaskHolder@45f21473
+//   value = akka.actor.LightArrayRevolverScheduler$TaskHolder@48d6430
 // )
 system.terminate()
 ```

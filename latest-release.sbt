@@ -1,1 +1,1 @@
-ThisBuild / latestRelease := "0.5.2"
+ThisBuild / latestRelease := "0.5.4"
