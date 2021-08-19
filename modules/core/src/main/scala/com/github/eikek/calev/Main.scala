@@ -18,7 +18,7 @@ object Main {
 
       case Opts(Some(ce), reps, ref, _) =>
         println(s"Normalized:  ${ce.asString}")
-        println(s"Reference:   ${ref}")
+        println(s"Reference:   $ref")
         println("Next Elapses:")
         val next = ce.nextElapses(ref, reps)
         next.foreach(zd => println(s"- $zd"))

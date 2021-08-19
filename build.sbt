@@ -49,12 +49,12 @@ val sharedSettings = Seq(
          )
        else
          Nil),
-  crossScalaVersions := Seq(scala212, scala213, scala3),
-  Test / console / scalacOptions := Seq(),
+  crossScalaVersions                := Seq(scala212, scala213, scala3),
+  Test / console / scalacOptions    := Seq(),
   Compile / console / scalacOptions := Seq(),
-  licenses := Seq("MIT" -> url("http://spdx.org/licenses/MIT")),
-  homepage := Some(url("https://github.com/eikek/calev")),
-  versionScheme := Some("early-semver")
+  licenses                          := Seq("MIT" -> url("http://spdx.org/licenses/MIT")),
+  homepage                          := Some(url("https://github.com/eikek/calev")),
+  versionScheme                     := Some("early-semver")
 ) ++ publishSettings
 
 lazy val publishSettings = Seq(
@@ -76,8 +76,8 @@ lazy val publishSettings = Seq(
 )
 
 lazy val noPublish = Seq(
-  publish := {},
-  publishLocal := {},
+  publish         := {},
+  publishLocal    := {},
   publishArtifact := false
 )
 
@@ -173,7 +173,7 @@ lazy val jacksonJVM = project
   .settings(testSettings)
   .settings(scalafixSettings)
   .settings(
-    name := "calev-jackson",
+    name               := "calev-jackson",
     crossScalaVersions := Seq(scala212, scala213),
     developers += Developer(
       id = "pawelkaczor",
@@ -191,7 +191,7 @@ lazy val akkaJVM = project
   .settings(sharedSettings)
   .settings(scalafixSettings)
   .settings(
-    name := "calev-akka",
+    name               := "calev-akka",
     crossScalaVersions := Seq(scala212, scala213),
     developers += Developer(
       id = "pawelkaczor",
@@ -233,7 +233,7 @@ val root = project
   .settings(sharedSettings)
   .settings(noPublish)
   .settings(
-    name := "calev-root",
+    name               := "calev-root",
     crossScalaVersions := Nil
   )
   .aggregate(

@@ -27,7 +27,7 @@ class ValueTest extends FunSuite {
 
   test("contains (ranges)") {
     val r0 = Value.Range(1, 12, Some(2))
-    for (n <- 1 until 12; if n % 2 == 1)
+    for (n <- 1 until 12 if n % 2 == 1)
       assert(r0.contains(n))
     assert(!r0.contains(4))
     assert(!r0.contains(17))

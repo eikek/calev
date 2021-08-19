@@ -161,10 +161,10 @@ object Parser {
   final case class P[A](run: String => Either[String, (String, A)]) {
 
     def map[B](f: A => B): P[B] =
-      P(str => run(str).map({ case (rest, a) => (rest, f(a)) }))
+      P(str => run(str).map { case (rest, a) => (rest, f(a)) })
 
     def emap[B](f: A => Either[String, B]): P[B] =
-      P(str => run(str).flatMap({ case (rest, a) => f(a).map(b => (rest, b)) }))
+      P(str => run(str).flatMap { case (rest, a) => f(a).map(b => (rest, b)) })
 
     def opt: P[Option[A]] =
       P(str =>
@@ -186,7 +186,7 @@ object Parser {
       P(str =>
         run(str) match {
           case Right((rest, a)) =>
-            p.run(rest).map({ case (r, b) => (r, (a, b)) })
+            p.run(rest).map { case (r, b) => (r, (a, b)) }
           case Left(err) =>
             Left(err)
         }
