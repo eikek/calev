@@ -12,11 +12,11 @@ import com.github.eikek.calev.akka.internal.{CalevInterceptor, CalevTimerSchedul
 
 object CalevBehaviors {
 
-  /** Support for scheduled `self` messages in an actor.
-    * It takes care of the lifecycle of the timers such as cancelling them when the actor
-    * is restarted or stopped.
+  /** Support for scheduled `self` messages in an actor. It takes care of the lifecycle of
+    * the timers such as cancelling them when the actor is restarted or stopped.
     *
-    * @see [[CalevTimerScheduler]]
+    * @see
+    *   [[CalevTimerScheduler]]
     */
   def withCalevTimers[T](
       minInterval: Option[FiniteDuration] = None,
@@ -26,8 +26,8 @@ object CalevBehaviors {
       factory(new CalevTimerSchedulerImpl[T](scheduler, clock, minInterval))
     }
 
-  /** Schedule the sending of a message at a time of the upcoming event
-    * according to the given calendar event definition.
+  /** Schedule the sending of a message at a time of the upcoming event according to the
+    * given calendar event definition.
     */
   def withCalendarEvent[I, O <: I: ClassTag](
       calEvent: CalEvent,

@@ -4,8 +4,8 @@ import java.time.ZonedDateTime
 
 import com.github.eikek.calev._
 
-/** Evaluates a calendar event against a reference date to provide the
-  * next date-time matching the calendar event.
+/** Evaluates a calendar event against a reference date to provide the next date-time
+  * matching the calendar event.
   */
 trait Trigger {
 

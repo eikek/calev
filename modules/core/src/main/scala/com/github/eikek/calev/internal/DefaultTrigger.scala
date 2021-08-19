@@ -4,30 +4,26 @@ import java.time._
 
 import com.github.eikek.calev._
 
-/** Generate the next date-time that matches a calendar event and is
-  * closest but after a give reference date-time.
+/** Generate the next date-time that matches a calendar event and is closest but after a
+  * give reference date-time.
   *
-  * This is done as follows: The reference date is divided into its
-  * components, like day, month, year, hour, minute and second. For
-  * each component, starting from the least significant one, a value
-  * matching the corresponding calendar event component is chosen. For
-  * example, if the reference minute is 16 and the minute component is
-  * 0/10, the closest possible value is 20.
+  * This is done as follows: The reference date is divided into its components, like day,
+  * month, year, hour, minute and second. For each component, starting from the least
+  * significant one, a value matching the corresponding calendar event component is
+  * chosen. For example, if the reference minute is 16 and the minute component is 0/10,
+  * the closest possible value is 20.
   *
-  * There are three possible outcomes for each decision (stop after
-  * first result):
+  * There are three possible outcomes for each decision (stop after first result):
   *
-  * 1. the current value matches as is
-  * 2. there is one greater than the current value
-  * 3. use the first possible value (which is lower than current)
+  *   1. the current value matches as is 2. there is one greater than the current value 3.
+  *      use the first possible value (which is lower than current)
   *
-  * If the result is 1) go to the next component. If the result is 2)
-  * the date has moved into the future. Then all previous results must
-  * be set to the first possible value, in order to get the closest
-  * date. If the result is 3) the next component may only check for 2)
-  * and 3). If the result 3) carries through to the year component,
-  * the year must be set to the next value. If that is not possible,
-  * there is no date-time and a `None' is returned.
+  * If the result is 1) go to the next component. If the result is 2) the date has moved
+  * into the future. Then all previous results must be set to the first possible value, in
+  * order to get the closest date. If the result is 3) the next component may only check
+  * for 2) and 3). If the result 3) carries through to the year component, the year must
+  * be set to the next value. If that is not possible, there is no date-time and a `None'
+  * is returned.
   */
 object DefaultTrigger extends Trigger {
 

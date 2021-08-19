@@ -20,7 +20,7 @@ class ComponentTest extends FunSuite {
 
   test("contains") {
     assert(!2.c.contains(3))
-    for (n <- 1 to 59; if n % 2 == 0) {
+    for (n <- 1 to 59 if n % 2 == 0) {
       assert(All.contains(n))
       assert(n.c.contains(n))
       assert(!n.c.contains(n + 1))

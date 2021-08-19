@@ -12,13 +12,11 @@ trait CalevActorScheduling {
 
   implicit class CalevActorSchedulingDsl(ctx: ActorContext[_]) {
 
-    /** Schedule the sending of a message to the given target Actor
-      * at the time of the upcoming event according to the given
-      * calendar event definition.
+    /** Schedule the sending of a message to the given target Actor at the time of the
+      * upcoming event according to the given calendar event definition.
       *
-      * The scheduled action can be cancelled
-      * by invoking Cancellable#cancel on the returned
-      * handle.
+      * The scheduled action can be cancelled by invoking Cancellable#cancel on the
+      * returned handle.
       *
       * This method is thread-safe and can be called from other threads than the ordinary
       * actor message processing thread, such as Future callbacks.
