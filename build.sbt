@@ -122,21 +122,6 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
 lazy val coreJVM = core.jvm
 lazy val coreJS  = core.js
 
-lazy val fs2 = crossProject(JSPlatform, JVMPlatform)
-  .crossType(CrossType.Pure)
-  .in(file("modules/fs2"))
-  .settings(sharedSettings)
-  .settings(testSettings)
-  .settings(scalafixSettings)
-  .settings(
-    name := "calev-fs2",
-    libraryDependencies ++=
-      Dependencies.fs2
-  )
-  .dependsOn(core)
-lazy val fs2JVM = fs2.jvm
-lazy val fs2JS  = fs2.js
-
 lazy val doobieJVM = project
   .in(file("modules/doobie"))
   .settings(sharedSettings)
@@ -226,7 +211,7 @@ lazy val readme = project
       ()
     }
   )
-  .dependsOn(coreJVM, fs2JVM, doobieJVM, circeJVM, jacksonJVM, akkaJVM)
+  .dependsOn(coreJVM, doobieJVM, circeJVM, jacksonJVM, akkaJVM)
 
 val root = project
   .in(file("."))
@@ -239,8 +224,6 @@ val root = project
   .aggregate(
     coreJVM,
     coreJS,
-    fs2JVM,
-    fs2JS,
     doobieJVM,
     circeJVM,
     circeJS,

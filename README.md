@@ -54,15 +54,6 @@ compared to systemd:
   ```sbt
   libraryDependencies += "com.github.eikek" %% "calev-core" % "0.5.4"
   ```
-- The *fs2* module contains utilities to work with
-  [FS2](https://github.com/functional-streams-for-scala/fs2) streams.
-  These were taken, thankfully and slightly modified to exchange cron expressions
-  for calendar events, from the
-  [fs2-cron](https://github.com/fthomas/fs2-cron) library.  It is also published
-  for ScalaJS. With sbt, use
-  ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-fs2" % "0.5.4"
-  ```
 - The *doobie* module contains `Meta`, `Read` and `Write` instances
   for `CalEvent` to use with
   [doobie](https://github.com/tpolecat/doobie).
@@ -85,6 +76,10 @@ compared to systemd:
   libraryDependencies += "com.github.eikek" %% "calev-akka" % "0.5.4"
   ```
 
+Note that the fs2 module has been removed. The functionality is now
+available for fs2 3.x from the
+[fs2-cron](https://github.com/fthomas/fs2-cron) library. If calev-fs2
+is required for fs2 2.x, calev version 0.5.4 can be used.
 
 ## Examples
 
@@ -167,16 +162,16 @@ import java.time._
 ce.asString
 // res4: String = "*-*-* 00/2:00:00"
 val now = LocalDateTime.now
-// now: LocalDateTime = 2021-06-30T00:21:12.170
+// now: LocalDateTime = 2021-08-20T18:50:58.888
 ce.nextElapse(now)
-// res5: Option[LocalDateTime] = Some(value = 2021-06-30T02:00)
+// res5: Option[LocalDateTime] = Some(value = 2021-08-20T20:00)
 ce.nextElapses(now, 5)
 // res6: List[LocalDateTime] = List(
-//   2021-06-30T02:00,
-//   2021-06-30T04:00,
-//   2021-06-30T06:00,
-//   2021-06-30T08:00,
-//   2021-06-30T10:00
+//   2021-08-20T20:00,
+//   2021-08-20T22:00,
+//   2021-08-21T00:00,
+//   2021-08-21T02:00,
+//   2021-08-21T04:00
 // )
 ```
 
@@ -185,54 +180,6 @@ If an event is in the past, the `nextElapsed` returns a `None`:
 ```scala
 CalEvent.unsafe("1900-01-* 12,14:0:0").nextElapse(LocalDateTime.now)
 // res7: Option[LocalDateTime] = None
-```
-
-
-### FS2
-
-The fs2 utilities allow to schedule things based on calendar events.
-This is the same as [fs2-cron](https://github.com/fthomas/fs2-cron)
-provides, only adopted to use calendar events instead of cron
-expressions. The example is also from there.
-
-**Note:** `calev-fs2` is still build against fs2 2.x. This module will
-be removed in the future, because the
-[fs2-cron](https://github.com/fthomas/fs2-cron) project now provides
-this via its `fs2-cron-calev` module, which is built against fs2 3
-already.
-
-```scala
-import cats.effect.{IO, Timer}
-import fs2.Stream
-import com.github.eikek.fs2calev._
-import java.time.LocalTime
-import scala.concurrent.ExecutionContext
-
-implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
-// timer: Timer[IO] = cats.effect.internals.IOTimer@4406d447
-
-val printTime = IO(println(LocalTime.now))
-// printTime: IO[Unit] = Delay(thunk = <function0>)
-
-val event = CalEvent.unsafe("*-*-* *:*:0/2")
-// event: CalEvent = CalEvent(
-//   weekday = All,
-//   date = DateEvent(year = All, month = All, day = All),
-//   time = TimeEvent(
-//     hour = All,
-//     minute = All,
-//     seconds = List(values = Vector(Single(value = 0, rep = Some(value = 2))))
-//   ),
-//   zone = None
-// )
-
-val task = CalevFs2.awakeEvery[IO](event).evalMap(_ => printTime)
-// task: Stream[IO[x], Unit] = Stream(..)
-
-task.take(3).compile.drain.unsafeRunSync()
-// 00:21:14.021
-// 00:21:16
-// 00:21:18.001
 ```
 
 
@@ -270,8 +217,8 @@ val insert =
 //     acquire = Suspend(
 //       a = PrepareStatement(a = "INSERT INTO mytable (event) VALUES (?)")
 //     ),
-//     use = doobie.hi.connection$$$Lambda$11625/2046523540@5c2fb3a6,
-//     release = cats.effect.Bracket$$Lambda$11627/540350284@8c0f281
+//     use = doobie.hi.connection$$$Lambda$38918/2009939920@2835fff2,
+//     release = cats.effect.Bracket$$Lambda$38920/1634253453@461bcb5d
 //   )
 // )
 
@@ -282,8 +229,8 @@ val select =
 //     acquire = Suspend(
 //       a = PrepareStatement(a = "SELECT event FROM mytable WHERE id = 1")
 //     ),
-//     use = doobie.hi.connection$$$Lambda$11625/2046523540@1c03aa81,
-//     release = cats.effect.Bracket$$Lambda$11627/540350284@430a5324
+//     use = doobie.hi.connection$$$Lambda$38918/2009939920@3277d9fb,
+//     release = cats.effect.Bracket$$Lambda$38920/1634253453@1e9b8fb8
 //   )
 // )
 ```
@@ -357,6 +304,8 @@ val read = for {
 //   )
 // )
 ```
+
+
 ### Jackson
 
 Add `CalevModule` to use calendar event expressions in json: 
@@ -371,7 +320,7 @@ val jackson = JsonMapper
   .builder()
   .addModule(new CalevModule())
   .build()
-// jackson: JsonMapper = com.fasterxml.jackson.databind.json.JsonMapper@62197a60
+// jackson: JsonMapper = com.fasterxml.jackson.databind.json.JsonMapper@10f58b2
 
 val myEvent    = CalEvent.unsafe("Mon *-*-* 05:00/10:00")
 // myEvent: CalEvent = CalEvent(
@@ -399,6 +348,8 @@ val eventDeserialized = jackson.readValue(eventSerialized, new TypeReference[Cal
 //   zone = None
 // )
 ```
+
+
 ### Akka
 
 #### Akka Timers
@@ -437,7 +388,7 @@ CalevBehaviors.withCalevTimers[Message]() { scheduler =>
         same
     }
 }
-// res9: Behavior[Message] = Deferred(TimerSchedulerImpl.scala:29)
+// res8: Behavior[Message] = Deferred(TimerSchedulerImpl.scala:29)
 ```
 
 Use ```CalevBehaviors.withCalendarEvent``` to schedule messages according 
@@ -457,8 +408,9 @@ CalevBehaviors.withCalendarEvent(calEvent)(
       same
   }
 )
-// res10: Behavior[Message] = Deferred(InterceptorImpl.scala:29-30)
+// res9: Behavior[Message] = Deferred(InterceptorImpl.scala:29-30)
 ```
+
 #### Testing
 
 See [CalevBehaviorsTest](https://github.com/eikek/calev/blob/master/modules/akka/src/test/scala/com/github/eikek/calev/akka/dsl/CalevBehaviorsTest.scala)
@@ -489,8 +441,8 @@ calevScheduler().scheduleOnceWithCalendarEvent(calEvent, () => {
       s"Called at: ${LocalTime.now}"
   )
 })
-// res11: Option[<none>.<root>.akka.actor.Cancellable] = Some(
-//   value = akka.actor.LightArrayRevolverScheduler$TaskHolder@48d6430
+// res10: Option[<none>.<root>.akka.actor.Cancellable] = Some(
+//   value = akka.actor.LightArrayRevolverScheduler$TaskHolder@2deff253
 // )
 system.terminate()
 ```

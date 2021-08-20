@@ -12,25 +12,19 @@ case class TestDataSet(event: CalEvent, ref: ZonedDateTime, expect: List[ZonedDa
 object TestDataSet {
   type EA[B] = Either[Throwable, B]
 
-  def readResource[F[_]: Sync: ContextShift](
-      name: String,
-      blocker: Blocker
-  ): Stream[F, EA[TestDataSet]] =
+  def readResource[F[_]: Sync](name: String): Stream[F, EA[TestDataSet]] =
     Option(getClass.getResource(name)) match {
       case Some(url) =>
-        read[F](url, blocker)
+        read[F](url)
 
       case None =>
         sys.error(s"Resource not found: $name")
     }
 
-  def read[F[_]: Sync: ContextShift](
-      url: URL,
-      blocker: Blocker
-  ): Stream[F, EA[TestDataSet]] =
+  def read[F[_]: Sync](url: URL): Stream[F, EA[TestDataSet]] =
     fs2.io
-      .readInputStream(Sync[F].delay(url.openStream), 8192, blocker)
-      .through(fs2.text.utf8Decode)
+      .readInputStream(Sync[F].delay(url.openStream), 8192)
+      .through(fs2.text.utf8.decode)
       .through(fs2.text.lines)
       .filter(l => !l.trim.startsWith("#"))
       .split(_.trim.isEmpty)

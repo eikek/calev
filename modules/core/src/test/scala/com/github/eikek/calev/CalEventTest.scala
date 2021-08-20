@@ -5,16 +5,10 @@ import java.time.LocalTime
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoField
 
-import scala.concurrent.ExecutionContext
-
-import cats.effect._
 import com.github.eikek.calev.Dsl._
 import munit._
 
 class CalEventTest extends FunSuite {
-
-  implicit val CS: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
-  val blocker = Blocker.liftExecutionContext(ExecutionContext.global)
 
   test("contains") {
     val ce = CalEvent(Mon ~ Tue, DateEvent.All, time(0.c, 10.c ++ 20.c, 0.c))
