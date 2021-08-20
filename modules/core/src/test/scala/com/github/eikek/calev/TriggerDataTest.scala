@@ -1,24 +1,20 @@
 package com.github.eikek.calev
 
-import scala.concurrent.ExecutionContext
-
 import cats.effect._
+import cats.effect.unsafe.implicits._
 import munit._
 
 class TriggerDataTest extends FunSuite {
-  implicit val CS: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 
   val resource = "trigger-data.txt"
 
-  val data = Blocker[IO]
-    .use { blocker =>
-      TestDataSet
-        .readResource[IO](resource, blocker)
-        .zipWithIndex
-        .compile
-        .toVector
-    }
-    .unsafeRunSync()
+  val data =
+    TestDataSet
+      .readResource[IO](resource)
+      .zipWithIndex
+      .compile
+      .toVector
+      .unsafeRunSync()
 
   data.foreach {
     case (Left(ex), index) =>

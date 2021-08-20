@@ -54,15 +54,6 @@ compared to systemd:
   ```sbt
   libraryDependencies += "com.github.eikek" %% "calev-core" % "@VERSION@"
   ```
-- The *fs2* module contains utilities to work with
-  [FS2](https://github.com/functional-streams-for-scala/fs2) streams.
-  These were taken, thankfully and slightly modified to exchange cron expressions
-  for calendar events, from the
-  [fs2-cron](https://github.com/fthomas/fs2-cron) library.  It is also published
-  for ScalaJS. With sbt, use
-  ```sbt
-  libraryDependencies += "com.github.eikek" %% "calev-fs2" % "@VERSION@"
-  ```
 - The *doobie* module contains `Meta`, `Read` and `Write` instances
   for `CalEvent` to use with
   [doobie](https://github.com/tpolecat/doobie).
@@ -85,6 +76,10 @@ compared to systemd:
   libraryDependencies += "com.github.eikek" %% "calev-akka" % "@VERSION@"
   ```
 
+Note that the fs2 module has been removed. The functionality is now
+available for fs2 3.x from the
+[fs2-cron](https://github.com/fthomas/fs2-cron) library. If calev-fs2
+is required for fs2 2.x, calev version 0.5.4 can be used.
 
 ## Examples
 
@@ -131,38 +126,6 @@ If an event is in the past, the `nextElapsed` returns a `None`:
 
 ```scala mdoc
 CalEvent.unsafe("1900-01-* 12,14:0:0").nextElapse(LocalDateTime.now)
-```
-
-
-### FS2
-
-The fs2 utilities allow to schedule things based on calendar events.
-This is the same as [fs2-cron](https://github.com/fthomas/fs2-cron)
-provides, only adopted to use calendar events instead of cron
-expressions. The example is also from there.
-
-**Note:** `calev-fs2` is still build against fs2 2.x. This module will
-be removed in the future, because the
-[fs2-cron](https://github.com/fthomas/fs2-cron) project now provides
-this via its `fs2-cron-calev` module, which is built against fs2 3
-already.
-
-```scala mdoc
-import cats.effect.{IO, Timer}
-import fs2.Stream
-import com.github.eikek.fs2calev._
-import java.time.LocalTime
-import scala.concurrent.ExecutionContext
-
-implicit val timer: Timer[IO] = IO.timer(ExecutionContext.global)
-
-val printTime = IO(println(LocalTime.now))
-
-val event = CalEvent.unsafe("*-*-* *:*:0/2")
-
-val task = CalevFs2.awakeEvery[IO](event).evalMap(_ => printTime)
-
-task.take(3).compile.drain.unsafeRunSync()
 ```
 
 
@@ -214,6 +177,8 @@ val read = for {
   value <- parsed.as[Meeting]
 } yield value
 ```
+
+
 ### Jackson
 
 Add `CalevModule` to use calendar event expressions in json: 
@@ -234,6 +199,8 @@ val myEvent    = CalEvent.unsafe("Mon *-*-* 05:00/10:00")
 val eventSerialized = jackson.writeValueAsString(myEvent)
 val eventDeserialized = jackson.readValue(eventSerialized, new TypeReference[CalEvent] {})
 ```
+
+
 ### Akka
 
 #### Akka Timers
@@ -292,6 +259,7 @@ CalevBehaviors.withCalendarEvent(calEvent)(
   }
 )
 ```
+
 #### Testing
 
 See [CalevBehaviorsTest](https://github.com/eikek/calev/blob/master/modules/akka/src/test/scala/com/github/eikek/calev/akka/dsl/CalevBehaviorsTest.scala)
