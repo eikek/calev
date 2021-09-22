@@ -2,7 +2,7 @@ import com.typesafe.sbt.SbtGit.GitKeys._
 
 val scala212 = "2.12.14"
 val scala213 = "2.13.6"
-val scala3   = "3.0.2"
+val scala3 = "3.0.2"
 
 val updateReadme = inputKey[Unit]("Update readme")
 
@@ -49,12 +49,12 @@ val sharedSettings = Seq(
          )
        else
          Nil),
-  crossScalaVersions                := Seq(scala212, scala213, scala3),
-  Test / console / scalacOptions    := Seq(),
+  crossScalaVersions := Seq(scala212, scala213, scala3),
+  Test / console / scalacOptions := Seq(),
   Compile / console / scalacOptions := Seq(),
-  licenses                          := Seq("MIT" -> url("http://spdx.org/licenses/MIT")),
-  homepage                          := Some(url("https://github.com/eikek/calev")),
-  versionScheme                     := Some("early-semver")
+  licenses := Seq("MIT" -> url("http://spdx.org/licenses/MIT")),
+  homepage := Some(url("https://github.com/eikek/calev")),
+  versionScheme := Some("early-semver")
 ) ++ publishSettings
 
 lazy val publishSettings = Seq(
@@ -76,8 +76,8 @@ lazy val publishSettings = Seq(
 )
 
 lazy val noPublish = Seq(
-  publish         := {},
-  publishLocal    := {},
+  publish := {},
+  publishLocal := {},
   publishArtifact := false
 )
 
@@ -102,7 +102,7 @@ val buildInfoSettings = Seq(
 )
 
 val scalafixSettings = Seq(
-  semanticdbEnabled := true,                        // enable SemanticDB
+  semanticdbEnabled := true, // enable SemanticDB
   semanticdbVersion := scalafixSemanticdb.revision, // use Scalafix compatible version
   ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
 )
@@ -116,11 +116,11 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
   .settings(
     name := "calev-core",
     libraryDependencies ++=
-      Dependencies.fs2.map(_     % Test) ++
+      Dependencies.fs2.map(_ % Test) ++
         Dependencies.fs2io.map(_ % Test)
   )
 lazy val coreJVM = core.jvm
-lazy val coreJS  = core.js
+lazy val coreJS = core.js
 
 lazy val doobieJVM = project
   .in(file("modules/doobie"))
@@ -149,7 +149,7 @@ lazy val circe = crossProject(JSPlatform, JVMPlatform)
   )
   .dependsOn(core)
 lazy val circeJVM = circe.jvm
-lazy val circeJS  = circe.js
+lazy val circeJS = circe.js
 
 lazy val jacksonJVM = project
   .in(file("modules/jackson"))
@@ -158,7 +158,7 @@ lazy val jacksonJVM = project
   .settings(testSettings)
   .settings(scalafixSettings)
   .settings(
-    name               := "calev-jackson",
+    name := "calev-jackson",
     crossScalaVersions := Seq(scala212, scala213),
     developers += Developer(
       id = "pawelkaczor",
@@ -176,7 +176,7 @@ lazy val akkaJVM = project
   .settings(sharedSettings)
   .settings(scalafixSettings)
   .settings(
-    name               := "calev-akka",
+    name := "calev-akka",
     crossScalaVersions := Seq(scala212, scala213),
     developers += Developer(
       id = "pawelkaczor",
@@ -203,7 +203,7 @@ lazy val readme = project
     ),
     updateReadme := {
       mdoc.evaluated
-      val out    = mdocOut.value / "readme.md"
+      val out = mdocOut.value / "readme.md"
       val target = (LocalRootProject / baseDirectory).value / "README.md"
       val logger = streams.value.log
       logger.info(s"Updating readme: $out -> $target")
@@ -218,7 +218,7 @@ val root = project
   .settings(sharedSettings)
   .settings(noPublish)
   .settings(
-    name               := "calev-root",
+    name := "calev-root",
     crossScalaVersions := Nil
   )
   .aggregate(

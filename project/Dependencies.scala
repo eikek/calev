@@ -2,15 +2,15 @@ import sbt._
 
 object Dependencies {
 
-  val akkaVersion      = "2.6.16"
-  val circeVersion     = "0.14.1"
-  val doobieVersion    = "0.13.4"
-  val fs2Version       = "3.1.2"
-  val h2Version        = "1.4.200"
-  val jacksonVersion   = "2.12.5"
-  val log4sVersion     = "1.8.2"
-  val logbackVersion   = "1.2.6"
-  val munitVersion     = "0.7.29"
+  val akkaVersion = "2.6.16"
+  val circeVersion = "0.14.1"
+  val doobieVersion = "0.13.4"
+  val fs2Version = "3.1.2"
+  val h2Version = "1.4.200"
+  val jacksonVersion = "2.12.5"
+  val log4sVersion = "1.8.2"
+  val logbackVersion = "1.2.6"
+  val munitVersion = "0.7.29"
   val scalaTestVersion = "3.2.10"
 
   val scalaTest = Seq(
@@ -18,7 +18,7 @@ object Dependencies {
   )
 
   val munit = Seq(
-    "org.scalameta" %% "munit"            % munitVersion,
+    "org.scalameta" %% "munit" % munitVersion,
     "org.scalameta" %% "munit-scalacheck" % munitVersion
   )
 
@@ -51,16 +51,16 @@ object Dependencies {
   )
   val circeAll = Seq(
     "io.circe" %% "circe-generic" % circeVersion,
-    "io.circe" %% "circe-parser"  % circeVersion
+    "io.circe" %% "circe-parser" % circeVersion
   )
 
   val jacksonAll = Seq(
-    "com.fasterxml.jackson.core"    % "jackson-databind"     % jacksonVersion,
+    "com.fasterxml.jackson.core" % "jackson-databind" % jacksonVersion,
     "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion % Test
   )
 
   val akkaAll = Seq(
-    "com.typesafe.akka" %% "akka-actor-typed"         % akkaVersion,
+    "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
     "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion % Test
   )
 }

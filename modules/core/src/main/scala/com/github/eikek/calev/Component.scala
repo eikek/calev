@@ -10,17 +10,16 @@ sealed trait Component {
 
   def validate(min: Int, max: Int): Seq[String]
 
-  /** Find the first value in this component that is in range [min,max].
-    */
+  /** Find the first value in this component that is in range [min,max]. */
   def findFirst(min: Int, max: Int): Option[Int]
 }
 
 object Component {
 
   case object All extends Component {
-    def contains(n: Int): Boolean                 = true
-    def ++(c: Component): Component               = this
-    def asString: String                          = "*"
+    def contains(n: Int): Boolean = true
+    def ++(c: Component): Component = this
+    def asString: String = "*"
     def validate(min: Int, max: Int): Seq[String] = Nil
     def findFirst(min: Int, max: Int): Option[Int] =
       Some(min).filter(_ <= max)

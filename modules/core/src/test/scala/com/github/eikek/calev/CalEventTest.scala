@@ -47,7 +47,7 @@ class CalEventTest extends FunSuite {
   }
 
   test("nextElapse no millis") {
-    val ce  = CalEvent.unsafe("*-*-* 0/2:0/10")
+    val ce = CalEvent.unsafe("*-*-* 0/2:0/10")
     val ref = zdt(2020, 4, 2, 18, 31, 12).`with`(ChronoField.MILLI_OF_SECOND, 156)
     assertEquals(ref.getNano, 156000000)
     val next = ce.nextElapse(ref).get

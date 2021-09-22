@@ -30,7 +30,7 @@ private[akka] class CalevInterceptor[I, O <: I: ClassTag](
 
   private def scheduleUpcoming(target: Behavior[I]): Behavior[I] = Behaviors.setup {
     ctx =>
-      val config      = ctx.system.settings.config
+      val config = ctx.system.settings.config
       val minInterval = config.getDurationMillis("akka.scheduler.tick-duration") * 4
 
       CalevBehaviors.withCalevTimers(Some(minInterval), clock) { scheduler =>
