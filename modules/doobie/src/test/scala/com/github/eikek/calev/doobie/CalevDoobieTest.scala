@@ -1,15 +1,13 @@
 package com.github.eikek.calev.doobie
 
-import scala.concurrent.ExecutionContext
-
 import _root_.doobie._
 import _root_.doobie.implicits._
 import cats.effect._
+import cats.effect.unsafe.implicits._
 import com.github.eikek.calev._
 import munit._
 
 class CalevDoobieTest extends FunSuite with CalevDoobieMeta {
-  implicit val CS: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 
   val xa = Transactor.fromDriverManager[IO](
     "org.h2.Driver",
