@@ -23,12 +23,12 @@ class TriggerDataTest extends FunSuite {
       }
     case (Right(data), index) =>
       test(s"test dataset zoned-datetime $index ${data.event.asString}/${data.ref}") {
-        val num   = math.max(1, data.expect.size)
+        val num = math.max(1, data.expect.size)
         val nexts = data.event.nextElapses(data.ref, num).toList
         assertEquals(nexts, data.expect)
       }
       test(s"test dataset local-datetime $index ${data.event.asString}/${data.ref}") {
-        val num   = math.max(1, data.expect.size)
+        val num = math.max(1, data.expect.size)
         val nexts = data.event.nextElapses(data.ref.toLocalDateTime(), num).toList
         assertEquals(nexts, data.expect.map(_.toLocalDateTime()))
       }

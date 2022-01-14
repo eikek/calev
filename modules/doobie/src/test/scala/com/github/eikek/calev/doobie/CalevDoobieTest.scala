@@ -31,7 +31,7 @@ class CalevDoobieTest extends FunSuite with CalevDoobieMeta {
     val insertRecord = sql"""insert into events(event) values(${r.event}) """
 
     for {
-      _  <- createTable.update.run
+      _ <- createTable.update.run
       id <- insertRecord.update.withUniqueGeneratedKeys[Long]("id")
     } yield id
   }
@@ -43,7 +43,7 @@ class CalevDoobieTest extends FunSuite with CalevDoobieMeta {
     val record = Record(CalEvent.unsafe("Mon *-*-* 0/2:0"))
 
     val op = for {
-      id   <- insertRecord(record)
+      id <- insertRecord(record)
       load <- loadRecord(id)
     } yield load
 

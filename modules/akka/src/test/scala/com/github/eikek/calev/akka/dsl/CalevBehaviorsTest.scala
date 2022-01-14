@@ -21,16 +21,16 @@ import org.slf4j.LoggerFactory
 object CalevBehaviorsTest {
   sealed trait Message
   case class Tick(timestamp: ZonedDateTime) extends Message
-  case class Ping()                         extends Message
+  case class Ping() extends Message
 }
 
 class CalevBehaviorsTest
     extends ScalaTestWithActorTestKit(ManualTime.config)
     with AnyWordSpecLike {
 
-  val log        = LoggerFactory.getLogger(getClass)
+  val log = LoggerFactory.getLogger(getClass)
   val manualTime = ManualTime()
-  val clock      = new TestClock
+  val clock = new TestClock
 
   "Akka Timer" should {
     val probe = TestProbe[Message]()

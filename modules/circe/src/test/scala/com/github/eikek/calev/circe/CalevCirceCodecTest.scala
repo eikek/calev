@@ -12,7 +12,7 @@ class CalevCirceCodecTest extends FunSuite with CalevCirceCodec {
     parser.parse(str).fold(throw _, identity)
 
   test("encode/decode literal") {
-    val event  = CalEvent.unsafe("Mon *-*-* 5:0/10")
+    val event = CalEvent.unsafe("Mon *-*-* 5:0/10")
     val parsed = parseJson(s""""${event.asString}"""")
     assertEquals(event.asJson, parsed)
     assertEquals(parsed.as[CalEvent].fold(throw _, identity), event)
@@ -26,8 +26,8 @@ class CalevCirceCodecTest extends FunSuite with CalevCirceCodec {
 
   test("encode/decode derived") {
     val meeting = Meeting("trash can", CalEvent.unsafe("Mon..Fri *-*-* 14,18:0"))
-    val json    = meeting.asJson.noSpaces
-    val read    = parseJson(json).as[Meeting].fold(throw _, identity)
+    val json = meeting.asJson.noSpaces
+    val read = parseJson(json).as[Meeting].fold(throw _, identity)
     assertEquals(read, meeting)
   }
 }

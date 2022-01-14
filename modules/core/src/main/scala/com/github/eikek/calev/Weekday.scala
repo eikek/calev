@@ -21,45 +21,45 @@ object Weekday {
     }
 
   case object Mon extends Weekday {
-    val ord       = 1
+    val ord = 1
     val shortName = "Mon"
-    val longName  = "Monday"
+    val longName = "Monday"
   }
 
   case object Tue extends Weekday {
-    val ord       = 2
+    val ord = 2
     val shortName = "Tue"
-    val longName  = "Tuesday"
+    val longName = "Tuesday"
   }
 
   case object Wed extends Weekday {
-    val ord       = 3
+    val ord = 3
     val shortName = "Wed"
-    val longName  = "Wednesday"
+    val longName = "Wednesday"
   }
 
   case object Thu extends Weekday {
-    val ord       = 4
+    val ord = 4
     val shortName = "Thu"
-    val longName  = "Thursday"
+    val longName = "Thursday"
   }
 
   case object Fri extends Weekday {
-    val ord       = 5
+    val ord = 5
     val shortName = "Fri"
-    val longName  = "Friday"
+    val longName = "Friday"
   }
 
   case object Sat extends Weekday {
-    val ord       = 6
+    val ord = 6
     val shortName = "Sat"
-    val longName  = "Saturday"
+    val longName = "Saturday"
   }
 
   case object Sun extends Weekday {
-    val ord       = 7
+    val ord = 7
     val shortName = "Sun"
-    val longName  = "Sunday"
+    val longName = "Sunday"
   }
 
   val all = List(Mon, Tue, Wed, Thu, Fri, Sat, Sun)

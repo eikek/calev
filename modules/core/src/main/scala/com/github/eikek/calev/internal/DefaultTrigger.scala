@@ -71,7 +71,7 @@ object DefaultTrigger extends Trigger {
 
       case _ =>
         val (ref, comp) = calc.components
-        val prevFlag    = calc.flag
+        val prevFlag = calc.flag
 
         if (comp.contains(ref) && prevFlag != Flag.First)
           run(calc.copy(flag = Flag.Exact).nextPos)
@@ -162,7 +162,7 @@ object DefaultTrigger extends Trigger {
   sealed trait Flag
   object Flag {
     case object Exact extends Flag
-    case object Next  extends Flag
+    case object Next extends Flag
     case object First extends Flag
   }
 

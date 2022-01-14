@@ -35,9 +35,9 @@ object TestDataSet {
     lines match {
       case ev :: ref :: rest =>
         for {
-          event   <- CalEvent.parse(ev).leftMap(new Exception(_))
+          event <- CalEvent.parse(ev).leftMap(new Exception(_))
           refDate <- readDateTime(ref)
-          result  <- rest.traverse[EA, ZonedDateTime](readDateTime)
+          result <- rest.traverse[EA, ZonedDateTime](readDateTime)
         } yield TestDataSet(event, refDate, result)
 
       case _ =>
