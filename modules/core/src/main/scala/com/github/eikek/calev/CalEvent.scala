@@ -1,9 +1,6 @@
 package com.github.eikek.calev
 
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
+import java.time._
 
 final case class CalEvent(
     weekday: WeekdayComponent,
@@ -56,7 +53,7 @@ final case class CalEvent(
 
 object CalEvent {
 
-  val UTC = ZoneId.of("UTC")
+  val UTC: ZoneId = ZoneOffset.UTC
 
   def parse(str: String): Either[String, CalEvent] =
     internal.CalEventParser.calevent.run(str.trim).map(_._2)

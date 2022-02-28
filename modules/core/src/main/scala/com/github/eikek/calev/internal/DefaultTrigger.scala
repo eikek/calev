@@ -28,19 +28,21 @@ import com.github.eikek.calev._
 object DefaultTrigger extends Trigger {
 
   def next(ref: ZonedDateTime, ev: CalEvent): Option[ZonedDateTime] = {
-    val refDate = {
+    val (refDate, zone) = {
       val date = ev.zone
         .map(z => ref.withZoneSameInstant(z))
         .getOrElse(ref)
-      DateTime(date.toLocalDateTime)
+      (DateTime(date.toLocalDateTime), date.getZone)
     }
 
     @annotation.tailrec
     def go(c: Calc): Option[ZonedDateTime] =
       run(c) match {
         case Some(dt) =>
-          val zd = dt.toLocalDateTime.atZone(ref.getZone)
-          if (ev.weekday.contains(Weekday.from(zd.getDayOfWeek))) Some(zd)
+          val zd = dt.toLocalDateTime.atZone(zone)
+          // need to match weekdays in the zone of the calendar-event
+          if (ev.weekday.contains(Weekday.from(zd.getDayOfWeek)))
+            Some(zd.withZoneSameInstant(ref.getZone))
           else go(Calc.init(dt, ev))
         case None =>
           None
