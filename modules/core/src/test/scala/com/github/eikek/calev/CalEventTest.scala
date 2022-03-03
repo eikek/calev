@@ -1,8 +1,6 @@
 package com.github.eikek.calev
 
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.ZonedDateTime
+import java.time._
 import java.time.temporal.ChronoField
 
 import com.github.eikek.calev.Dsl._
@@ -67,6 +65,21 @@ class CalEventTest extends FunSuite {
     assertEquals(ce.nextElapses(ref, 5), expect)
   }
 
+  test("nextElapse honors time zones") {
+    val ref = zdt(2022, 2, 28, 21, 5, 15)
+
+    val ce = CalEvent(
+      AllWeekdays,
+      DateEvent.All,
+      time(22.c, 10.c, 0.c),
+      Some(ZoneId.of("Europe/Berlin"))
+    )
+
+    val Some(next) = ce.nextElapse(ref)
+    assertEquals(next.getZone, ZoneOffset.UTC)
+    assertEquals(next.toLocalTime, LocalTime.of(21, 10, 0))
+  }
+
   private def zdt(y: Int, month: Int, d: Int, h: Int, min: Int, sec: Int): ZonedDateTime =
-    ZonedDateTime.of(LocalDate.of(y, month, d), LocalTime.of(h, min, sec), CalEvent.UTC)
+    ZonedDateTime.of(LocalDate.of(y, month, d), LocalTime.of(h, min, sec), ZoneOffset.UTC)
 }
