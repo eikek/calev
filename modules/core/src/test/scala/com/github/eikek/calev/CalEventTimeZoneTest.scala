@@ -1,9 +1,9 @@
 package com.github.eikek.calev
 
+import java.time.{ZoneId, ZonedDateTime}
+
 import com.github.eikek.calev.Dsl._
 import munit._
-
-import java.time.{ZoneId, ZonedDateTime}
 
 class CalEventTimeZoneTest extends FunSuite {
 
