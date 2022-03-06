@@ -83,7 +83,7 @@ lazy val noPublish = Seq(
 
 val testSettings = Seq(
   libraryDependencies ++= (Dependencies.munit ++ Dependencies.logback).map(_ % Test),
-  testFrameworks += new TestFramework("munit.Framework")
+  testFrameworks += TestFrameworks.MUnit
 )
 
 val buildInfoSettings = Seq(
@@ -104,7 +104,7 @@ val buildInfoSettings = Seq(
 val scalafixSettings = Seq(
   semanticdbEnabled := true, // enable SemanticDB
   semanticdbVersion := scalafixSemanticdb.revision, // use Scalafix compatible version
-  ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
+  ThisBuild / scalafixDependencies ++= Dependencies.organizeImports
 )
 
 lazy val core = crossProject(JSPlatform, JVMPlatform)
@@ -120,6 +120,20 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
       Dependencies.fs2.map(_ % Test) ++
         Dependencies.fs2io.map(_ % Test)
   )
+
+lazy val fs2 = crossProject(JSPlatform, JVMPlatform)
+  .crossType(CrossType.Pure)
+  .withoutSuffixFor(JVMPlatform)
+  .in(file("modules/fs2"))
+  .settings(sharedSettings)
+  .settings(testSettings)
+  .settings(scalafixSettings)
+  .settings(
+    name := "calev-fs2",
+    libraryDependencies ++=
+      Dependencies.fs2
+  )
+  .dependsOn(core)
 
 lazy val doobie = project
   .in(file("modules/doobie"))
@@ -193,23 +207,23 @@ lazy val readme = project
   .settings(noPublish)
   .settings(
     name := "calev-readme",
+    crossScalaVersions := Seq(scala212, scala213),
     libraryDependencies ++=
       Dependencies.circeAll,
-    scalacOptions := Seq(),
+    scalacOptions -= "-Xfatal-warnings",
+    scalacOptions -= "-Werror",
     mdocVariables := Map(
       "VERSION" -> latestRelease.value
     ),
+    mdocIn := (LocalRootProject / baseDirectory).value / "docs" / "readme.md",
+    mdocOut := (LocalRootProject / baseDirectory).value / "README.md",
+    fork := true,
     updateReadme := {
       mdoc.evaluated
-      val out = mdocOut.value / "readme.md"
-      val target = (LocalRootProject / baseDirectory).value / "README.md"
-      val logger = streams.value.log
-      logger.info(s"Updating readme: $out -> $target")
-      IO.copyFile(out, target)
       ()
     }
   )
-  .dependsOn(core.jvm, doobie, circe.jvm, jackson, akka)
+  .dependsOn(core.jvm, fs2.jvm, doobie, circe.jvm, jackson, akka)
 
 val root = project
   .in(file("."))
@@ -222,6 +236,8 @@ val root = project
   .aggregate(
     core.jvm,
     core.js,
+    fs2.jvm,
+    fs2.js,
     doobie,
     circe.jvm,
     circe.js,
