@@ -109,6 +109,7 @@ val scalafixSettings = Seq(
 
 lazy val core = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Pure)
+  .withoutSuffixFor(JVMPlatform)
   .in(file("modules/core"))
   .settings(sharedSettings)
   .settings(testSettings)
@@ -119,10 +120,8 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
       Dependencies.fs2.map(_ % Test) ++
         Dependencies.fs2io.map(_ % Test)
   )
-lazy val coreJVM = core.jvm
-lazy val coreJS = core.js
 
-lazy val doobieJVM = project
+lazy val doobie = project
   .in(file("modules/doobie"))
   .settings(sharedSettings)
   .settings(testSettings)
@@ -133,10 +132,11 @@ lazy val doobieJVM = project
       Dependencies.doobie ++
         Dependencies.h2.map(_ % Test)
   )
-  .dependsOn(coreJVM)
+  .dependsOn(core.jvm)
 
 lazy val circe = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Pure)
+  .withoutSuffixFor(JVMPlatform)
   .in(file("modules/circe"))
   .settings(sharedSettings)
   .settings(testSettings)
@@ -148,12 +148,10 @@ lazy val circe = crossProject(JSPlatform, JVMPlatform)
         Dependencies.circeAll.map(_ % Test)
   )
   .dependsOn(core)
-lazy val circeJVM = circe.jvm
-lazy val circeJS = circe.js
 
-lazy val jacksonJVM = project
+lazy val jackson = project
   .in(file("modules/jackson"))
-  .dependsOn(coreJVM)
+  .dependsOn(core.jvm)
   .settings(sharedSettings)
   .settings(testSettings)
   .settings(scalafixSettings)
@@ -170,9 +168,9 @@ lazy val jacksonJVM = project
       Dependencies.jacksonAll
   )
 
-lazy val akkaJVM = project
+lazy val akka = project
   .in(file("modules/akka"))
-  .dependsOn(coreJVM)
+  .dependsOn(core.jvm)
   .settings(sharedSettings)
   .settings(scalafixSettings)
   .settings(
@@ -211,7 +209,7 @@ lazy val readme = project
       ()
     }
   )
-  .dependsOn(coreJVM, doobieJVM, circeJVM, jacksonJVM, akkaJVM)
+  .dependsOn(core.jvm, doobie, circe.jvm, jackson, akka)
 
 val root = project
   .in(file("."))
@@ -222,11 +220,11 @@ val root = project
     crossScalaVersions := Nil
   )
   .aggregate(
-    coreJVM,
-    coreJS,
-    doobieJVM,
-    circeJVM,
-    circeJS,
-    jacksonJVM,
-    akkaJVM
+    core.jvm,
+    core.js,
+    doobie,
+    circe.jvm,
+    circe.js,
+    jackson,
+    akka
   )
