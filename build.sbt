@@ -83,7 +83,7 @@ lazy val noPublish = Seq(
 
 val testSettings = Seq(
   libraryDependencies ++= (Dependencies.munit ++ Dependencies.logback).map(_ % Test),
-  testFrameworks += new TestFramework("munit.Framework")
+  testFrameworks += TestFrameworks.MUnit
 )
 
 val buildInfoSettings = Seq(
@@ -104,11 +104,12 @@ val buildInfoSettings = Seq(
 val scalafixSettings = Seq(
   semanticdbEnabled := true, // enable SemanticDB
   semanticdbVersion := scalafixSemanticdb.revision, // use Scalafix compatible version
-  ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
+  ThisBuild / scalafixDependencies ++= Dependencies.organizeImports
 )
 
 lazy val core = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Pure)
+  .withoutSuffixFor(JVMPlatform)
   .in(file("modules/core"))
   .settings(sharedSettings)
   .settings(testSettings)
@@ -119,10 +120,22 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
       Dependencies.fs2.map(_ % Test) ++
         Dependencies.fs2io.map(_ % Test)
   )
-lazy val coreJVM = core.jvm
-lazy val coreJS = core.js
 
-lazy val doobieJVM = project
+lazy val fs2 = crossProject(JSPlatform, JVMPlatform)
+  .crossType(CrossType.Pure)
+  .withoutSuffixFor(JVMPlatform)
+  .in(file("modules/fs2"))
+  .settings(sharedSettings)
+  .settings(testSettings)
+  .settings(scalafixSettings)
+  .settings(
+    name := "calev-fs2",
+    libraryDependencies ++=
+      Dependencies.fs2
+  )
+  .dependsOn(core)
+
+lazy val doobie = project
   .in(file("modules/doobie"))
   .settings(sharedSettings)
   .settings(testSettings)
@@ -133,10 +146,11 @@ lazy val doobieJVM = project
       Dependencies.doobie ++
         Dependencies.h2.map(_ % Test)
   )
-  .dependsOn(coreJVM)
+  .dependsOn(core.jvm)
 
 lazy val circe = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Pure)
+  .withoutSuffixFor(JVMPlatform)
   .in(file("modules/circe"))
   .settings(sharedSettings)
   .settings(testSettings)
@@ -148,12 +162,10 @@ lazy val circe = crossProject(JSPlatform, JVMPlatform)
         Dependencies.circeAll.map(_ % Test)
   )
   .dependsOn(core)
-lazy val circeJVM = circe.jvm
-lazy val circeJS = circe.js
 
-lazy val jacksonJVM = project
+lazy val jackson = project
   .in(file("modules/jackson"))
-  .dependsOn(coreJVM)
+  .dependsOn(core.jvm)
   .settings(sharedSettings)
   .settings(testSettings)
   .settings(scalafixSettings)
@@ -170,9 +182,9 @@ lazy val jacksonJVM = project
       Dependencies.jacksonAll
   )
 
-lazy val akkaJVM = project
+lazy val akka = project
   .in(file("modules/akka"))
-  .dependsOn(coreJVM)
+  .dependsOn(core.jvm)
   .settings(sharedSettings)
   .settings(scalafixSettings)
   .settings(
@@ -195,23 +207,23 @@ lazy val readme = project
   .settings(noPublish)
   .settings(
     name := "calev-readme",
+    crossScalaVersions := Seq(scala212, scala213),
     libraryDependencies ++=
       Dependencies.circeAll,
-    scalacOptions := Seq(),
+    scalacOptions -= "-Xfatal-warnings",
+    scalacOptions -= "-Werror",
     mdocVariables := Map(
       "VERSION" -> latestRelease.value
     ),
+    mdocIn := (LocalRootProject / baseDirectory).value / "docs" / "readme.md",
+    mdocOut := (LocalRootProject / baseDirectory).value / "README.md",
+    fork := true,
     updateReadme := {
       mdoc.evaluated
-      val out = mdocOut.value / "readme.md"
-      val target = (LocalRootProject / baseDirectory).value / "README.md"
-      val logger = streams.value.log
-      logger.info(s"Updating readme: $out -> $target")
-      IO.copyFile(out, target)
       ()
     }
   )
-  .dependsOn(coreJVM, doobieJVM, circeJVM, jacksonJVM, akkaJVM)
+  .dependsOn(core.jvm, fs2.jvm, doobie, circe.jvm, jackson, akka)
 
 val root = project
   .in(file("."))
@@ -222,11 +234,13 @@ val root = project
     crossScalaVersions := Nil
   )
   .aggregate(
-    coreJVM,
-    coreJS,
-    doobieJVM,
-    circeJVM,
-    circeJS,
-    jacksonJVM,
-    akkaJVM
+    core.jvm,
+    core.js,
+    fs2.jvm,
+    fs2.js,
+    doobie,
+    circe.jvm,
+    circe.js,
+    jackson,
+    akka
   )

@@ -12,6 +12,11 @@ object Dependencies {
   val logbackVersion = "1.2.11"
   val munitVersion = "0.7.29"
   val scalaTestVersion = "3.2.11"
+  val organizeImportsVersion = "0.6.0"
+
+  val organizeImports = Seq(
+    "com.github.liancheng" %% "organize-imports" % organizeImportsVersion
+  )
 
   val scalaTest = Seq(
     "org.scalatest" %% "scalatest" % scalaTestVersion % Test

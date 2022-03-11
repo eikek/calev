@@ -54,6 +54,15 @@ compared to systemd:
   ```sbt
   libraryDependencies += "com.github.eikek" %% "calev-core" % "@VERSION@"
   ```
+- The *fs2* module contains utilities to work with
+  [FS2](https://github.com/functional-streams-for-scala/fs2) streams.
+  These were taken, thankfully and slightly modified to exchange cron expressions
+  for calendar events, from the
+  [fs2-cron](https://github.com/fthomas/fs2-cron) library.  It is also published
+  for ScalaJS. With sbt, use
+  ```sbt
+  libraryDependencies += "com.github.eikek" %% "calev-fs2" % "@VERSION@"
+  ```
 - The *doobie* module contains `Meta`, `Read` and `Write` instances
   for `CalEvent` to use with
   [doobie](https://github.com/tpolecat/doobie).
@@ -76,10 +85,8 @@ compared to systemd:
   libraryDependencies += "com.github.eikek" %% "calev-akka" % "@VERSION@"
   ```
 
-Note that the fs2 module has been removed. The functionality is now
-available for fs2 3.x from the
-[fs2-cron](https://github.com/fthomas/fs2-cron) library. If calev-fs2
-is required for fs2 2.x, calev version 0.5.4 can be used.
+Note that the fs2 module is also available via
+[fs2-cron](https://github.com/fthomas/fs2-cron) library.
 
 ## Examples
 
@@ -126,6 +133,31 @@ If an event is in the past, the `nextElapsed` returns a `None`:
 
 ```scala mdoc
 CalEvent.unsafe("1900-01-* 12,14:0:0").nextElapse(LocalDateTime.now)
+```
+
+
+### FS2
+
+The fs2 utilities allow to schedule things based on calendar events.
+This is the same as [fs2-cron](https://github.com/fthomas/fs2-cron)
+provides, only adopted to use calendar events instead of cron
+expressions. The example is also from there.
+
+```scala mdoc
+import cats.effect.IO
+import _root_.fs2.Stream
+import com.github.eikek.calev.fs2.Scheduler
+import java.time.LocalTime
+
+val everyTwoSeconds = CalEvent.unsafe("*-*-* *:*:0/2")
+val scheduler = Scheduler.systemDefault[IO]
+
+val printTime = Stream.eval(IO(println(LocalTime.now)))
+
+val task = scheduler.awakeEvery(everyTwoSeconds) >> printTime
+
+import cats.effect.unsafe.implicits._
+task.take(3).compile.drain.unsafeRunSync()
 ```
 
 
