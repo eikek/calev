@@ -15,7 +15,7 @@ class CalevJacksonSerializerTest extends FunSuite {
 
   val jackson = JsonMapper
     .builder()
-    .addModule(new CalevModule())
+    .addModule(new CalevModule)
     .addModule(DefaultScalaModule)
     .build()
 

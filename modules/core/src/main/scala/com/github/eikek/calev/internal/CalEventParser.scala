@@ -6,7 +6,7 @@ import com.github.eikek.calev.internal.Parser._
 object CalEventParser {
 
   def time: P[TimeEvent] =
-    ((comp2 <~ colon) ~ comp2 ~ ((colon ~> comp2).opt)).map { case ((h, m), s) =>
+    ((comp2 <~ colon) ~ comp2 ~ (colon ~> comp2).opt).map { case ((h, m), s) =>
       TimeEvent(h, m, s.getOrElse(Component(0)))
     }
 

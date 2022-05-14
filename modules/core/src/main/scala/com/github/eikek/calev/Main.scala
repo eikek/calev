@@ -31,7 +31,7 @@ object Main {
     def readOpts(in: List[(String, String)], opts: Opts): Opts =
       in match {
         case Nil => opts
-        case (name, value) :: rest =>
+        case name, value :: rest =>
           name match {
             case "-i"    => readOpts(rest, opts.copy(reps = value.toInt))
             case "--ref" => readOpts(rest, opts.copy(ref = LocalDateTime.parse(value)))

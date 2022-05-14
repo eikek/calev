@@ -38,7 +38,7 @@ object Value {
           @annotation.tailrec
           def go(v: Vector[Int], count: Int): Vector[Int] =
             if (count * r + value > max) v
-            else go(v :+ (count * r + value), count + 1)
+            else go(v :+ count * r + value, count + 1)
 
           go(Vector.empty, 0)
 

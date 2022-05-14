@@ -113,8 +113,8 @@ object Parser {
     @annotation.tailrec
     def go(result: Vector[A], in: String): Either[String, (String, Vector[A])] =
       p.run(in) match {
-        case Right((rest, a)) => go(result :+ a, rest)
-        case Left(_)          => Right(in -> result)
+        case Right(rest, a) => go(result :+ a, rest)
+        case Left(_)        => Right(in -> result)
       }
 
     P(str => go(Vector.empty, str))
@@ -169,8 +169,8 @@ object Parser {
     def opt: P[Option[A]] =
       P(str =>
         run(str) match {
-          case Right((rest, a)) => Right(rest -> Some(a))
-          case Left(_)          => Right(str -> None)
+          case Right(rest, a) => Right(rest -> Some(a))
+          case Left(_)        => Right(str -> None)
         }
       )
 
@@ -185,7 +185,7 @@ object Parser {
     def ~[B](p: P[B]): P[(A, B)] =
       P(str =>
         run(str) match {
-          case Right((rest, a)) =>
+          case Right(rest, a) =>
             p.run(rest).map { case (r, b) => (r, (a, b)) }
           case Left(err) =>
             Left(err)

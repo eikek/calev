@@ -30,7 +30,7 @@ class WeekdayComponentTest extends FunSuite {
     assert(!(Mon.c ++ Thu.c).contains(Sat))
     assert(!(Mon.c ++ Thu.c).contains(Sun))
 
-    val comp = Mon.c ++ Thu.c ++ (Sat ~ Sun)
+    val comp = Mon.c ++ Thu.c ++ Sat ~ Sun
     assert(comp.contains(Mon))
     assert(!comp.contains(Tue))
     assert(!comp.contains(Wed))

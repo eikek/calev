@@ -72,8 +72,8 @@ class ParserTest extends FunSuite {
     val p = Parser.comp2
 
     assertEquals(p.run("1,2,3"), Right(("", 1.c ++ 2.c ++ 3.c)))
-    assertEquals(p.run("1,2..5,3"), Right(("", 1.c ++ (2 ~ 5) ++ 3.c)))
-    assertEquals(p.run("1/5,2..5,3"), Right(("", (1 #/ 5) ++ (2 ~ 5) ++ 3.c)))
+    assertEquals(p.run("1,2..5,3"), Right(("", 1.c ++ 2 ~ 5 ++ 3.c)))
+    assertEquals(p.run("1/5,2..5,3"), Right(("", 1 #/ 5 ++ 2 ~ 5 ++ 3.c)))
   }
 
   test("weekday") {
@@ -81,7 +81,7 @@ class ParserTest extends FunSuite {
     assertEquals(p.run("Wed"), Right("" -> Wed.c))
     assertEquals(p.run("Wed,Thu"), Right("" -> (Wed.c ++ Thu.c)))
     assertEquals(p.run("Wed,Thu,Sat"), Right("" -> (Wed.c ++ Thu.c ++ Sat.c)))
-    assertEquals(p.run("Wed,Thu..Fri,Sat"), Right("" -> (Wed.c ++ (Thu ~ Fri) ++ Sat.c)))
+    assertEquals(p.run("Wed,Thu..Fri,Sat"), Right("" -> (Wed.c ++ Thu ~ Fri ++ Sat.c)))
     assertEquals(p.run("*-*-*"), Right("*-*-*" -> AllWeekdays))
   }
 
