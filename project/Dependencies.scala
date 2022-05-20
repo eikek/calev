@@ -3,7 +3,7 @@ import sbt._
 object Dependencies {
 
   val akkaVersion = "2.6.19"
-  val circeVersion = "0.14.1"
+  val circeVersion = "0.14.2"
   val doobieVersion = "1.0.0-RC2"
   val fs2Version = "3.2.7"
   val h2Version = "2.1.212"
