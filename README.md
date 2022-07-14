@@ -31,11 +31,6 @@ For more information see
 man systemd.time
 ```
 
-or
-
-<https://man.cx/systemd.time#heading7>
-
-
 ## Limitations
 
 This library has some limitations when parsing calendar events
