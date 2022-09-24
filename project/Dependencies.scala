@@ -2,14 +2,14 @@ import sbt._
 
 object Dependencies {
 
-  val akkaVersion = "2.6.19"
-  val circeVersion = "0.14.2"
+  val akkaVersion = "2.6.20"
+  val circeVersion = "0.14.3"
   val doobieVersion = "1.0.0-RC2"
-  val fs2Version = "3.2.12"
+  val fs2Version = "3.3.0"
   val h2Version = "2.1.214"
-  val jacksonVersion = "2.13.3"
+  val jacksonVersion = "2.13.4"
   val log4sVersion = "1.8.2"
-  val logbackVersion = "1.4.0"
+  val logbackVersion = "1.4.1"
   val munitVersion = "0.7.29"
   val scalaTestVersion = "3.2.13"
   val organizeImportsVersion = "0.6.0"
