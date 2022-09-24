@@ -1,6 +1,6 @@
 import com.typesafe.sbt.SbtGit.GitKeys._
 
-val scala212 = "2.12.15"
+val scala212 = "2.12.17"
 val scala213 = "2.13.9"
 val scala3 = "3.1.3"
 
