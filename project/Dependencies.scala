@@ -9,9 +9,9 @@ object Dependencies {
   val h2Version = "2.1.214"
   val jacksonVersion = "2.13.4"
   val log4sVersion = "1.8.2"
-  val logbackVersion = "1.4.1"
+  val logbackVersion = "1.4.3"
   val munitVersion = "0.7.29"
-  val scalaTestVersion = "3.2.13"
+  val scalaTestVersion = "3.2.14"
   val organizeImportsVersion = "0.6.0"
 
   val organizeImports = Seq(
