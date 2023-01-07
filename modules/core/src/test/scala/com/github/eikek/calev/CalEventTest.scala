@@ -75,7 +75,7 @@ class CalEventTest extends FunSuite {
       Some(ZoneId.of("Europe/Berlin"))
     )
 
-    val Some(next) = ce.nextElapse(ref)
+    val next = ce.nextElapse(ref).get
     assertEquals(next.getZone, ZoneOffset.UTC)
     assertEquals(next.toLocalTime, LocalTime.of(21, 10, 0))
   }
