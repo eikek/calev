@@ -5,13 +5,13 @@ object Dependencies {
   val akkaVersion = "2.6.20"
   val circeVersion = "0.14.5"
   val doobieVersion = "1.0.0-RC2"
-  val fs2Version = "3.6.1"
+  val fs2Version = "3.7.0"
   val h2Version = "2.1.214"
-  val jacksonVersion = "2.14.2"
+  val jacksonVersion = "2.15.2"
   val log4sVersion = "1.8.2"
   val logbackVersion = "1.4.6"
   val munitVersion = "0.7.29"
-  val scalaTestVersion = "3.2.15"
+  val scalaTestVersion = "3.2.16"
   val organizeImportsVersion = "0.6.0"
 
   val organizeImports = Seq(
