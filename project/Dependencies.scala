@@ -4,7 +4,7 @@ object Dependencies {
 
   val akkaVersion = "2.6.20"
   val circeVersion = "0.14.5"
-  val doobieVersion = "1.0.0-RC2"
+  val doobieVersion = "1.0.0-RC3"
   val fs2Version = "3.7.0"
   val h2Version = "2.1.214"
   val jacksonVersion = "2.15.2"
