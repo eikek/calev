@@ -10,10 +10,11 @@ import munit._
 class CalevDoobieTest extends FunSuite with CalevDoobieMeta {
 
   val xa = Transactor.fromDriverManager[IO](
-    "org.h2.Driver",
-    "jdbc:h2:mem:testing;DB_CLOSE_DELAY=-1",
-    "sa",
-    ""
+    driver = "org.h2.Driver",
+    url = "jdbc:h2:mem:testing;DB_CLOSE_DELAY=-1",
+    user = "sa",
+    password = "",
+    logHandler = None
   )
 
   case class Record(event: CalEvent)

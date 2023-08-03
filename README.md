@@ -31,6 +31,11 @@ For more information see
 man systemd.time
 ```
 
+or
+
+<https://man.cx/systemd.time#heading7>
+
+
 ## Limitations
 
 This library has some limitations when parsing calendar events
@@ -164,16 +169,16 @@ import java.time._
 ce.asString
 // res4: String = "*-*-* 00/2:00:00"
 val now = LocalDateTime.now
-// now: LocalDateTime = 2022-03-11T21:47:18.418490
+// now: LocalDateTime = 2023-08-03T11:30:20.371144744
 ce.nextElapse(now)
-// res5: Option[LocalDateTime] = Some(value = 2022-03-11T22:00)
+// res5: Option[LocalDateTime] = Some(value = 2023-08-03T12:00)
 ce.nextElapses(now, 5)
 // res6: List[LocalDateTime] = List(
-//   2022-03-11T22:00,
-//   2022-03-12T00:00,
-//   2022-03-12T02:00,
-//   2022-03-12T04:00,
-//   2022-03-12T06:00
+//   2023-08-03T12:00,
+//   2023-08-03T14:00,
+//   2023-08-03T16:00,
+//   2023-08-03T18:00,
+//   2023-08-03T20:00
 // )
 ```
 
@@ -210,19 +215,19 @@ val everyTwoSeconds = CalEvent.unsafe("*-*-* *:*:0/2")
 //   zone = None
 // )
 val scheduler = Scheduler.systemDefault[IO]
-// scheduler: Scheduler[IO] = com.github.eikek.calev.fs2.Scheduler$$anon$1@60877629
+// scheduler: Scheduler[IO] = com.github.eikek.calev.fs2.Scheduler$$anon$1@331b0bfd
 
 val printTime = Stream.eval(IO(println(LocalTime.now)))
 // printTime: Stream[IO, Unit] = Stream(..)
 
 val task = scheduler.awakeEvery(everyTwoSeconds) >> printTime
-// task: Stream[IO[x], Unit] = Stream(..)
+// task: Stream[[x]IO[x], Unit] = Stream(..)
 
 import cats.effect.unsafe.implicits._
 task.take(3).compile.drain.unsafeRunSync()
-// 21:47:20.018387
-// 21:47:22.001942
-// 21:47:24.002348
+// 11:30:22.007430655
+// 11:30:24.000809249
+// 11:30:26.001204345
 ```
 
 
@@ -257,7 +262,7 @@ val insert =
   sql"INSERT INTO mytable (event) VALUES (${r.event})".update.run
 // insert: ConnectionIO[Int] = Suspend(
 //   a = Uncancelable(
-//     body = cats.effect.kernel.MonadCancel$$Lambda$2138/0x0000000800c18040@48d44acf
+//     body = cats.effect.kernel.MonadCancel$$Lambda$2205/0x000000080185f8a0@7f6c85c4
 //   )
 // )
 
@@ -265,7 +270,7 @@ val select =
   sql"SELECT event FROM mytable WHERE id = 1".query[Record].unique
 // select: ConnectionIO[Record] = Suspend(
 //   a = Uncancelable(
-//     body = cats.effect.kernel.MonadCancel$$Lambda$2138/0x0000000800c18040@49f2994f
+//     body = cats.effect.kernel.MonadCancel$$Lambda$2205/0x000000080185f8a0@319c77de
 //   )
 // )
 ```
@@ -355,7 +360,7 @@ val jackson = JsonMapper
   .builder()
   .addModule(new CalevModule())
   .build()
-// jackson: JsonMapper = com.fasterxml.jackson.databind.json.JsonMapper@2a654f27
+// jackson: JsonMapper = com.fasterxml.jackson.databind.json.JsonMapper@12dcfa6a
 
 val myEvent    = CalEvent.unsafe("Mon *-*-* 05:00/10:00")
 // myEvent: CalEvent = CalEvent(
@@ -477,7 +482,7 @@ calevScheduler().scheduleOnceWithCalendarEvent(calEvent, () => {
   )
 })
 // res11: Option[<none>.<root>.akka.actor.Cancellable] = Some(
-//   value = akka.actor.LightArrayRevolverScheduler$TaskHolder@5b7f9eaa
+//   value = akka.actor.LightArrayRevolverScheduler$TaskHolder@57b4fc1e
 // )
 system.terminate()
 ```
