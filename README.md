@@ -1,5 +1,5 @@
 # calev
-[![Build Status](https://travis-ci.org/eikek/calev.svg?branch=master)](https://travis-ci.org/eikek/calev)
+[![CI](https://github.com/eikek/calev/actions/workflows/ci.yml/badge.svg)](https://github.com/eikek/calev/actions/workflows/ci.yml)
 [![Scaladex](https://index.scala-lang.org/eikek/calev/latest.svg?color=blue)](https://index.scala-lang.org/eikek/calev/calev-core)
 [![Scala Steward badge](https://img.shields.io/badge/Scala_Steward-helping-blue.svg?style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAMAAAARSr4IAAAAVFBMVEUAAACHjojlOy5NWlrKzcYRKjGFjIbp293YycuLa3pYY2LSqql4f3pCUFTgSjNodYRmcXUsPD/NTTbjRS+2jomhgnzNc223cGvZS0HaSD0XLjbaSjElhIr+AAAAAXRSTlMAQObYZgAAAHlJREFUCNdNyosOwyAIhWHAQS1Vt7a77/3fcxxdmv0xwmckutAR1nkm4ggbyEcg/wWmlGLDAA3oL50xi6fk5ffZ3E2E3QfZDCcCN2YtbEWZt+Drc6u6rlqv7Uk0LdKqqr5rk2UCRXOk0vmQKGfc94nOJyQjouF9H/wCc9gECEYfONoAAAAASUVORK5CYII=)](https://scala-steward.org)
 
@@ -169,7 +169,7 @@ import java.time._
 ce.asString
 // res4: String = "*-*-* 00/2:00:00"
 val now = LocalDateTime.now
-// now: LocalDateTime = 2023-09-03T01:39:36.239914846
+// now: LocalDateTime = 2023-09-03T01:42:02.057451594
 ce.nextElapse(now)
 // res5: Option[LocalDateTime] = Some(value = 2023-09-03T02:00)
 ce.nextElapses(now, 5)
@@ -225,9 +225,9 @@ val task = scheduler.awakeEvery(everyTwoSeconds) >> printTime
 
 import cats.effect.unsafe.implicits._
 task.take(3).compile.drain.unsafeRunSync()
-// 01:39:38.007686419
-// 01:39:40.000784708
-// 01:39:42.000823444
+// 01:42:04.006338192
+// 01:42:06.000327762
+// 01:42:08.000910107
 ```
 
 
