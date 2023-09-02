@@ -1,7 +1,8 @@
 package com.github.eikek.calev.internal
 
-import java.time.ZoneId
+import java.time.{ZoneId, ZoneOffset}
 
+import scala.util.Try
 import scala.util.control.NonFatal
 
 import com.github.eikek.calev._
@@ -92,7 +93,7 @@ object Parser {
   def weekday(wd: Weekday): P[Weekday] =
     (iconst(wd.longName) | iconst(wd.shortName)).map(_ => wd)
 
-  val zoneId: P[ZoneId] = {
+  val timeZone: P[ZoneId] = {
     val all = ZoneId.getAvailableZoneIds()
     rest.emap { id =>
       Option(ZoneId.SHORT_IDS.get(id)) match {
@@ -103,6 +104,15 @@ object Parser {
       }
     }
   }
+
+  val zoneOffset: P[ZoneOffset] =
+    rest.emap { id =>
+      Try(ZoneOffset.of(id)).toEither.left.map(ex =>
+        s"Invalid time zone or offset: ${ex.getMessage}"
+      )
+    }
+
+  val zoneId: P[ZoneId] = timeZone | zoneOffset.map(identity)
 
   def repsep[A](p: P[A], sep: P[Unit]): P[Vector[A]] =
     (rep(p <~ sep) ~ p).map { case (list, el) =>
