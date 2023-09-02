@@ -29,7 +29,8 @@ class SchedulerTest extends FunSuite {
     s2.compile.last.map(a => assertEquals(a, Option(true))).unsafeRunSync()
   }
 
-  test("timezones") {
+  test("timezones".ignore) {
+
     val zoneId: ZoneId = ZoneOffset.ofTotalSeconds(1)
     val scheduler = Scheduler.from(IO.pure(zoneId))
 

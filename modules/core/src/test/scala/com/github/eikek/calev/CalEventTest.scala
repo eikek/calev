@@ -44,6 +44,22 @@ class CalEventTest extends FunSuite {
     assert(ce2.validate.isEmpty)
   }
 
+  test("with timezone") {
+    val ce = CalEvent(Mon ~ Wed, date(All, All, All), time(15.c, 0.c, 0.c))
+      .copy(zone = Some(ZoneId.of("UTC")))
+    assertEquals(ce.asString, "Mon..Wed *-*-* 15:00:00 UTC")
+
+    val ce2 = CalEvent(Mon ~ Wed, date(All, All, All), time(15.c, 0.c, 0.c))
+      .copy(zone = Some(ZoneOffset.UTC))
+    assertEquals(ce2.asString, "Mon..Wed *-*-* 15:00:00 Z")
+
+    val ce3 = CalEvent.unsafe("Mon..Wed *-*-* 15:00:00 UTC")
+    assertEquals(ce3, ce)
+
+    val ce4 = CalEvent.unsafe("Mon..Wed *-*-* 15:00:00 Z")
+    assertEquals(ce4, ce2)
+  }
+
   test("nextElapse no millis") {
     val ce = CalEvent.unsafe("*-*-* 0/2:0/10")
     val ref = zdt(2020, 4, 2, 18, 31, 12).`with`(ChronoField.MILLI_OF_SECOND, 156)
