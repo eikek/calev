@@ -11,7 +11,7 @@ object Dependencies {
   val log4sVersion = "1.8.2"
   val logbackVersion = "1.4.11"
   val munitVersion = "0.7.29"
-  val scalaTestVersion = "3.2.16"
+  val scalaTestVersion = "3.2.17"
   val organizeImportsVersion = "0.6.0"
 
   val organizeImports = Seq(
