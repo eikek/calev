@@ -1,5 +1,7 @@
 package com.github.eikek.calev
 
+import scala.collection.immutable.Seq
+
 import com.github.eikek.calev.WeekdayComponent._
 
 object Dsl {

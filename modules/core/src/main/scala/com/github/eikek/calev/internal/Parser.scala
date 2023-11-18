@@ -2,6 +2,7 @@ package com.github.eikek.calev.internal
 
 import java.time.{ZoneId, ZoneOffset}
 
+import scala.collection.immutable.Seq
 import scala.util.Try
 import scala.util.control.NonFatal
 
