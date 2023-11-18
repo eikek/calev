@@ -1,5 +1,6 @@
 package com.github.eikek.calev
 
+import scala.collection.immutable.Seq
 sealed trait WeekdayComponent {
 
   def contains(day: Weekday): Boolean

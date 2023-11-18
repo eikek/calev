@@ -1,5 +1,6 @@
 package com.github.eikek.calev
 
+import scala.collection.immutable.Seq
 sealed trait Component {
 
   def contains(n: Int): Boolean
