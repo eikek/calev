@@ -9,7 +9,7 @@ object Dependencies {
   val h2Version = "2.2.224"
   val jacksonVersion = "2.16.1"
   val log4sVersion = "1.8.2"
-  val logbackVersion = "1.5.0"
+  val logbackVersion = "1.5.1"
   val munitVersion = "0.7.29"
   val scalaTestVersion = "3.2.18"
 
