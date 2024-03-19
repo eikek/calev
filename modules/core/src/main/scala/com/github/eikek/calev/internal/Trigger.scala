@@ -12,6 +12,8 @@ trait Trigger {
   def next(ref: ZonedDateTime, ev: CalEvent): Option[ZonedDateTime]
 
   def nextRepeat(count: Int)(ref: ZonedDateTime, ev: CalEvent): List[ZonedDateTime] = {
+    require(count >= 0, "Repeat count cannot be negative")
+
     @annotation.tailrec
     def go(result: List[ZonedDateTime], cur: ZonedDateTime, i: Int): List[ZonedDateTime] =
       if (i == 0) result
@@ -23,5 +25,4 @@ trait Trigger {
 
     go(Nil, ref, count).reverse
   }
-
 }
