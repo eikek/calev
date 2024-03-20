@@ -96,6 +96,16 @@ class CalEventTest extends FunSuite {
     assertEquals(next.toLocalTime, LocalTime.of(21, 10, 0))
   }
 
+  test("day after last January is not 31st February") {
+    val expression = CalEvent(AllWeekdays, date(All, 2.c, All), time(0 #/ 6, 0.c, 0.c))
+
+    val next = expression
+      .nextElapse(OffsetDateTime.parse("2024-01-31T18:00+01:00").toZonedDateTime)
+      .get
+
+    assertEquals(next, ZonedDateTime.parse("2024-02-01T00:00+01:00"))
+  }
+
   private def zdt(y: Int, month: Int, d: Int, h: Int, min: Int, sec: Int): ZonedDateTime =
     ZonedDateTime.of(LocalDate.of(y, month, d), LocalTime.of(h, min, sec), ZoneOffset.UTC)
 }

@@ -90,8 +90,10 @@ object DefaultTrigger extends Trigger {
     }
 
   case class Date(year: Int, month: Int, day: Int) {
-    def toLocalDate: LocalDate =
-      LocalDate.of(year, month, day)
+    def toLocalDate: LocalDate = {
+      val lastDayOfMonth = YearMonth.of(year, month).atEndOfMonth().getDayOfMonth
+      LocalDate.of(year, month, math.min(day, lastDayOfMonth))
+    }
 
     def incYear: Date =
       Date(year + 1, month, day)
