@@ -7,7 +7,7 @@ object Dependencies {
   val doobieVersion = "1.0.0-RC5"
   val fs2Version = "3.10.1"
   val h2Version = "2.2.224"
-  val jacksonVersion = "2.17.0"
+  val jacksonVersion = "2.17.1"
   val log4sVersion = "1.8.2"
   val logbackVersion = "1.5.6"
   val munitVersion = "0.7.29"
