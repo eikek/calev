@@ -106,6 +106,66 @@ class CalEventTest extends FunSuite {
     assertEquals(next, ZonedDateTime.parse("2024-02-01T00:00+01:00"))
   }
 
+  test(
+    "expression for the daily run on some month with potential next run on next year should start at the beginning of the month next year"
+  ) {
+    val expression = CalEvent.unsafe("*-2-* 10:00:00")
+
+    val next = expression.nextElapse(LocalDateTime.parse("2024-03-20T10:01:00"))
+    assertEquals(
+      next.get,
+      LocalDateTime.parse("2025-02-01T10:00")
+    )
+  }
+
+  test(
+    "expression for the daily run on some month with ref date before (1 month before) aforementioned month should start at the beginning of the month of the same year"
+  ) {
+    val expression = CalEvent.unsafe("*-2-* 10:00:00")
+
+    val next = expression.nextElapse(LocalDateTime.parse("2024-01-20T10:01:00"))
+    assertEquals(
+      next.get,
+      LocalDateTime.parse("2024-02-01T10:00")
+    )
+  }
+
+  test(
+    "expression for the daily run on some month with ref date before (few months before) aforementioned month should start at the beginning of the month of the same year"
+  ) {
+    val expression = CalEvent.unsafe("*-4-* 10:00:00")
+
+    val next = expression.nextElapse(LocalDateTime.parse("2024-01-20T10:01:00"))
+    assertEquals(
+      next.get,
+      LocalDateTime.parse("2024-04-01T10:00")
+    )
+  }
+
+  test(
+    "expression for the daily run on some month with ref date before (on the same month) aforementioned month should start at the beginning of the month of the same year"
+  ) {
+    val expression = CalEvent.unsafe("*-4-25 10:00:00")
+
+    val next = expression.nextElapse(LocalDateTime.parse("2024-04-20T10:01:00"))
+    assertEquals(
+      next.get,
+      LocalDateTime.parse("2024-04-25T10:00")
+    )
+  }
+
+  test(
+    "expression for the monthly run on some month with potential next run on next year should start at the beginning of the month next year"
+  ) {
+    val expression = CalEvent.unsafe("*-4-25 10:00:00")
+
+    val next = expression.nextElapse(LocalDateTime.parse("2024-08-20T10:01:00"))
+    assertEquals(
+      next.get,
+      LocalDateTime.parse("2025-04-25T10:00")
+    )
+  }
+
   private def zdt(y: Int, month: Int, d: Int, h: Int, min: Int, sec: Int): ZonedDateTime =
     ZonedDateTime.of(LocalDate.of(y, month, d), LocalTime.of(h, min, sec), ZoneOffset.UTC)
 }

@@ -52,7 +52,7 @@ object Value {
 
     def contains(n: Int): Boolean =
       n >= start && n <= end &&
-        (rep == None || Single(start, rep).contains(n))
+        (rep.isEmpty || Single(start, rep).contains(n))
 
     def asString: String =
       rep match {
