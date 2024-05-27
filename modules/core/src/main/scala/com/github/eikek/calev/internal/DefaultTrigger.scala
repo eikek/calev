@@ -72,20 +72,38 @@ object DefaultTrigger extends Trigger {
         }
 
       case _ =>
-        val (ref, comp) = calc.components
-        val prevFlag = calc.flag
+        val (ref: Int, comp: Component) = calc.components
+        val prevFlag: Flag = calc.flag
 
-        if (comp.contains(ref) && prevFlag != Flag.First)
+        if (comp.contains(ref) && prevFlag != Flag.First) {
           run(calc.copy(flag = Flag.Exact).nextPos)
-        else
-          comp.findFirst(ref + 1, calc.maxValue) match {
+        } else
+          comp.findFirst(min = ref + 1, max = calc.maxValue) match {
             case Some(v) =>
               run(calc.set(v, Flag.Next).atStartBelowCurrent.nextPos)
 
             case None =>
-              val n =
-                comp.findFirst(calc.minValue, calc.maxValue).getOrElse(calc.minValue)
-              run(calc.set(n, Flag.First).nextPos)
+              if (calc.isMonth) {
+                comp.findFirst(min = calc.minValue, max = calc.maxValue) match {
+                  case Some(v) =>
+                    run(calc.set(v, Flag.First).atStartBelowCurrent.nextPos)
+                  case None =>
+                    val pos = calc
+                      .set(
+                        comp
+                          .findFirst(calc.minValue, calc.maxValue)
+                          .getOrElse(calc.minValue),
+                        Flag.First
+                      )
+                      .nextPos
+                    run(pos)
+                }
+              } else {
+                val n =
+                  comp.findFirst(calc.minValue, calc.maxValue).getOrElse(calc.minValue)
+                run(calc.set(n, Flag.First).nextPos)
+              }
+
           }
     }
 
@@ -112,7 +130,7 @@ object DefaultTrigger extends Trigger {
   }
 
   case class DateTime(date: Date, time: Time) {
-    def toLocalDateTime =
+    def toLocalDateTime: LocalDateTime =
       LocalDateTime.of(date.toLocalDate, time.toLocalTime)
 
     def toZonedDateTime(zone: ZoneId): ZonedDateTime =
@@ -171,7 +189,7 @@ object DefaultTrigger extends Trigger {
   }
 
   case class Calc(flag: Flag, date: DateTime, pos: DateTime.Pos, ce: CalEvent) {
-    def components =
+    def components: (Int, Component) =
       pos match {
         case DateTime.Pos.Sec =>
           (date.time.second, ce.time.seconds)
@@ -228,7 +246,7 @@ object DefaultTrigger extends Trigger {
     def set(value: Int, flag: Flag): Calc =
       set(value, pos).copy(flag = flag)
 
-    private def set(value: Int, pos: DateTime.Pos): Calc =
+    def set(value: Int, pos: DateTime.Pos): Calc =
       pos match {
         case DateTime.Pos.Sec =>
           copy(date = date.copy(time = date.time.copy(second = value)))
@@ -243,6 +261,9 @@ object DefaultTrigger extends Trigger {
         case DateTime.Pos.Year =>
           copy(date = date.copy(date = date.date.copy(year = value)))
       }
+
+    def isMonth: Boolean =
+      pos == DateTime.Pos.Month
   }
 
   object Calc {
