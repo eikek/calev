@@ -10,7 +10,7 @@ object Dependencies {
   val jacksonVersion = "2.18.2"
   val log4sVersion = "1.8.2"
   val logbackVersion = "1.5.16"
-  val munitVersion = "1.0.0"
+  val munitVersion = "1.1.0"
   val scalaTestVersion = "3.2.19"
 
   val scalaTest = Seq(
