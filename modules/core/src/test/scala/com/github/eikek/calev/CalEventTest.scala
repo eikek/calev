@@ -68,6 +68,42 @@ class CalEventTest extends FunSuite {
     assertEquals(next.getNano, 0)
   }
 
+  test("nextElapse respects DST with ref before time change") {
+    val ce = CalEvent.unsafe("Mon *-*-* 02:00:00 Europe/Warsaw")
+    val ref = zdtInZone(2025, 3, 27, 2, 0, 0, ZoneId.of("Europe/Warsaw"))
+    val next = ce.nextElapse(ref).get
+    assertEquals(next.getZone.getId, "Europe/Warsaw")
+    assertEquals(next.toLocalDate, LocalDate.of(2025, 3, 31))
+    assertEquals(next.toLocalTime, LocalTime.of(2, 0, 0))
+  }
+
+  test("nextElapse respects DST with ref at time change") {
+    val ce = CalEvent.unsafe("Sun *-*-* 02:00:00 Europe/Warsaw")
+    val ref = zdtInZone(2025, 3, 30, 2, 0, 0, ZoneId.of("Europe/Warsaw"))
+    val next = ce.nextElapse(ref).get
+    assertEquals(next.getZone.getId, "Europe/Warsaw")
+    assertEquals(next.toLocalDate, LocalDate.of(2025, 4, 6))
+    assertEquals(next.toLocalTime, LocalTime.of(2, 0, 0))
+  }
+
+
+  test("nextElapse respects DST with ref before time change and CalEvent exactly at time change") {
+    val ce = CalEvent.unsafe("Sun *-*-* 02:00:00 Europe/Warsaw")
+    val ref = zdtInZone(2025, 3, 27, 2, 0, 0, ZoneId.of("Europe/Warsaw"))
+    val next = ce.nextElapse(ref).get
+    assertEquals(next.getZone.getId, "Europe/Warsaw")
+    assertEquals(next.toLocalDate, LocalDate.of(2025, 3, 30))
+    assertEquals(next.toLocalTime, LocalTime.of(3, 0, 0))
+  }
+
+  test("nextElapse respects DST with ref after time change") {
+    val ce = CalEvent.unsafe("Sun *-*-* 02:00:00 Europe/Warsaw")
+    val ref = zdtInZone(2025, 4, 20, 2, 0, 0, ZoneId.of("Europe/Warsaw"))
+    val next = ce.nextElapse(ref).get
+    assertEquals(next.getZone.getId, "Europe/Warsaw")
+    assertEquals(next.toLocalTime, LocalTime.of(2, 0, 0))
+  }
+
   test("nextElapses ends") {
     val ref = zdt(2020, 3, 8, 1, 47, 12).withZoneSameLocal(CalEvent.UTC)
     val ce =
@@ -168,4 +204,7 @@ class CalEventTest extends FunSuite {
 
   private def zdt(y: Int, month: Int, d: Int, h: Int, min: Int, sec: Int): ZonedDateTime =
     ZonedDateTime.of(LocalDate.of(y, month, d), LocalTime.of(h, min, sec), ZoneOffset.UTC)
+
+  private def zdtInZone(y: Int, month: Int, d: Int, h: Int, min: Int, sec: Int, zone: ZoneId): ZonedDateTime =
+    ZonedDateTime.of(LocalDate.of(y, month, d), LocalTime.of(h, min, sec), zone)
 }

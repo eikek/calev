@@ -4,6 +4,8 @@ import java.time._
 
 import com.github.eikek.calev._
 
+import java.util.{Calendar, GregorianCalendar}
+
 /** Generate the next date-time that matches a calendar event and is closest but after a
   * give reference date-time.
   *
@@ -41,14 +43,15 @@ object DefaultTrigger extends Trigger {
         case Some(dt) =>
           val zd = dt.toLocalDateTime.atZone(zone)
           // need to match weekdays in the zone of the calendar-event
-          if (ev.weekday.contains(Weekday.from(zd.getDayOfWeek)))
+          val containsDow = ev.weekday.contains(Weekday.from(zd.getDayOfWeek))
+          if (containsDow)
             Some(zd.withZoneSameInstant(ref.getZone))
-          else go(Calc.init(dt, ev))
+          else go(Calc.init(dt, ev, ref))
         case None =>
           None
       }
 
-    go(Calc.init(refDate, ev))
+    go(Calc.init(refDate, ev, ref))
   }
 
   @annotation.tailrec
@@ -267,10 +270,12 @@ object DefaultTrigger extends Trigger {
   }
 
   object Calc {
-    def init(dt: DateTime, ce: CalEvent): Calc = {
+    def init(dt: DateTime, ce: CalEvent, ref: ZonedDateTime): Calc = {
       val zd = dt.toZonedDateTime(ce.zone.getOrElse(CalEvent.UTC))
+      val dstOffsetHoursZd: Int = GregorianCalendar.from(zd).get(Calendar.DST_OFFSET) / 3600000
+      val dstOffsetHoursRef: Int = GregorianCalendar.from(ref).get(Calendar.DST_OFFSET) / 3600000
       val ndt =
-        if (ce.copy(weekday = WeekdayComponent.All).contains(zd)) dt.incSecond
+        if (ce.copy(weekday = WeekdayComponent.All).contains(zd, dstOffsetHoursZd - dstOffsetHoursRef)) dt.incSecond
         else dt
       Calc(Flag.Exact, ndt, DateTime.Pos.Sec, ce)
     }

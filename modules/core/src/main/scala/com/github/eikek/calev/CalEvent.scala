@@ -2,8 +2,6 @@ package com.github.eikek.calev
 
 import java.time._
 
-import scala.collection.immutable.Seq
-
 final case class CalEvent(
     weekday: WeekdayComponent,
     date: DateEvent,
@@ -11,16 +9,14 @@ final case class CalEvent(
     zone: Option[ZoneId] = None
 ) {
 
-  def contains(ts: Instant): Boolean =
-    contains(ts.atZone(zone.getOrElse(CalEvent.UTC)))
-
-  def contains(zdate: ZonedDateTime): Boolean = {
+  def contains(zdate: ZonedDateTime, dstOffsetHour: Int = 0): Boolean = {
     val zd = zone.map(z => zdate.withZoneSameInstant(z)).getOrElse(zdate)
+
     weekday.contains(Weekday.from(zd.getDayOfWeek)) &&
     date.year.contains(zd.getYear()) &&
     date.month.contains(zd.getMonth().getValue()) &&
     date.day.contains(zd.getDayOfMonth()) &&
-    time.hour.contains(zd.getHour()) &&
+    time.hour.contains(zd.getHour() - dstOffsetHour) &&
     time.minute.contains(zd.getMinute()) &&
     time.seconds.contains(zd.getSecond())
   }
