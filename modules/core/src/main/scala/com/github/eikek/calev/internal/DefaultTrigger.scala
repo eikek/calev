@@ -270,15 +270,22 @@ object DefaultTrigger extends Trigger {
   }
 
   object Calc {
+
+    private val HOUR_MILLIS = 3600000
+
     def init(dt: DateTime, ce: CalEvent, ref: ZonedDateTime): Calc = {
       val zd = dt.toZonedDateTime(ce.zone.getOrElse(CalEvent.UTC))
-      val dstOffsetHoursZd: Int = GregorianCalendar.from(zd).get(Calendar.DST_OFFSET) / 3600000
-      val dstOffsetHoursRef: Int = GregorianCalendar.from(ref).get(Calendar.DST_OFFSET) / 3600000
       val ndt =
-        if (ce.copy(weekday = WeekdayComponent.All).contains(zd, dstOffsetHoursZd - dstOffsetHoursRef)) dt.incSecond
+        if (ce.copy(weekday = WeekdayComponent.All).contains(zd, getDstOffsetHours(zd) - getDstOffsetHours(ref)))
+          dt.incSecond
         else dt
       Calc(Flag.Exact, ndt, DateTime.Pos.Sec, ce)
     }
+
+    private def getDstOffsetHours(zd: ZonedDateTime) = {
+      GregorianCalendar.from(zd).get(Calendar.DST_OFFSET) / HOUR_MILLIS
+    }
   }
+
 
 }
