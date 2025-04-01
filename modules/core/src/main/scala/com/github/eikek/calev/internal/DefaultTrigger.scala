@@ -1,10 +1,9 @@
 package com.github.eikek.calev.internal
 
 import java.time._
+import java.util.{Calendar, GregorianCalendar}
 
 import com.github.eikek.calev._
-
-import java.util.{Calendar, GregorianCalendar}
 
 /** Generate the next date-time that matches a calendar event and is closest but after a
   * give reference date-time.
@@ -275,17 +274,21 @@ object DefaultTrigger extends Trigger {
 
     def init(dt: DateTime, ce: CalEvent, ref: ZonedDateTime): Calc = {
       val zd = dt.toZonedDateTime(ce.zone.getOrElse(CalEvent.UTC))
+      val dstOffsetDiff = getDstOffsetHours(zd) - getDstOffsetHours(ref)
+      // at DST start hour and ZONE_OFFSET change in ZonedDateTime, at DST end only ZONE_OFFSET changes in ZonedDateTime
+      val hourDstOffset = if (dstOffsetDiff > 0) dstOffsetDiff else 0
       val ndt =
-        if (ce.copy(weekday = WeekdayComponent.All).contains(zd, getDstOffsetHours(zd) - getDstOffsetHours(ref)))
+        if (
+          ce.copy(weekday = WeekdayComponent.All)
+            .contains(zd, hourDstOffset)
+        )
           dt.incSecond
         else dt
       Calc(Flag.Exact, ndt, DateTime.Pos.Sec, ce)
     }
 
-    private def getDstOffsetHours(zd: ZonedDateTime) = {
+    private def getDstOffsetHours(zd: ZonedDateTime) =
       GregorianCalendar.from(zd).get(Calendar.DST_OFFSET) / HOUR_MILLIS
-    }
   }
-
 
 }

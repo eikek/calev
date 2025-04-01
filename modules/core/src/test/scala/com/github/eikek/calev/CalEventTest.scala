@@ -68,7 +68,7 @@ class CalEventTest extends FunSuite {
     assertEquals(next.getNano, 0)
   }
 
-  test("nextElapse respects DST with ref before time change") {
+  test("nextElapse respects DST with ref before time change - DST start") {
     val ce = CalEvent.unsafe("Mon *-*-* 02:00:00 Europe/Warsaw")
     val ref = zdtInZone(2025, 3, 27, 2, 0, 0, ZoneId.of("Europe/Warsaw"))
     val next = ce.nextElapse(ref).get
@@ -77,7 +77,25 @@ class CalEventTest extends FunSuite {
     assertEquals(next.toLocalTime, LocalTime.of(2, 0, 0))
   }
 
-  test("nextElapse respects DST with ref at time change") {
+  test("nextElapse respects DST with ref before time change - in DST") {
+    val ce = CalEvent.unsafe("Mon *-*-* 02:00:00 Europe/Warsaw")
+    val ref = zdtInZone(2025, 4, 27, 2, 0, 0, ZoneId.of("Europe/Warsaw"))
+    val next = ce.nextElapse(ref).get
+    assertEquals(next.getZone.getId, "Europe/Warsaw")
+    assertEquals(next.toLocalDate, LocalDate.of(2025, 4, 28))
+    assertEquals(next.toLocalTime, LocalTime.of(2, 0, 0))
+  }
+
+  test("nextElapse respects DST with ref before time change - DST end") {
+    val ce = CalEvent.unsafe("Mon *-*-* 03:00:00 Europe/Warsaw")
+    val ref = zdtInZone(2025, 10, 24, 3, 0, 0, ZoneId.of("Europe/Warsaw"))
+    val next = ce.nextElapse(ref).get
+    assertEquals(next.getZone.getId, "Europe/Warsaw")
+    assertEquals(next.toLocalDate, LocalDate.of(2025, 10, 27))
+    assertEquals(next.toLocalTime, LocalTime.of(3, 0, 0))
+  }
+
+  test("nextElapse respects DST with ref at time change - DST start") {
     val ce = CalEvent.unsafe("Sun *-*-* 02:00:00 Europe/Warsaw")
     val ref = zdtInZone(2025, 3, 30, 2, 0, 0, ZoneId.of("Europe/Warsaw"))
     val next = ce.nextElapse(ref).get
@@ -86,8 +104,18 @@ class CalEventTest extends FunSuite {
     assertEquals(next.toLocalTime, LocalTime.of(2, 0, 0))
   }
 
+  test("nextElapse respects DST with ref at time change - DST end") {
+    val ce = CalEvent.unsafe("Sun *-*-* 03:00:00 Europe/Warsaw")
+    val ref = zdtInZone(2025, 10, 26, 3, 0, 0, ZoneId.of("Europe/Warsaw"))
+    val next = ce.nextElapse(ref).get
+    assertEquals(next.getZone.getId, "Europe/Warsaw")
+    assertEquals(next.toLocalDate, LocalDate.of(2025, 11, 2))
+    assertEquals(next.toLocalTime, LocalTime.of(3, 0, 0))
+  }
 
-  test("nextElapse respects DST with ref before time change and CalEvent exactly at time change") {
+  test(
+    "nextElapse respects DST with ref before time change and CalEvent exactly at time change - DST start"
+  ) {
     val ce = CalEvent.unsafe("Sun *-*-* 02:00:00 Europe/Warsaw")
     val ref = zdtInZone(2025, 3, 27, 2, 0, 0, ZoneId.of("Europe/Warsaw"))
     val next = ce.nextElapse(ref).get
@@ -96,7 +124,18 @@ class CalEventTest extends FunSuite {
     assertEquals(next.toLocalTime, LocalTime.of(3, 0, 0))
   }
 
-  test("nextElapse respects DST with ref after time change") {
+  test(
+    "nextElapse respects DST with ref before time change and CalEvent exactly at time change - DST end"
+  ) {
+    val ce = CalEvent.unsafe("Sun *-*-* 03:00:00 Europe/Warsaw")
+    val ref = zdtInZone(2025, 10, 23, 3, 0, 0, ZoneId.of("Europe/Warsaw"))
+    val next = ce.nextElapse(ref).get
+    assertEquals(next.getZone.getId, "Europe/Warsaw")
+    assertEquals(next.toLocalDate, LocalDate.of(2025, 10, 26))
+    assertEquals(next.toLocalTime, LocalTime.of(3, 0, 0))
+  }
+
+  test("nextElapse respects DST with ref after time change - DST start") {
     val ce = CalEvent.unsafe("Sun *-*-* 02:00:00 Europe/Warsaw")
     val ref = zdtInZone(2025, 4, 20, 2, 0, 0, ZoneId.of("Europe/Warsaw"))
     val next = ce.nextElapse(ref).get
@@ -205,6 +244,14 @@ class CalEventTest extends FunSuite {
   private def zdt(y: Int, month: Int, d: Int, h: Int, min: Int, sec: Int): ZonedDateTime =
     ZonedDateTime.of(LocalDate.of(y, month, d), LocalTime.of(h, min, sec), ZoneOffset.UTC)
 
-  private def zdtInZone(y: Int, month: Int, d: Int, h: Int, min: Int, sec: Int, zone: ZoneId): ZonedDateTime =
+  private def zdtInZone(
+      y: Int,
+      month: Int,
+      d: Int,
+      h: Int,
+      min: Int,
+      sec: Int,
+      zone: ZoneId
+  ): ZonedDateTime =
     ZonedDateTime.of(LocalDate.of(y, month, d), LocalTime.of(h, min, sec), zone)
 }
