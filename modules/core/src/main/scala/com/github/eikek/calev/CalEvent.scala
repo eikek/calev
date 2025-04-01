@@ -2,6 +2,8 @@ package com.github.eikek.calev
 
 import java.time._
 
+import scala.collection.immutable.Seq
+
 final case class CalEvent(
     weekday: WeekdayComponent,
     date: DateEvent,
