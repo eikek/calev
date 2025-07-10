@@ -1,6 +1,7 @@
 package com.github.eikek.calev.internal
 
 import java.time._
+import java.util.{Calendar, GregorianCalendar}
 
 import com.github.eikek.calev._
 
@@ -41,14 +42,15 @@ object DefaultTrigger extends Trigger {
         case Some(dt) =>
           val zd = dt.toLocalDateTime.atZone(zone)
           // need to match weekdays in the zone of the calendar-event
-          if (ev.weekday.contains(Weekday.from(zd.getDayOfWeek)))
+          val containsDow = ev.weekday.contains(Weekday.from(zd.getDayOfWeek))
+          if (containsDow)
             Some(zd.withZoneSameInstant(ref.getZone))
-          else go(Calc.init(dt, ev))
+          else go(Calc.init(dt, ev, ref))
         case None =>
           None
       }
 
-    go(Calc.init(refDate, ev))
+    go(Calc.init(refDate, ev, ref))
   }
 
   @annotation.tailrec
@@ -267,13 +269,26 @@ object DefaultTrigger extends Trigger {
   }
 
   object Calc {
-    def init(dt: DateTime, ce: CalEvent): Calc = {
+
+    private val HOUR_MILLIS = 3600000
+
+    def init(dt: DateTime, ce: CalEvent, ref: ZonedDateTime): Calc = {
       val zd = dt.toZonedDateTime(ce.zone.getOrElse(CalEvent.UTC))
+      val dstOffsetDiff = getDstOffsetHours(zd) - getDstOffsetHours(ref)
+      // at DST start hour and ZONE_OFFSET change in ZonedDateTime, at DST end only ZONE_OFFSET changes in ZonedDateTime
+      val hourDstOffset = if (dstOffsetDiff > 0) dstOffsetDiff else 0
       val ndt =
-        if (ce.copy(weekday = WeekdayComponent.All).contains(zd)) dt.incSecond
+        if (
+          ce.copy(weekday = WeekdayComponent.All)
+            .contains(zd, hourDstOffset)
+        )
+          dt.incSecond
         else dt
       Calc(Flag.Exact, ndt, DateTime.Pos.Sec, ce)
     }
+
+    private def getDstOffsetHours(zd: ZonedDateTime) =
+      GregorianCalendar.from(zd).get(Calendar.DST_OFFSET) / HOUR_MILLIS
   }
 
 }
