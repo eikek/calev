@@ -56,7 +56,7 @@ object WeekdayComponent {
 
     def ++(wc: WeekdayComponent): WeekdayComponent =
       wc match {
-        case All => All
+        case All       => All
         case List(seq) =>
           List(values ++ seq)
       }

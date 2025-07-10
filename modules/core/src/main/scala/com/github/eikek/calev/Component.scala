@@ -35,7 +35,7 @@ object Component {
 
     def ++(c: Component): Component =
       c match {
-        case All => All
+        case All      => All
         case List(vs) =>
           List(values ++ vs)
       }

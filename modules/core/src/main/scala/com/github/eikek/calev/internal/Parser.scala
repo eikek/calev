@@ -99,7 +99,7 @@ object Parser {
     rest.emap { id =>
       Option(ZoneId.SHORT_IDS.get(id)) match {
         case Some(zid) => Right(ZoneId.of(zid))
-        case None =>
+        case None      =>
           if (all.contains(id)) Right(ZoneId.of(id))
           else Left(s"Unknown zone id: $id")
       }

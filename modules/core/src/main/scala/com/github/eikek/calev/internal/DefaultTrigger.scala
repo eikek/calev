@@ -212,7 +212,7 @@ object DefaultTrigger extends Trigger {
         case DateTime.Pos.Sec  => 59
         case DateTime.Pos.Min  => 59
         case DateTime.Pos.Hour => 23
-        case DateTime.Pos.Day =>
+        case DateTime.Pos.Day  =>
           val isLeap = date.date.toLocalDate.isLeapYear
           Month.of(date.date.month).length(isLeap)
         case DateTime.Pos.Month => 12
