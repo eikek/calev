@@ -11,7 +11,7 @@ object Dependencies {
   val log4sVersion = "1.8.2"
   val logbackVersion = "1.5.20"
   val munitVersion = "1.2.0"
-  val scalaTestVersion = "3.2.19"
+  val scalaTestVersion = "3.2.20"
 
   val scalaTest = Seq(
     "org.scalatest" %% "scalatest" % scalaTestVersion % Test
